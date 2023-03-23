@@ -148,10 +148,10 @@ def DatosFluke():
         print(data)
         if data != b"": #Comparación de datos recibidos, vacío hasta que se de la medición
             todas=data.split()#Separar los 4 datos en una lista
-            MedicionTemp1=Decimal(todas[0]) #Guardando temperatura 1 en lista
-            MedicionTemp2=Decimal(todas[1]) #Guardando temperatura 2 en lista
-            MedicionTemp3=Decimal(todas[2]) #Guardando temperatura 3 en lista
-            MedicionTemp4=Decimal(todas[3]) #Guardando temperatura 4 en lista
+            MedicionTemp1=float(todas[0]) #Guardando temperatura 1 en lista
+            MedicionTemp2=float(todas[1]) #Guardando temperatura 2 en lista
+            MedicionTemp3=float(todas[2]) #Guardando temperatura 3 en lista
+            MedicionTemp4=float(todas[3]) #Guardando temperatura 4 en lista
             detenerse = 1  #Condición para salir del while
     return MedicionTemp1, MedicionTemp2, MedicionTemp3, MedicionTemp4
 
@@ -479,7 +479,6 @@ def BusquedaClientes(nombreClienteBuscado):
         nombreCliente: nombre del cliente para el cual se va a calibrar
     Salida: una lista con el nombre del cliente, su dirección y el archivo donde está almacenada su información
     """
-
     woorkbookClientes = load_workbook(filename="Clientes.xlsx", keep_vba=True) # Apertura del archivo de excel de clientes 
     hojaClientes = woorkbookClientes.active # Hoja del archivo de excel donde están los clientes y su información
     
@@ -497,39 +496,34 @@ def BusquedaClientes(nombreClienteBuscado):
     archivoCliente = hojaClientes["C"+str(numFila)].value
 
     return nombreCliente, direccionCliente, archivoCliente
+    
+################## Selector de machote ##################
 
-
+def selectorMachote(seleccionSecuencia):
+	if seleccionSecuencia == "Desviación central" :
+		machote = "./Machotes/Machote para calibración de Bloques con comparador mecánico TESA (Desviación central).xlsm"
+		return machote
+	elif seleccionSecuencia == "Desviación central y planitud" :
+		machote = "./Machotes/Machote para calibración de Bloques con comparador mecánico TESA (Desviación central y planitud).xlsm"
+		return machote
+		
 ################## Creación de un archivo para la calibración ##################
 
 def CrearArchivoCalibracion(seleccionSecuencia):
-    """
-    Entradas: 
-        seleccionSecuencia: selección de la secuencia de calibración: "Desviación central" ó "Desviación central y planitud"
-    Salida: 
-        archivoCalibracion: la ruta de un archivo, nombrado con una marca temporal, en el que se va a trabajar la calibración en curso
-    """
-    # Se escoge sobre qué machote se va a trabajar a partir de la secuencia de calibración escogida por el usuario:
-    if seleccionSecuencia == "Desviación central":
-        machote = "Machotes/Machote para calibración de Bloques con comparador mecánico TESA (Desviación central).xlsm"
-    elif seleccionSecuencia == "Desviación central y planitud":
-        machote = "Machotes/Machote para calibración de Bloques con comparador mecánico TESA (Desviación central y planitud).xlsm"
-    
-    # Se crea un duplicado del machote, nombrado con una marca temporal:
-    fecha = datetime.datetime.now() # Fecha y hora del día
-    archivoCalibracion = "Calibraciones en curso/Calibración"+str(fecha.strftime("%c"))+".xlsm" # Nombre del archivo para la calibración
-    shutil.copy(machote, archivoCalibracion) # Creación del duplicado del machote
-    
-    return archivoCalibracion
+	# Se escoge sobre qué machote se va a trabajar a partir de la secuencia de calibración escogida por el usuario:
+	machote = selectorMachote(seleccionSecuencia)
+
+	# Se crea un duplicado del machote, nombrado con una marca temporal:
+	fecha = datetime.datetime.now() # Fecha y hora del día
+	archivoCalibracion = "./Calibraciones en curso/Calibración"+str(fecha.strftime("%c"))+".xlsm" # Nombre del archivo para la calibración
+	shutil.copy(machote, archivoCalibracion) # Creación del duplicado del machote
+
+	return archivoCalibracion
 
 ################## Autocompletado de la información que se tiene del cliente y la calibración ##################
 
 def AutocompletarInformacionCliente(nombreCliente, direccionCliente, numeroCertificado, numeroSolicitud, identificacionCalibrando, 
                                     responsableCalibracion, responsableRevision, patron, materialPatron, seleccionSecuencia):
-    """
-    Entradas: 
-        
-    Salida: el archivo de excel en el que se está trabajando la calibración actualizado con los datos del cliente e información de la calibración
-    """
     # Lista con la información del cliente para el que se va a calibrar
     informacionCliente = BusquedaClientes(nombreCliente)
    
@@ -836,7 +830,13 @@ def selectorFilaResultados(hojaResultadosCalibracion):
 def NuevaCalibracion(nombreCliente, numeroCertificado, numeroSolicitud, identificacionCalibrando, 
                                     responsableCalibracion, responsableRevision, patron, materialPatron, seleccionSecuencia, tiempoinicial, tiempoestabilizacion, numRepeticiones):
     nombreCliente, direccionCliente, archivoCliente = BusquedaClientes(nombreCliente)
-    archivoCalibracion = CrearArchivoCalibracion(seleccionSecuencia)
+    
+    machote = selectorMachote(seleccionSecuencia) # Se escoge la plantilla del machote que se va a utilizar
+	# Se crea un duplicado del machote, nombrado con una marca temporal:
+	fecha = datetime.datetime.now() # Fecha y hora del día
+	archivoCalibracion = "./Calibraciones en curso/Calibración"+str(fecha.strftime("%c"))+".xlsm" # Nombre del archivo para la calibración
+	shutil.copy(machote, archivoCalibracion) # Creación del duplicado del machote
+    
     hojaResultadosCalibracion = AutocompletarInformacionCliente(nombreCliente, direccionCliente, numeroCertificado, numeroSolicitud, identificacionCalibrando, 
                                     responsableCalibracion, responsableRevision, patron, materialPatron, seleccionSecuencia)
 
@@ -885,12 +885,13 @@ def NuevaCalibracion(nombreCliente, numeroCertificado, numeroSolicitud, identifi
         CalculosDesviacionYPlanitud(hojaResultadosCalibracion, numNuevasColumnas, numRepeticiones)
     """
 
-    archivoCalibracion.save('PruebaSecuenciaCentros.xlsm')
+    archivoCalibracion.save("PruebaSecuenciaCentros.xlsm")
     
     return
 
-NuevaCalibracion("Instituto Costarricense de Electricidad", "LCM12345", "67890", "12345", 
-                                    "Fernanda Quesada", "Leonardo Rojas", "Bloques Patrón de Cerámica de 0,5 mm a 100 mm", "Cerámica", "Desviación Central", 15000, 25000, 2)
+NuevaCalibracion("Instituto Costarricense de Electricidad", "LCM12345", "67890", "12345","Fernanda Quesada", "Leonardo Rojas", "Bloques Patrón de Cerámica de 0,5 mm a 100 mm", "Cerámica", "Desviación central", 15000, 25000, 2)
+                  
+
 
 
 
