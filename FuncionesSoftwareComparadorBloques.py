@@ -842,7 +842,8 @@ def NuevaCalibracion(nombreCliente, numeroCertificado, numeroSolicitud, identifi
 
     if seleccionSecuencia == "Desviación Central":
         numNuevasColumnas = EncabezadosDesviacionCentral(numRepeticiones, hojaResultadosCalibracion)
-        while ContinuarCalibracion() == True:
+	ContinuarCalibracion = "si" 
+        if ContinuarCalibracion() == "si":
             valorBloque = Decimal(input("Indique el valor del bloque a Calibrar: "))
             numFila = selectorFilaResultados(hojaResultadosCalibracion)
             hojaResultadosCalibracion["A"+str(numFila)] = valorBloque
@@ -872,6 +873,12 @@ def NuevaCalibracion(nombreCliente, numeroCertificado, numeroSolicitud, identifi
             hojaResultadosCalibracion["K"+str(numFila)] = listaMedicionesTemperatura[2]
             hojaResultadosCalibracion["L"+str(numFila)] = listaMedicionesTemperatura[3]
             hojaResultadosCalibracion["M"+str(numFila)] = DatosVaisala()
+	    
+	    ContinuarCalibracion = input("¿Desea continuar con la calibración?: ") 
+	
+	else: 
+	    print("Calibración finalizada") 
+	
 
         CalculosDesviacionCentral(numRepeticiones, numNuevasColumnas, hojaResultadosCalibracion)
 
