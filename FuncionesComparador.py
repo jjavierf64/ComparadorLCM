@@ -595,7 +595,7 @@ def AutocompletarInformacionCliente(nombreCliente, direccionCliente, numeroCerti
     hojaConversionDatos["L30"] = patron
     hojaConversionDatos["L31"] = materialPatron
 
-    return workbookSolicitantes, hojaResultadosCalibracion
+    return workbookCalibracion, hojaResultadosCalibracion
 
 def EncabezadosDesviacionCentral(numRepeticiones, hojaResultadosCalibracion):
     #SI NO SE HA REANUDADO LA CALIBRACIÓN
