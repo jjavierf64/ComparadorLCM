@@ -139,8 +139,11 @@ def nueva_calibracion():
     numReps_entry = ttk.Entry(ventana_nuevaCalibracion, width=42)
     numReps_entry.grid(row=13, column=1, columnspan=2, pady=5, padx=(20,5))
     
+    motores_button = ttk.Button(ventana_nuevaCalibracion, text="Posicionar Motores", command=mover_motores)
+    motores_button.grid(row=14, column=0, columnspan=1, pady=10)
+
     continuar_button = ttk.Button(ventana_nuevaCalibracion, text="Continuar", command=continuarNuevaCalibracion)
-    continuar_button.grid(row=14, column=0, columnspan=1, pady=10)
+    continuar_button.grid(row=14, column=2, columnspan=1, pady=10)
 
     regresar_button = ttk.Button(ventana_nuevaCalibracion, text="Regresar al menú de opciones", command=lambda: regresarVentanaPrincipal(root,ventana_nuevaCalibracion))
     regresar_button.grid(row=15, column=0, columnspan=1, pady=10)
@@ -333,6 +336,29 @@ def ingresar_calibrando():
 
     regresar_button = ttk.Button(ventana_calibrando, text="Regresar al menú de opciones", command=lambda: regresarVentanaPrincipal(root,ventana_calibrando))
     regresar_button.grid(row=11, column=0, columnspan=1, pady=10)
+    return
+
+def mover_motores():
+    #Crear una nueva ventana
+    ventana_moverMotores = tk.Toplevel(root)
+    ventana_moverMotores.title("Posicionamiento de Motores")
+    ventana_moverMotores.configure(bg="white")
+
+    main_label = ttk.Label(ventana_moverMotores, text="Utilize las flechas del teclado para colocar los motores en la posición inicial.", anchor=tk.CENTER, background="white")
+    main_label.grid(row=0,column=0, pady=(30,0), padx=30)
+    flechas_label = ttk.Label(ventana_moverMotores, text="←↕→", anchor=tk.CENTER, background="white")
+    flechas_label.grid(row=1,column=0, pady=(10,10))
+    exit_label = ttk.Label(ventana_moverMotores, text="Presione Enter ↲ para salir.", anchor=tk.CENTER, background="white")
+    exit_label.grid(row=2,column=0, pady=(0,50), padx=30)
+    
+    try:
+        #moverManual()
+        input()
+
+    finally:
+        ventana_moverMotores.destroy()
+
+
     return
 
 ##########

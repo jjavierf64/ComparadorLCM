@@ -83,11 +83,8 @@ listo=0                             #Variable que determina cuando terminó
 ################## Movimiento Manual de los motores ##################
 
 def moverManual():
-    print("\n\n     ***** Movimiento manual de la posición inicial del motor ***** ")
-    print("-> Al terminar presiona  q  para salir.")
-    input("Para comenzar, presiona enter:")
-
     ActivaPedal(servo_pin)
+    sleep(2)
     
     screen = curses.initscr()
     curses.noecho()
@@ -109,6 +106,14 @@ def moverManual():
             elif char == curses.KEY_DOWN:
                 print("DOWN")
                 steperMotor1.motor_go(True, "Half", 2, 0, False, 0)
+
+            elif char == curses.KEY_LEFT:
+                print("UP")
+                steperMotor2.motor_go(False, "Half", 2, 0, False, 0)		
+
+            elif char == curses.KEY_RIGHT:
+                print("DOWN")
+                steperMotor2.motor_go(True, "Half", 2, 0, False, 0)
 
     finally:
         curses.nocbreak(); screen.keypad(0); curses.echo()
