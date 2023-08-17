@@ -20,6 +20,7 @@ from decimal import Decimal                                         # Biblioteca
 import curses														# Biblioteca para interacción con el teclado
 import os                                                           # Biblioteca para interactuar con el sistema operativo
 import warnings
+import csv                                                          # Biblioteca para crear archivos csv e interactuar con ellos
 import tkinter as tk
 from tkinter import ttk
 
@@ -653,6 +654,16 @@ def CrearArchivoCalibracion(seleccionSecuencia, numCertificado):
 	shutil.copy(machote, archivoCalibracion) # Creación del duplicado del machote
 
 	return archivoCalibracion
+
+
+################## Creación de un archivo csv para Datos ##################
+
+def CrearArchivoCSV(seleccionSecuencia, numCertificado):
+	# Se crea un archivo csv, nombrado con una marca temporal:
+	archivoDatos = "./Calibraciones en curso/" + numCertificado + ".csv" # Nombre del archivo para el almacenaje de datos
+	open(archivoDatos, mode="w", newline="")	#Creación del Archivo
+
+	return archivoDatos
 
 ################## Autocompletado de la información que se tiene del cliente y la calibración ##################
 
