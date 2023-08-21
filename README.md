@@ -5,6 +5,10 @@ Código de automatización y asistencia del proceso de comparación de bloques u
 
 ## Detalles y notas
 
+Para corregir los permisos del gpiomem se deben de automatizar los comandos al inicio:
+``` sudo chown root:gpio /dev/gpiomem ```
+``` sudo chmod g+rw /dev/gpiomem ```
+
 ### Dispositivos Seriales utilizados
 Definidos en el archivo `/etc/udev/rules.d/10-usb-serial.rules`
 
