@@ -83,6 +83,28 @@ listo=0                             #Variable que determina cuando terminó
 
 ################## Movimiento Manual de los motores ##################
 
+def moverManualInterfaz(event):
+    try:
+        tecla = event.keysym
+        print(tecla)
+        GPIO.output(pin_enableCalibrationMotor, motorEnabledState)   # Encender motores
+        
+        if tecla == "Up":
+            steperMotor1.motor_go(False, "Half", 2, 0, False, 0)		
+
+        elif tecla == "Down":
+            steperMotor1.motor_go(True, "Half", 2, 0, False, 0)
+
+        elif tecla == "Left":
+            steperMotor2.motor_go(False, "Half", 2, 0, False, 0)		
+
+        elif tecla == "Right":
+            steperMotor2.motor_go(True, "Half", 2, 0, False, 0)
+            
+    finally:
+        GPIO.output(pin_enableCalibrationMotor, motorDisabledState)   # Apagar motores
+
+
 def moverManual():
     ActivaPedal(servo_pin)
     sleep(2)
@@ -312,7 +334,7 @@ def DatosVaisala():
 
 servo_pin = 26 #Pin que envía la señal al servomotor
 
-def ActivaPedal(servo_pin): 
+def ActivaPedal(servo_pin=26): 
 
     myservotest = rpiservolib.SG90servo("servoone", 50, 2, 12) #Parámetros del servomotor
 

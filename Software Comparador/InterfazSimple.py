@@ -343,6 +343,7 @@ def mover_motores():
     ventana_moverMotores = tk.Toplevel(root)
     ventana_moverMotores.title("Posicionamiento de Motores")
     ventana_moverMotores.configure(bg="white")
+    ventana_moverMotores.focus_set()
 
     main_label = ttk.Label(ventana_moverMotores, text="Utilize las flechas del teclado para colocar los motores en la posición inicial.", anchor=tk.CENTER, background="white")
     main_label.grid(row=0,column=0, pady=(30,0), padx=30)
@@ -351,12 +352,29 @@ def mover_motores():
     exit_label = ttk.Label(ventana_moverMotores, text="Presione Enter ↲ para salir.", anchor=tk.CENTER, background="white")
     exit_label.grid(row=2,column=0, pady=(0,50), padx=30)
     
-    try:
-        #moverManual()
-        input()
 
-    finally:
+    print("Preparacion Pedal")
+    #ActivaPedal()
+
+
+    def funcionMotores(event):
+        print(event.keysym)
+        print(type(event.keysym))
+
+
+
+    
+    def muere(event):
+        print("Terminacion Pedal")
+        #ActivaPedal()
         ventana_moverMotores.destroy()
+    
+    ventana_moverMotores.bind("<Up>", funcionMotores)
+    ventana_moverMotores.bind("<Down>", funcionMotores)
+    ventana_moverMotores.bind("<Left>", funcionMotores)
+    ventana_moverMotores.bind("<Right>", funcionMotores)
+    ventana_moverMotores.bind("<Return>", muere)
+    ventana_moverMotores.bind("<q>", muere)
 
 
     return
