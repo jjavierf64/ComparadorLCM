@@ -1148,7 +1148,7 @@ def ReanudarCalibracion(numCertificado, tiempoinicial, tiempoestabilizacion):
     rutaEnCurso = "./Calibraciones en curso/" + nombreArchivoEnCurso
 	
     archivoDatos = "./Calibraciones en curso/" + numCertificado + ".csv" # Nombre del archivo para el almacenaje de datos
-	archivoDatosAmbientales = "./Calibraciones en curso/" + numCertificado + "-Ambientales.csv" 
+    archivoDatosAmbientales = "./Calibraciones en curso/" + numCertificado + "-Ambientales.csv" 
     
     if os.path.exists(rutaEnCurso): #Si el archivo de la calibración en curso existe:
         workbookCalibracionEnCurso = load_workbook(filename = rutaEnCurso, keep_vba = True, data_only = True) #Apertura del archivo de excel de la calibración en curso
