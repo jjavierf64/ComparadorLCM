@@ -8,7 +8,7 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 import os
 import  openpyxl
-#from FuncionesComparadorInterfazSimple import *
+from FuncionesComparadorInterfazSimple import *
 
 ################## Definición variables globales ##################
 
@@ -354,19 +354,22 @@ def mover_motores():
     
 
     print("Preparacion Pedal")
-    #ActivaPedal()
+    ActivaPedal()
+    GPIO.output(pin_enableCalibrationMotor, motorEnabledState)   # Encender motores
 
 
     def funcionMotores(event):
         print(event.keysym)
         print(type(event.keysym))
+        moverManualInterfaz(event)
 
 
 
     
     def muere(event):
         print("Terminacion Pedal")
-        #ActivaPedal()
+        ActivaPedal()
+        GPIO.output(pin_enableCalibrationMotor, motorDisabledState)   # Apagar motores
         ventana_moverMotores.destroy()
     
     ventana_moverMotores.bind("<Up>", funcionMotores)
