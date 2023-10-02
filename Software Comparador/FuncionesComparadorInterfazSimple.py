@@ -356,7 +356,7 @@ def Centros(tiempoestabilizacion, Repeticiones):
     
     listaMediciones=[]
     
-    #Antes de empezar a medir es neceario que el palpador vuelva a subir un momento sobre el patrón
+    #Antes de empezar a medir es necesario que el palpador vuelva a subir un momento sobre el patrón
     """
     ActivaPedal(servo_pin)								#Sube el palpador
     sleep(10)					#Se le da un tiempo al palpador arriba sobre el bloque patrón
@@ -768,7 +768,7 @@ def EncabezadosDesviacionCentral(numRepeticiones, hojaResultadosCalibracion):
 
     hojaResultadosCalibracion["H2"] = numRepeticiones
     numNuevasColumnas = 2*numRepeticiones #Se usan dos columnas por cada repetición: una para el patrón y otra para el calibrando
-    hojaResultadosCalibracion.insert_cols(idx=19, amount=numNuevasColumnas) # Insertar el número de columnas necesarias al final de las columnas llenas en la hoja
+    hojaResultadosCalibracion.insert_cols(idx=19, amount=numNuevasColumnas) # Insertar el número de columnas necesarias al final de las columnas llenas en la hoja (Columna S)
 
     #Definir estilos 
     texto_negrita = Font(bold = True)
@@ -779,7 +779,7 @@ def EncabezadosDesviacionCentral(numRepeticiones, hojaResultadosCalibracion):
                             bottom = borde_sencillo,
                             left = borde_sencillo)
 
-    j = 19 #Se inicializa el contador para las columnas
+    j = 19 #Se inicializa el contador para las columnas (Columna S)
     k = 1 #Se inicializa el contador para las repeticiones
 
     while j <= (19+numNuevasColumnas)-1 and k <= numRepeticiones:
@@ -868,7 +868,7 @@ def CalculosDesviacionCentral(hojaResultadosCalibracion, numNuevasColumnas, numR
 
     while hojaResultadosCalibracion["S"+str(l)].value != None:
         listaDiferencias = [] #Inicializamos una lista para guardar los strings del cálculo de las diferencias, ej: A3-A2
-        j = 19 #Se vuelve a inicializar el contador para las columnas
+        j = 19 #Se vuelve a inicializar el contador para las columnas en S
         k = 1 #Se vuelve a inicializar el contador para las repeticiones
         while j <= (19+numNuevasColumnas)-1 and k <= numRepeticiones:
             letraColumnaPatron = openpyxl.utils.cell.get_column_letter(j) #Obtener la letra de la columna en la que se está trabajando
@@ -1029,7 +1029,7 @@ def ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, 
     if seleccionSecuencia == "Desviación central":
         continuarCalibracion = "sí"
         while continuarCalibracion == "sí":
-            valorBloque = Decimal(float(ventanaEntrada("Indique el valor del bloque a Calibrar: ")))
+            valorBloque = Decimal(float(ventanaEntrada("Indique el valor del bloque a Calibrar: "))) ## Debería agregarse un caso de error
             numFila = selectorFilaResultados(hojaResultadosCalibracion)
             hojaResultadosCalibracion["A"+str(numFila)] = valorBloque
             sleep(int(tiempoinicial)*60)					#Tiempo de estabilización inicial
