@@ -688,7 +688,7 @@ def CrearArchivoCSV(seleccionSecuencia, numCertificado):
 
     # Se crean también para el registro de condiciones ambientales
 
-    archivoDatosAmbientales = "./Calibraciones en curso/" + numCertificado + "-Ambientales.csv" # Nombre del archivo para el almacenaje de datos
+	archivoDatosAmbientales = "./Calibraciones en curso/" + numCertificado + "-Ambientales.csv" # Nombre del archivo para el almacenaje de datos
 	open(archivoDatosAmbientales, mode="w", newline="")	#Creación del Archivo
 
 
