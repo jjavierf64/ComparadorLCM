@@ -87,22 +87,23 @@ def moverManualInterfaz(event):
     try:
         tecla = event.keysym
         print(tecla)
-        GPIO.output(pin_enableCalibrationMotor, motorEnabledState)   # Encender motores
+        
         
         if tecla == "Up":
-            steperMotor1.motor_go(False, "Half", 2, 0, False, 0)		
+            steperMotor1.motor_go(False, "Full", 20, 0, False, 0)		
 
         elif tecla == "Down":
-            steperMotor1.motor_go(True, "Half", 2, 0, False, 0)
+            steperMotor1.motor_go(True, "Full", 20, 0, False, 0)
 
         elif tecla == "Left":
-            steperMotor2.motor_go(False, "Half", 2, 0, False, 0)		
+            steperMotor2.motor_go(False, "Full", 20, 0, False, 0)		
 
         elif tecla == "Right":
-            steperMotor2.motor_go(True, "Half", 2, 0, False, 0)
+            steperMotor2.motor_go(True, "Full", 20, 0, False, 0)
             
-    finally:
+    except:
         GPIO.output(pin_enableCalibrationMotor, motorDisabledState)   # Apagar motores
+        
 
 
 def moverManual():
