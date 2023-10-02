@@ -686,7 +686,13 @@ def CrearArchivoCSV(seleccionSecuencia, numCertificado):
 	archivoDatos = "./Calibraciones en curso/" + numCertificado + ".csv" # Nombre del archivo para el almacenaje de datos
 	open(archivoDatos, mode="w", newline="")	#Creación del Archivo
 
-	return archivoDatos
+    # Se crean también para el registro de condiciones ambientales
+
+    archivoDatosAmbientales = "./Calibraciones en curso/" + numCertificado + "-Ambientales.csv" # Nombre del archivo para el almacenaje de datos
+	open(archivoDatosAmbientales, mode="w", newline="")	#Creación del Archivo
+
+
+	return archivoDatos,archivoDatosAmbientales
 
 ################## Autocompletado de la información que se tiene del cliente y la calibración ##################
 
@@ -1024,7 +1030,7 @@ def EliminarArchivo(rutaArchivoEliminar):
     
 ################## Proceso de calibración de bloques ##################
 
-def ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, numRepeticiones, hojaResultadosCalibracion, hojaConversionDatos, nombreArchivoCalibracion, libroExcel):
+def ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, numRepeticiones, hojaResultadosCalibracion, hojaConversionDatos, nombreArchivoCalibracion, libroExcel,archivoDatos, archivoDatosAmbientales):
     
 	#Si se va calibrar los bloques solo con desviación central se hace lo siguiente:
     if seleccionSecuencia == "Desviación central":
@@ -1052,6 +1058,7 @@ def ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, 
             ########################
 
             listaMedicionesBloque = Centros(tiempoestabilizacion, numRepeticiones)[0]
+
             for numMedicion in range(len(listaMedicionesBloque)):
                 letraColumnaMedicion = openpyxl.utils.cell.get_column_letter(numColumnaMediciones)
                 hojaResultadosCalibracion[letraColumnaMedicion+str(numFila)] = listaMedicionesBloque[numMedicion]
@@ -1111,13 +1118,12 @@ def NuevaCalibracion(nombreCliente, numeroCertificado, numeroSolicitud, identifi
                                     responsableCalibracion, responsableRevision, patron, materialPatron, seleccionSecuencia, tiempoinicial, tiempoestabilizacion, numRepeticiones):
     
     nombreCliente, direccionCliente, archivoCliente = BusquedaClientes(nombreCliente)		#Búsqueda de los datos del cliente
-    machote = selectorMachote(seleccionSecuencia)											#Selección de la plantilla del machote que se va a utilizar 
     
-	#Creación de un duplicado del machote, nombrado con el número de certificado
-    nombreArchivoCalibracion = numeroCertificado + ".xlsm" 												#Fecha y hora en la que se comienza la calibración
-    archivoCalibracion = "./Calibraciones en curso/" + nombreArchivoCalibracion # Ruta del archivo para la calibración
-    shutil.copy(machote, archivoCalibracion)												#Creación del duplicado del machote
     
+    archivoCalibracion = CrearArchivoCalibracion(seleccionSecuencia, numCertificado)
+    archivoDatos, archivoDatosAmbientales = CrearArchivoCSV(seleccionSecuencia, numCertificado)
+    
+
 	#Ingreso de interés del cliente y de la calibración al archivo de Excel
     archivoExcel = AutocompletarInformacionCliente(nombreCliente, direccionCliente, numeroCertificado, numeroSolicitud, identificacionCalibrando, 
                                     responsableCalibracion, responsableRevision, patron, materialPatron, seleccionSecuencia)
@@ -1130,7 +1136,7 @@ def NuevaCalibracion(nombreCliente, numeroCertificado, numeroSolicitud, identifi
     elif seleccionSecuencia == "Desviación central y planitud":
         EncabezadosCentroYPlanitud(numRepeticiones, hojaResultadosCalibracion)
     
-    ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, numRepeticiones, hojaResultadosCalibracion, hojaConversionDatos, nombreArchivoCalibracion, libroExcel)
+    ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, numRepeticiones, hojaResultadosCalibracion, hojaConversionDatos, nombreArchivoCalibracion, libroExcel, archivoDatos, archivoDatosAmbientales)
     
     return
 
@@ -1140,6 +1146,9 @@ def ReanudarCalibracion(numCertificado, tiempoinicial, tiempoestabilizacion):
     
     nombreArchivoEnCurso = numCertificado + ".xlsm" 
     rutaEnCurso = "./Calibraciones en curso/" + nombreArchivoEnCurso
+	
+    archivoDatos = "./Calibraciones en curso/" + numCertificado + ".csv" # Nombre del archivo para el almacenaje de datos
+	archivoDatosAmbientales = "./Calibraciones en curso/" + numCertificado + "-Ambientales.csv" 
     
     if os.path.exists(rutaEnCurso): #Si el archivo de la calibración en curso existe:
         workbookCalibracionEnCurso = load_workbook(filename = rutaEnCurso, keep_vba = True, data_only = True) #Apertura del archivo de excel de la calibración en curso
@@ -1155,7 +1164,7 @@ def ReanudarCalibracion(numCertificado, tiempoinicial, tiempoestabilizacion):
         numRepeticiones = hojaResultadosCalibracion["H2"].value
     
         #Se continúa con el proceso de calibración
-        ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, numRepeticiones, hojaResultadosCalibracion, nombreArchivoEnCurso, workbookCalibracionEnCurso)
+        ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, numRepeticiones, hojaResultadosCalibracion, nombreArchivoEnCurso, workbookCalibracionEnCurso, archivoDatos, archivoDatosAmbientales)
 
     else: #Si el archivo indicado no existe
         mostrarMensaje("No hay una calibración en curso guardada con el número de certificado " + numCertificado +".")
