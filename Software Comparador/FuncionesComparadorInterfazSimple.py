@@ -1030,7 +1030,7 @@ def EliminarArchivo(rutaArchivoEliminar):
     
 ################## Proceso de calibración de bloques ##################
 
-def ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, numRepeticiones, hojaResultadosCalibracion, hojaConversionDatos, nombreArchivoCalibracion, libroExcel,archivoDatos, archivoDatosAmbientales):
+def ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, numRepeticiones, hojaResultadosCalibracion, hojaConversionDatos, nombreArchivoCalibracion, libroExcel,numCertificado,archivoDatos, archivoDatosAmbientales):
     
 	#Si se va calibrar los bloques solo con desviación central se hace lo siguiente:
     if seleccionSecuencia == "Desviación central":
@@ -1041,6 +1041,15 @@ def ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, 
             hojaResultadosCalibracion["A"+str(numFila)] = valorBloque # Se asigna el valor nominal del bloque ingresado por el usuario
             sleep(int(tiempoinicial)*60)					#Tiempo de estabilización inicial
 
+			
+			
+			#Se realizan las mediciones de los bloques y se guardan en una lista [patrón, calibrando, patrón, calibrando,...]
+
+
+            ########################
+            # PARTE VIEJA
+            ########################
+
 			#Medición y registro de las condiciones ambientales iniciales
             """listaMedicionesTemperatura = DatosFluke()
             hojaResultadosCalibracion["I"+str(numFila)] = listaMedicionesTemperatura[0]
@@ -1049,25 +1058,14 @@ def ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, 
             hojaResultadosCalibracion["L"+str(numFila)] = listaMedicionesTemperatura[3]
             hojaResultadosCalibracion["M"+str(numFila)] = DatosVaisala()	#Dato de humedad relativa inicial"""
 			
-            # En CSV:
-
-            condicionesAmbientales = list(DatosFluke())
-            condicionesAmbientales.append(DatosVaisala)
-
-            numColumnaMediciones = 19 #Contador inicia en 19 porque ese es el número de la columna a partir del
-			#cual se empiezan a registar las mediciones de los bloques (Colummna S)
-			
-			#Se realizan las mediciones de los bloques y se guardan en una lista [patrón, calibrando, patrón, calibrando,...]
-            ########################
-            # PARTE A PASAR A CSV
-            ########################
-
-            listaMedicionesBloque = Centros(tiempoestabilizacion, numRepeticiones)[0]
+            numColumnaMediciones = 19 #Contador inicia en 19 porque ese es el número de la columna a partir del cual se empiezan a registar las mediciones de los bloques (Colummna S)
+            """
 
             for numMedicion in range(len(listaMedicionesBloque)):
                 letraColumnaMedicion = openpyxl.utils.cell.get_column_letter(numColumnaMediciones)
                 hojaResultadosCalibracion[letraColumnaMedicion+str(numFila)] = listaMedicionesBloque[numMedicion]
                 numColumnaMediciones += 1
+            """
 			
 			#Medición y registro de las condiciones ambientales finales
             """listaMedicionesTemperatura = DatosFluke()
@@ -1077,10 +1075,33 @@ def ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, 
             hojaResultadosCalibracion["Q"+str(numFila)] = listaMedicionesTemperatura[3]
             hojaResultadosCalibracion["R"+str(numFila)] = DatosVaisala()	#Dato de humedad relativa final"""
             
-            condicionesAmbientales = condicionesAmbientales + list(DatosFluke())
-            condicionesAmbientales.append(DatosVaisala())
 
-            condicionesAmbientales = [[str(num) for num in condicionesAmbientales]]
+
+            ########################
+            # PARTE NUEVA CSV
+            ########################
+
+            # Condiciones Ambientales Iniciales
+            condicionesAmbientales = list(DatosFluke()) # 4 datos de temperatura
+            condicionesAmbientales.append(DatosVaisala) # 1 dato de humedad relativa
+
+            
+            # Datos de Mediciones de Bloque Comparador
+            listaMedicionesBloque = Centros(tiempoestabilizacion, numRepeticiones)[0]
+
+            listaMedicionesBloque = [[str(num) for num in listaMedicionesBloque]] # Formato
+
+
+            with open(archivoDatos, mode="a", newline="") as archivo:
+                writer = csv.writer(archivo, delimiter=';')
+                writer.writerows(listaMedicionesBloque)
+            
+            
+            # Condiciones Ambientales Finales
+            condicionesAmbientales = condicionesAmbientales + list(DatosFluke()) # 4 datos de temperatura
+            condicionesAmbientales.append(DatosVaisala()) # 1 dato de humedad relativa
+
+            condicionesAmbientales = [[str(num) for num in condicionesAmbientales]] #Formato
 
             with open(archivoDatosAmbientales, mode="a", newline="") as archivo:
                 writer = csv.writer(archivo, delimiter=';')
@@ -1105,6 +1126,11 @@ def ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, 
             rutaGuardar = "./Calibraciones Finalizadas/" + nombreArchivoCalibracion #Se guarda el archivo de la calibración a partir del número de Certificado
             libroExcel.save(rutaGuardar)  
             EliminarArchivo("./Calibraciones en curso/" + nombreArchivoCalibracion) #Se elimina el archivo de la calibración de la carpeta "Calibraciones en curso"
+
+            # Mover archivos csv
+            shutil.move(archivoDatos, "./Calibraciones Finalizadas/" + numCertificado +".csv")
+            shutil.move(archivoDatosAmbientales, "./Calibraciones Finalizadas/" + numCertificado +"-Ambientales.csv")
+
             mostrarMensaje("Calibración finalizada. Puede revisar el archivo correspondiente en la carpeta \"Calibraciones Finalizadas\".")
 				
 	#Si se va a calibrar los bloques con desviación + planitud
@@ -1154,7 +1180,7 @@ def NuevaCalibracion(nombreCliente, numeroCertificado, numeroSolicitud, identifi
     elif seleccionSecuencia == "Desviación central y planitud":
         EncabezadosCentroYPlanitud(numRepeticiones, hojaResultadosCalibracion)
     
-    ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, numRepeticiones, hojaResultadosCalibracion, hojaConversionDatos, nombreArchivoCalibracion, libroExcel, archivoDatos, archivoDatosAmbientales)
+    ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, numRepeticiones, hojaResultadosCalibracion, hojaConversionDatos, nombreArchivoCalibracion, libroExcel, numCertificado,archivoDatos, archivoDatosAmbientales)
     
     return
 
@@ -1182,7 +1208,7 @@ def ReanudarCalibracion(numCertificado, tiempoinicial, tiempoestabilizacion):
         numRepeticiones = hojaResultadosCalibracion["H2"].value
     
         #Se continúa con el proceso de calibración
-        ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, numRepeticiones, hojaResultadosCalibracion, nombreArchivoEnCurso, workbookCalibracionEnCurso, archivoDatos, archivoDatosAmbientales)
+        ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, numRepeticiones, hojaResultadosCalibracion, nombreArchivoEnCurso, workbookCalibracionEnCurso, numCertificado,archivoDatos, archivoDatosAmbientales)
 
     else: #Si el archivo indicado no existe
         mostrarMensaje("No hay una calibración en curso guardada con el número de certificado " + numCertificado +".")
