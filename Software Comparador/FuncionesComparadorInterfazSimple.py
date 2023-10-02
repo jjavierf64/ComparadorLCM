@@ -1042,13 +1042,18 @@ def ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, 
             sleep(int(tiempoinicial)*60)					#Tiempo de estabilización inicial
 
 			#Medición y registro de las condiciones ambientales iniciales
-            listaMedicionesTemperatura = DatosFluke()
+            """listaMedicionesTemperatura = DatosFluke()
             hojaResultadosCalibracion["I"+str(numFila)] = listaMedicionesTemperatura[0]
             hojaResultadosCalibracion["J"+str(numFila)] = listaMedicionesTemperatura[1]
             hojaResultadosCalibracion["K"+str(numFila)] = listaMedicionesTemperatura[2]
             hojaResultadosCalibracion["L"+str(numFila)] = listaMedicionesTemperatura[3]
-            hojaResultadosCalibracion["M"+str(numFila)] = DatosVaisala()	#Dato de humedad relativa inicial
+            hojaResultadosCalibracion["M"+str(numFila)] = DatosVaisala()	#Dato de humedad relativa inicial"""
 			
+            # En CSV:
+
+            condicionesAmbientales = list(DatosFluke())
+            condicionesAmbientales.append(DatosVaisala)
+
             numColumnaMediciones = 19 #Contador inicia en 19 porque ese es el número de la columna a partir del
 			#cual se empiezan a registar las mediciones de los bloques (Colummna S)
 			
@@ -1065,13 +1070,26 @@ def ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, 
                 numColumnaMediciones += 1
 			
 			#Medición y registro de las condiciones ambientales finales
-            listaMedicionesTemperatura = DatosFluke()
+            """listaMedicionesTemperatura = DatosFluke()
             hojaResultadosCalibracion["N"+str(numFila)] = listaMedicionesTemperatura[0]
             hojaResultadosCalibracion["O"+str(numFila)] = listaMedicionesTemperatura[1]
             hojaResultadosCalibracion["P"+str(numFila)] = listaMedicionesTemperatura[2]
             hojaResultadosCalibracion["Q"+str(numFila)] = listaMedicionesTemperatura[3]
-            hojaResultadosCalibracion["R"+str(numFila)] = DatosVaisala()	#Dato de humedad relativa final
+            hojaResultadosCalibracion["R"+str(numFila)] = DatosVaisala()	#Dato de humedad relativa final"""
             
+            condicionesAmbientales = condicionesAmbientales + list(DatosFluke())
+            condicionesAmbientales.append(DatosVaisala())
+
+            condicionesAmbientales = [[str(num) for num in condicionesAmbientales]]
+
+            with open(archivoDatosAmbientales, mode="a", newline="") as archivo:
+                writer = csv.writer(archivo, delimiter=';')
+                writer.writerows(condicionesAmbientales)
+
+
+
+
+
             continuarCalibracion = ventanaOpciones("¿Desea continuar con la calibración?:", ["sí", "no"]) 
             
         pausarCalibracion = ventanaOpciones("¿Desea Pausar la calibración o ya ha finalizado?", ["Pausar calibración", "Finalizar calibración"]) 
