@@ -1031,8 +1031,8 @@ def ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, 
         continuarCalibracion = "sí"
         while continuarCalibracion == "sí":
             valorBloque = Decimal(float(ventanaEntrada("Indique el valor del bloque a Calibrar: "))) ## Debería agregarse un caso de error
-            numFila = selectorFilaResultados(hojaResultadosCalibracion)
-            hojaResultadosCalibracion["A"+str(numFila)] = valorBloque
+            numFila = selectorFilaResultados(hojaResultadosCalibracion) # Se halla la fila a trabajar
+            hojaResultadosCalibracion["A"+str(numFila)] = valorBloque # Se asigna el valor nominal del bloque ingresado por el usuario
             sleep(int(tiempoinicial)*60)					#Tiempo de estabilización inicial
 
 			#Medición y registro de las condiciones ambientales iniciales
@@ -1044,9 +1044,13 @@ def ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, 
             hojaResultadosCalibracion["M"+str(numFila)] = DatosVaisala()	#Dato de humedad relativa inicial
 			
             numColumnaMediciones = 19 #Contador inicia en 19 porque ese es el número de la columna a partir del
-			#cual se empiezan a registar las mediciones de los bloques
+			#cual se empiezan a registar las mediciones de los bloques (Colummna S)
 			
 			#Se realizan las mediciones de los bloques y se guardan en una lista [patrón, calibrando, patrón, calibrando,...]
+            ########################
+            # PARTE A PASAR A CSV
+            ########################
+
             listaMedicionesBloque = Centros(tiempoestabilizacion, numRepeticiones)[0]
             for numMedicion in range(len(listaMedicionesBloque)):
                 letraColumnaMedicion = openpyxl.utils.cell.get_column_letter(numColumnaMediciones)
