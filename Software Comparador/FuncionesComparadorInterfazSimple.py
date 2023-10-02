@@ -1138,6 +1138,17 @@ def ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, 
         continuarCalibracion = "sí"
         while continuarCalibracion == "sí":
             #Inluir aquí código para desviación central y planitud
+            #
+            #
+            #
+            #
+            #
+            #
+            #
+            #
+            #
+            #
+            #
             continuarCalibracion = ventanaOpciones("¿Desea continuar con la calibración?: ", ["sí", "no"]) 
             
         pausarCalibracion = ventanaOpciones("¿Desea Pausar la calibración o ya ha finalizado?", ["Pausar calibración", "Finalizar calibración"]) 
