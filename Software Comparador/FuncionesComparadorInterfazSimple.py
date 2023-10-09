@@ -48,7 +48,7 @@ direction3 = 19                     #Pin de sentido de giro
 step3 = 16                          #Pin de dar paso
 pin_enablePlateMotor = 23
 
-sleepMot3=12                        #Pin para controlar el sleep del motor de ordenamiento
+sleepMot3 = 12                        #Pin para controlar el sleep del motor de ordenamiento
                                     #Si está en 1 está activo, en 0 está en sleep
 pin_startRotationLimitSensor = 4               #Pin para el sensor infrarrojo de rotacion de angulo nicial
 pin_endRotationLimitSensor = 3                 #Pin para el sensor infrarrojo de rotacion de angulo final
