@@ -8,7 +8,7 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 import os
 import  openpyxl
-#from FuncionesComparadorInterfazSimple import *
+from FuncionesComparadorInterfazSimple import *
 
 ################## Definición variables globales ##################
 
@@ -53,7 +53,7 @@ def nueva_calibracion():
     subtitle_label = ttk.Label(ventana_nuevaCalibracion, text="Nueva calibración", font=("Helvetica", 14), background="white")
     subtitle_label.grid(row=1, column=0, columnspan=2, pady=10)
 
-    image = Image.open("./assets/logoLCM.png")  
+    image = Image.open("logoLCM.png")  
     image = image.resize((int(image.width * 0.25), int(image.height * 0.25)))  #Ajustar el tamaño del logo
     image = ImageTk.PhotoImage(image)
 
@@ -165,7 +165,7 @@ def reanudar_calibracion():
     subtitle_label = ttk.Label(ventana_reanudar, text="Reanudar calibración", font=("Helvetica", 14), background="white")
     subtitle_label.grid(row=1, column=0, columnspan=2, pady=10)
 
-    image = Image.open("./assets/logoLCM.png")  
+    image = Image.open("logoLCM.png")  
     image = image.resize((int(image.width * 0.25), int(image.height * 0.25)))  #Ajustar el tamaño del logo
     image = ImageTk.PhotoImage(image)
 
@@ -221,7 +221,7 @@ def ingresar_cliente():
     subtitle_label = ttk.Label(ventana_cliente, text="Ingresar nuevo cliente", font=("Helvetica", 14), background="white")
     subtitle_label.grid(row=1, column=0, columnspan=2, pady=10)
 
-    image = Image.open("./assets/logoLCM.png")  
+    image = Image.open("logoLCM.png")  
     image = image.resize((int(image.width * 0.25), int(image.height * 0.25)))  #Ajustar el tamaño del logo
     image = ImageTk.PhotoImage(image)
 
@@ -265,7 +265,7 @@ def ingresar_calibrando():
     subtitle_label = ttk.Label(ventana_calibrando, text="Ingresar calibrando", font=("Helvetica", 14), background="white")
     subtitle_label.grid(row=1, column=0, columnspan=2, pady=10)
 
-    image = Image.open("./assets/logoLCM.png")  
+    image = Image.open("logoLCM.png")  
     image = image.resize((int(image.width * 0.25), int(image.height * 0.25)))  #Ajustar el tamaño del logo
     image = ImageTk.PhotoImage(image)
 
@@ -443,7 +443,7 @@ title_label.grid(row=0, column=0, columnspan=2, pady=20)
 subtitle_label = ttk.Label(root, text="Menú de opciones", font=("Helvetica", 14), background="white")
 subtitle_label.grid(row=1, column=0, columnspan=2, pady=10)
 
-image = Image.open("./assets/logoLCM.png")  
+image = Image.open("logoLCM.png")  
 image = image.resize((int(image.width * 0.25), int(image.height * 0.25)))  
 image = ImageTk.PhotoImage(image)
 
