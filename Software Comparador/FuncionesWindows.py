@@ -35,13 +35,23 @@ def checkRPiStatus(url):
         status = data.get("status", "desconocido")
         status_label["text"] = f"Estado del Servidor: {status}"
         status_label["foreground"] = "green"
-
     except:
         status_label["text"] = "Estado del Servidor: error"
         status_label["foreground"] = "red"
-
     return
 
+
+
+def ejecutarSecuencia(secuencia, tiempoestabilizacion, numRepeticiones):
+    data = {
+        'secuencia':secuencia,
+        'tiempoestabilizacion':tiempoestabilizacion,
+        'numRepeticiones':numRepeticiones
+    }
+    url = RPi_url + "secuencias"
+    response = requests.post(url, json=data)
+    print(response)
+    return response
 
 
 
@@ -551,6 +561,7 @@ def ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, 
 
             
             # Datos de Mediciones de Bloque Comparador
+            # listaMedicionesBloque = Centros(tiempoestabilizacion, numRepeticiones)[0]
             listaMedicionesBloque = Centros(tiempoestabilizacion, numRepeticiones)[0]
 
             listaMedicionesBloque = [[str(num) for num in listaMedicionesBloque]] # Formato
