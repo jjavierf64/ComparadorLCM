@@ -38,7 +38,8 @@ grado_entry = None
 unidad_combobox = None
 
 # Dirección del servidor por defecto
-RPi_url = "http://172.26.142.159:5000/" # Provisional
+#RPi_url = "http://172.26.142.159:5000/" # Provisional
+RPi_url = "http://192.168.3.166:5000/" # Provisional
 
 ################## Definición de funciones para la interfaz ##################
 
