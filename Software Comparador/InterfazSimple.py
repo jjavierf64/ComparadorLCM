@@ -66,7 +66,7 @@ def nueva_calibracion():
     
     #Crear una lista con los nombres de los clientes ya registrados
     clientesRegistrados = []
-    archivoClientes = openpyxl.load_workbook("Clientes.xlsx")
+    archivoClientes = openpyxl.load_workbook("Clientes/Clientes.xlsx")
     hojaClientes = archivoClientes.active
     
     numFila = 3 #Se empieza en la fila 3 porque antes están los encabezados
@@ -278,7 +278,7 @@ def ingresar_calibrando():
     
     #Crear una lista con los nombres de los clientes ya registrados
     clientesRegistrados = []
-    archivoClientes = openpyxl.load_workbook("Clientes.xlsx")
+    archivoClientes = openpyxl.load_workbook("Clientes/Clientes.xlsx")
     hojaClientes = archivoClientes.active
     
     numFila = 3 #Se empieza en la fila 3 porque antes están los encabezados
