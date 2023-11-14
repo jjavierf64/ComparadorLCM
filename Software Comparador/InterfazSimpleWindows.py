@@ -10,7 +10,7 @@ import os
 import openpyxl
 import requests
 
-# from FuncionesComparadorInterfazSimple import *
+from FuncionesWindows import *
 
 ################## Definición variables globales ##################
 
@@ -39,7 +39,8 @@ unidad_combobox = None
 
 # Dirección del servidor por defecto
 #RPi_url = "http://172.26.142.159:5000/" # Provisional
-RPi_url = "http://192.168.3.166:5000/" # Provisional
+RPi_url = "http://0.0.0.0:5000/" # Provisional
+# RPi_url = "http://192.168.3.166:5000/" # Provisional
 
 ################## Definición de funciones para la interfaz ##################
 
@@ -466,22 +467,6 @@ def ingresarCalibrando():
 def regresarVentanaPrincipal(root, ventana):
     ventana.destroy()  # Destruir la ventana actual
     root.deiconify()  # Traer devuelta la ventana principal
-
-def checkRPiStatus(url):
-    try:
-        url = url+"isUp"
-        response = requests.get(url)
-        data = response.json()
-        print(data)
-        status = data.get("status", "desconocido")
-        status_label["text"] = f"Estado del Servidor: {status}"
-        status_label["foreground"] = "green"
-
-    except:
-        status_label["text"] = "Estado del Servidor: error"
-        status_label["foreground"] = "red"
-
-    return
 
 ################## Ventana inicial ##################
 

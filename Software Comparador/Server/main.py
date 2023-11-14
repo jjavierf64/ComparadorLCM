@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+#from FuncionesServer import *
 
 app = Flask(__name__)
 
@@ -16,6 +17,23 @@ def ejecutar_script():
     # Retorna una respuesta
     return jsonify(success=True, received_param=parametro), 200
 
+
+@app.route('/secuencias', methods=['POST', 'GET'])
+def secuencias():
+    # Obtiene los datos en formato JSON de la petición
+    data = request.json
+
+    # Supongamos que envías un valor llamado "parametro" en tu JSON
+    parametro = data.get('secuencia', '0')
+    print("Secuencia: ", parametro)
+
+    if parametro == "Centros":
+        print("Tiempo de Estabilización: ", data.get("tiempoestabilizacion", "Error"))
+        print("Número de Repeticiones: ", data.get("numRepeticiones", "Error"))
+        return jsonify(success=True, received_param=parametro), 200
+
+
+ 
 @app.route('/isUp', methods=['GET'])
 def isUp():
     return jsonify(status="online"), 200
