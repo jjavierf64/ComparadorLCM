@@ -7,7 +7,8 @@ En este archivo se presenta el código de una interfaz simple para posicionar mo
 import tkinter as tk
 from tkinter import ttk
 # Definiciones de movimiento de motores y funciones
-#from FuncionesComparadorInterfazSimple import moverManualInterfaz, ActivaPedal
+import FuncionesComparadorInterfazSimple
+from FuncionesComparadorInterfazSimple import moverManualInterfaz, ActivaPedal
 
 
 
@@ -27,20 +28,20 @@ exit_label = ttk.Label(root, text = "Presione Enter ↲ para salir.", anchor = t
 exit_label.grid(row = 2, column = 0, pady = (0, 50), padx = 30)
 
 print("Preparacion Pedal")
-#ActivaPedal()
+ActivaPedal()
 #GPIO.output(pin_enableCalibrationMotor, motorEnabledState)  # Encender motores
 
 
 def funcionMotores(event):
     print(event.keysym)
     print(type(event.keysym))
-    #moverManualInterfaz(event)
+    moverManualInterfaz(event)
 
 
 def muere(event):
     print("Terminacion Pedal")
-    #ActivaPedal()
-    #GPIO.output(pin_enableCalibrationMotor, motorDisabledState)  # Apagar motores
+    ActivaPedal()
+    #GPIO.output(pin_enableCalibrationMotor, motorDisabledState)  # Apagar motores (Tal vez no es necesario)
     root.destroy()
 
 

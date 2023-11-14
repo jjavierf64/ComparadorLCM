@@ -85,24 +85,26 @@ listo=0                             #Variable que determina cuando terminó
 
 def moverManualInterfaz(event):
     try:
+        GPIO.output(pin_enableCalibrationMotor, motorEnabledState)
         tecla = event.keysym
         print(tecla)
         
         
         if tecla == "Up":
             print("Motor 1 go up")
-            steperMotor1.motor_go(False, "Full", 2, 0.001, False, 0)		
+            steperMotor1.motor_go(False, "1/8", 2, 0.005, False, 0)		#COMFIGURACION CORRECTA
 
         elif tecla == "Down":
             print("Motor 1 go down")
-            steperMotor1.motor_go(True, "Full", 2, 0.001, False, 0)
+            steperMotor1.motor_go(True, "1/8", 2, 0.005, False, 0)
 
         elif tecla == "Left":
-            steperMotor2.motor_go(False, "Full", 2, 0.001, False, 0)		
+            steperMotor2.motor_go(False, "Full", 4, 0.001, False, 0)		
 
         elif tecla == "Right":
-            steperMotor2.motor_go(True, "Full", 2, 0.001, False, 0)
-            
+            steperMotor2.motor_go(True, "Full", 4, 0.001, False, 0)
+
+        GPIO.output(pin_enableCalibrationMotor, motorDisabledState)   # Apagar motores
     except:
         GPIO.output(pin_enableCalibrationMotor, motorDisabledState)   # Apagar motores
         

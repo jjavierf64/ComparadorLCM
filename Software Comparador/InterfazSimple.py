@@ -8,7 +8,7 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 import os
 import  openpyxl
-#from FuncionesComparadorInterfazSimple import *
+from FuncionesComparadorInterfazSimple import *
 
 ################## Definición variables globales ##################
 
@@ -66,7 +66,7 @@ def nueva_calibracion():
     
     #Crear una lista con los nombres de los clientes ya registrados
     clientesRegistrados = []
-    archivoClientes = openpyxl.load_workbook("Clientes.xlsx")
+    archivoClientes = openpyxl.load_workbook("Clientes/Clientes.xlsx")
     hojaClientes = archivoClientes.active
     
     numFila = 3 #Se empieza en la fila 3 porque antes están los encabezados
@@ -278,7 +278,7 @@ def ingresar_calibrando():
     
     #Crear una lista con los nombres de los clientes ya registrados
     clientesRegistrados = []
-    archivoClientes = openpyxl.load_workbook("Clientes.xlsx")
+    archivoClientes = openpyxl.load_workbook("Clientes/Clientes.xlsx")
     hojaClientes = archivoClientes.active
     
     numFila = 3 #Se empieza en la fila 3 porque antes están los encabezados
@@ -360,7 +360,6 @@ def mover_motores():
 
     def funcionMotores(event):
         print(event.keysym)
-        print(type(event.keysym))
         moverManualInterfaz(event)
 
 
