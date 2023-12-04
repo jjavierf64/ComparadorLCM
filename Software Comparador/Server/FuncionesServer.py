@@ -141,7 +141,7 @@ def DatosFluke():
 
     def recv(serial): #Definición de una función para recibir datos
         while True:
-            data=serial.read(32) #Lectura de 32 bytes
+            data=serial.read(34) #Lectura de 32 bytes
             if data == "":
                 continue
             else:
