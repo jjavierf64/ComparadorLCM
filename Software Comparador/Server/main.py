@@ -18,19 +18,30 @@ def ejecutar_script():
     return jsonify(success=True, received_param=parametro), 200
 
 
-@app.route('/secuencias', methods=['POST', 'GET'])
+@app.route('/secuencias', methods=['POST', 'GET'])  # Ruta para la petición de ejecución de comandos
 def secuencias():
     # Obtiene los datos en formato JSON de la petición
     data = request.json
 
     # Supongamos que envías un valor llamado "parametro" en tu JSON
     parametro = data.get('secuencia', '0')
+    parametro = str(parametro).lower()
     print("Secuencia: ", parametro)
 
-    if parametro == "Centros":
+    # Distintos tipos de secuencias posibles
+    if parametro == "centros":
         print("Tiempo de Estabilización: ", data.get("tiempoestabilizacion", "Error"))
         print("Número de Repeticiones: ", data.get("numRepeticiones", "Error"))
         return jsonify(success=True, received_param=parametro), 200
+    
+    if parametro == "prueba":
+        print("Prueba de Motores")
+        SecuenciaPrueba()
+        return jsonify(success=True, received_param=parametro), 200
+
+    else:
+        print("Error, parámetro no recibido")
+        return jsonify(success=False, received_param=parametro), 500
 
 
 @app.route('/condicionesAmbientales', methods=['POST', 'GET'])
