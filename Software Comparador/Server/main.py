@@ -29,7 +29,7 @@ def secuencias():
     print("Secuencia: ", parametro)
 
     # Distintos tipos de secuencias posibles
-    if parametro == "centros":
+    if parametro == "desviación central":
         tiempoestabilizacion = data.get("tiempoestabilizacion", "Error")
         numRepeticiones = data.get("numRepeticiones", "Error")
         print("Tiempo de Estabilización: ", tiempoestabilizacion)
