@@ -89,7 +89,7 @@ serTESA=serial.Serial("/dev/ttyUSBI", baudrate=1200, bytesize=serial.SEVENBITS, 
                           stopbits=serial.STOPBITS_TWO, xonxoff=True, timeout=0.5) #Configuración de puerto
 
 def DatosTESA():                                   
-    
+    """
     detenerse=0                     #Constante para while que captura dato
     def recv(serial):               #Definición de una función para recibir datos
         while True:
@@ -114,6 +114,8 @@ def DatosTESA():
                 MedicionBloque=medicion #Guardando dato en lista
             detenerse = 1           #Condición para salir del while
     return MedicionBloque
+    """
+    return 10
 
 
 
