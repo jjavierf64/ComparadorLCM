@@ -38,8 +38,8 @@ grado_entry = None
 unidad_combobox = None
 
 # Dirección del servidor por defecto
-#RPi_url = "http://172.26.142.159:5000/" # Provisional
-RPi_url = "http://0.0.0.0:5000/" # Provisional
+RPi_url = "http://192.168.196.100:5000/" # Zerotier
+# RPi_url = "http://0.0.0.0:5000/" # Provisional
 # RPi_url = "http://192.168.3.166:5000/" # Provisional
 
 ################## Definición de funciones para la interfaz ##################
@@ -417,7 +417,7 @@ def mover_motores():
 
 ##########
 
-def continuarNuevaCalibracion():
+def continuarNuevaCalibracion(): # Función para continuar con el proceso de una calibración, dados todos los datos.
     cliente = cliente_combobox.get()
     certificado = certificado_entry.get()
     solicitud = solicitud_entry.get()

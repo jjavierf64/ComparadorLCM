@@ -33,6 +33,22 @@ def secuencias():
         return jsonify(success=True, received_param=parametro), 200
 
 
+@app.route('/condicionesAmbientales', methods=['POST', 'GET'])
+def condicionesAmbientales():
+    # Obtiene los datos en formato JSON de la petición
+    data = request.json
+
+    # Supongamos que envías un valor llamado "parametro" en tu JSON
+    instrumento = data.get('instrumento', '0')
+    instrumento = str(instrumento).lower()
+    print("Instrumento: ", instrumento)
+
+    if instrumento == "fluke":
+        output = DatosFluke()
+        print("Datos: ", output)
+        return jsonify(output)
+
+
  
 @app.route('/isUp', methods=['GET'])
 def isUp():

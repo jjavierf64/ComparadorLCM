@@ -54,6 +54,15 @@ def ejecutarSecuencia(secuencia, tiempoestabilizacion, numRepeticiones):
     return response
 
 
+def condicionesAmbientales(instrumento):
+    data = {
+        'instrumento':instrumento
+    }
+    url = RPi_url + "condicionesAmbientales"
+    response = requests.post(url, json=data)
+    print(response)
+    return response    
+
 
 
 
