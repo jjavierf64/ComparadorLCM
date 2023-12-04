@@ -138,7 +138,7 @@ def nueva_calibracion():
                                 background="white")
     secuencia_label.grid(row=10, column=0, pady=5, sticky=tk.EW)
     secuencia_combobox = ttk.Combobox(ventana_nuevaCalibracion,
-                                      values=["Desviación central", "Desviación central y planitud"], width=40)
+                                      values=["Desviación central", "Desviación central y planitud", "Prueba"], width=40)
     secuencia_combobox.grid(row=10, column=1, columnspan=2, pady=5, padx=(20, 5), sticky="ew")
 
     tInicial_label = ttk.Label(ventana_nuevaCalibracion, text="Tiempo inicial (en minutos):", background="white")
@@ -430,9 +430,42 @@ def continuarNuevaCalibracion(): # Función para continuar con el proceso de una
     tInicial = tInicial_entry.get()
     tEstabilizacion = tEstabilizacion_entry.get()
     numReps = numReps_entry.get()
+
+    # Ventana de espera
+    ventana_espera = tk.Toplevel(root)
+    ventana_espera.title("Secuencia en Curso")
+    ventana_espera.configure(bg="white")
+    ventana_espera.focus_set()
+
+    main_label = ttk.Label(ventana_espera,
+                           text="Secuencia en Curso.",
+                           anchor=tk.CENTER, background="white")
+    main_label.grid(row=0, column=0, padx=30, pady=20)
+
+    waiting_icon = ttk.Label(ventana_espera,
+                           text="Por favor espere...",
+                           anchor=tk.CENTER, background="white")
+    waiting_icon.grid(row=1, column=0, padx=30, pady=(0,20))
+    root.update()
+
+    # Ejecución de secuencia
+
+    try:
+        ejecutarSecuencia(RPi_url,secuencia,tEstabilizacion,numReps)
     # moverManual()
     # NuevaCalibracion(cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps)
-    return
+        ventana_espera.destroy()
+    finally:
+        ventana_exito = tk.Toplevel(root)
+        ventana_exito.title("Secuencia Finalizada")
+        ventana_exito.configure(bg="white")
+        ventana_exito.focus_set()
+        main_label = ttk.Label(ventana_exito,
+                           text="Secuencia Terminada con Éxito.",
+                           anchor=tk.CENTER, background="white")
+        main_label.grid(row=0, column=0, padx=30, pady=20)
+        root.update()
+    return 
 
 
 def reanudarCalibracion():
@@ -502,6 +535,19 @@ for i, (text, command) in enumerate(options):
 
 
 # Status del RPi
+def checkRPiStatus(url):
+    try:
+        url = url+"isUp"
+        response = requests.get(url)
+        data = response.json()
+        print(data)
+        status = data.get("status", "desconocido")
+        status_label["text"] = f"Estado del Servidor: {status}"
+        status_label["foreground"] = "green"
+    except:
+        status_label["text"] = "Estado del Servidor: error"
+        status_label["foreground"] = "red"
+    return
 
 status_label = ttk.Label(root, text="Estado del Servidor: desconocido", background="white", foreground="black")
 status_label.grid(row=10, column=0, sticky=tk.W, pady=(10, 10), padx=(5,5))

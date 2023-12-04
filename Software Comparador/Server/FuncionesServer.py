@@ -569,13 +569,13 @@ def CrearArchivoCSV(seleccionSecuencia, numCertificado):
 def SecuenciaPrueba():                                                                                    
     GPIO.output(pin_enableCalibrationMotor, motorDisabledState)       #Modo seguro, motores inhabilitados
     GPIO.output(pin_enableCalibrationMotor, motorEnabledState)
-    steperMotor1.motor_go(False, "Half", 25, 0.001, True, 0)
-    sleep(1)
-    steperMotor1.motor_go(True, "Half", 25, 0.001, True, 0)
+    steperMotor1.motor_go(True, "Half", 40, 0.001, True, 0)
 
     steperMotor2.motor_go(False, "Full", 200, 0.001, True, 0)
     sleep(1)
     steperMotor2.motor_go(True, "Full", 400, 0.001, True, 0)
     steperMotor2.motor_go(False, "Full", 200, 0.001, True, 0)
+    sleep(1)
+    steperMotor1.motor_go(False, "Half", 40, 0.001, True, 0)
     GPIO.output(pin_enableCalibrationMotor, motorDisabledState)
 

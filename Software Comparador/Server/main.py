@@ -30,8 +30,11 @@ def secuencias():
 
     # Distintos tipos de secuencias posibles
     if parametro == "centros":
-        print("Tiempo de Estabilización: ", data.get("tiempoestabilizacion", "Error"))
-        print("Número de Repeticiones: ", data.get("numRepeticiones", "Error"))
+        tiempoestabilizacion = data.get("tiempoestabilizacion", "Error")
+        numRepeticiones = data.get("numRepeticiones", "Error")
+        print("Tiempo de Estabilización: ", tiempoestabilizacion)
+        print("Número de Repeticiones: ", numRepeticiones)
+        Centros(tiempoestabilizacion, numRepeticiones)
         return jsonify(success=True, received_param=parametro), 200
     
     if parametro == "prueba":

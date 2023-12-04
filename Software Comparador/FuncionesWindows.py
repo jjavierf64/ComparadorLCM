@@ -20,29 +20,13 @@ import warnings
 import csv                                                          # Biblioteca para crear archivos csv e interactuar con ellos
 import tkinter as tk
 from tkinter import ttk
-
+import requests
 
 
 ################# Comunicación con el RPI - Servidor #######################
 
 
-def checkRPiStatus(url):
-    try:
-        url = url+"isUp"
-        response = requests.get(url)
-        data = response.json()
-        print(data)
-        status = data.get("status", "desconocido")
-        status_label["text"] = f"Estado del Servidor: {status}"
-        status_label["foreground"] = "green"
-    except:
-        status_label["text"] = "Estado del Servidor: error"
-        status_label["foreground"] = "red"
-    return
-
-
-
-def ejecutarSecuencia(secuencia, tiempoestabilizacion, numRepeticiones):
+def ejecutarSecuencia(RPi_url, secuencia, tiempoestabilizacion, numRepeticiones):
     data = {
         'secuencia':secuencia,
         'tiempoestabilizacion':tiempoestabilizacion,
