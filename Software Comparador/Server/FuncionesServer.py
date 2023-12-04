@@ -155,6 +155,7 @@ def DatosFluke():
 
         if data != b"": #Comparación de datos recibidos, vacío hasta que se de la medición
             todas=data.split()#Separar los 4 datos en una lista
+            print(todas)
             MedicionTemp1=float(todas[0]) #Guardando temperatura 1 en lista
             MedicionTemp2=float(todas[1]) #Guardando temperatura 2 en lista
             MedicionTemp3=float(todas[2]) #Guardando temperatura 3 en lista
