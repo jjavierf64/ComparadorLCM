@@ -273,7 +273,7 @@ def Centros(tiempoestabilizacion, Repeticiones):
         
         #Movimiento de posición 1 a 2 con el palpador arriba
         GPIO.output(pin_enableCalibrationMotor, motorEnabledState)       #habilita los motores
-        steperMotor1.motor_go(True, "1/8", 835, .0025, False, 2)
+        steperMotor1.motor_go(True, "1/8", 205, .0025, False, 2)
         GPIO.output(pin_enableCalibrationMotor, motorDisabledState)       #Modo seguro, motores inhabilitados	
         
         #Medición del calibrando
@@ -286,7 +286,7 @@ def Centros(tiempoestabilizacion, Repeticiones):
         
         #Movimiento de 2 a 1 con el palpador arriba
         GPIO.output(pin_enableCalibrationMotor, motorEnabledState)       #habilita los motores
-        steperMotor1.motor_go(False, "1/8", 841, .0025, False, 2)
+        steperMotor1.motor_go(False, "1/8", 205, .0025, False, 2)
         GPIO.output(pin_enableCalibrationMotor, motorDisabledState)       #Modo seguro, motores inhabilitados
         ActivaPedal(servo_pin)								#Baja el palpador (termina cada repetición con el palpador abajo)
 
@@ -295,7 +295,7 @@ def Centros(tiempoestabilizacion, Repeticiones):
     ActivaPedal(servo_pin)                                  #Sube palpador
 	#Movimiento de 1 a HOME con el palpador arriba
     GPIO.output(pin_enableCalibrationMotor, motorEnabledState)       #habilita los motores
-    steperMotor1.motor_go(True, "Half", 213, .005, False, 2)#Movimiento de punto1 a HOME
+    steperMotor1.motor_go(True, "Half", 205/2, .005, False, 2)#Movimiento de punto1 a HOME
     GPIO.output(pin_enableCalibrationMotor, motorDisabledState)       #Modo seguro, motores inhabilitados
     ActivaPedal(servo_pin)                                  #Baja palpador
     
