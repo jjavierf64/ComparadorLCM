@@ -181,7 +181,7 @@ def AutocompletarInformacionCliente(nombreCliente, direccionCliente, numeroCerti
     informacionCliente = BusquedaClientes(nombreCliente)
    
     # Carga del archivo de excel que contiene la información del cliente 
-    workbookSolicitantes = load_workbook(filename=informacionCliente[2], keep_vba = True, data_only = True)
+    workbookSolicitantes = load_workbook(filename="Clientes/" + informacionCliente[2], keep_vba = True, data_only = True)
     hojaJuego = workbookSolicitantes[identificacionCalibrando] # Selección de la hoja que contiene la información del juego a calibrar
 
     # Carga del archivo de excel creado para la calibración:
