@@ -455,6 +455,16 @@ def continuarNuevaCalibracion(): # Función para continuar con el proceso de una
     
         NuevaCalibracion(cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps)
         ventana_espera.destroy()
+    except:
+        ventana_error = tk.Toplevel(root)
+        ventana_error.title("Secuencia Finalizada")
+        ventana_error.configure(bg="white")
+        ventana_error.focus_set()
+        main_label = ttk.Label(ventana_error,
+                           text="ERROR en la Secuencia.",
+                           anchor=tk.CENTER, background="yellow")
+        main_label.grid(row=0, column=0, padx=30, pady=20)
+        root.update()
     finally:
         ventana_exito = tk.Toplevel(root)
         ventana_exito.title("Secuencia Finalizada")
