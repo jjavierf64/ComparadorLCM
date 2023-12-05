@@ -253,7 +253,7 @@ def EncabezadosDesviacionCentral(numRepeticiones, hojaResultadosCalibracion):
     #Completa: 1 Patrón, 1 Calibrando por repetición -> 2 columnas por repetición
 
     hojaResultadosCalibracion["H2"] = numRepeticiones
-    numNuevasColumnas = 2*numRepeticiones #Se usan dos columnas por cada repetición: una para el patrón y otra para el calibrando
+    numNuevasColumnas = 2*int(numRepeticiones) #Se usan dos columnas por cada repetición: una para el patrón y otra para el calibrando
     hojaResultadosCalibracion.insert_cols(idx=19, amount=numNuevasColumnas) # Insertar el número de columnas necesarias al final de las columnas llenas en la hoja (Columna S)
 
     #Definir estilos 
@@ -301,7 +301,7 @@ def EncabezadosCentroYPlanitud(numRepeticiones, hojaResultadosCalibracion):
     """ 
     numRepeticiones = int(ventanaEntrada("Indique el número de repeticiones para la calibración: "))
     hojaResultadosCalibracion["N2"] = numRepeticiones
-    numNuevasColumnas = 6*numRepeticiones #Se usan dos columnas por cada repetición: una para el patrón y otra para el calibrando
+    numNuevasColumnas = 6*int(numRepeticiones) #Se usan dos columnas por cada repetición: una para el patrón y otra para el calibrando
     hojaResultadosCalibracion.insert_cols(idx=25, amount=numNuevasColumnas) # Insertar el número de columnas necesarias al final de las columnas llenas en la hoja
 
     #Definir estilos 
