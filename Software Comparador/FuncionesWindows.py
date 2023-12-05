@@ -154,10 +154,10 @@ def BusquedaClientes(nombreClienteBuscado):
 
 def selectorMachote(seleccionSecuencia):
 	if seleccionSecuencia == "Desviación central" :
-		machote = "./Machotes/Machote para calibración de Bloques con comparador mecánico TESA (Desviación central).xlsm"
+		machote = "./Machotes/Central.xlsm"
 		return machote
 	elif seleccionSecuencia == "Desviación central y planitud" :
-		machote = "./Machotes/Machote para calibración de Bloques con comparador mecánico TESA (Desviación central y planitud).xlsm"
+		machote = "./Machotes/CentralYPlanitud.xlsm"
 		return machote
 		
 ################## Creación de un archivo para la calibración ##################
