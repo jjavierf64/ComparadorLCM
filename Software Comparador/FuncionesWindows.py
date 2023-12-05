@@ -43,10 +43,21 @@ def condicionesAmbientales(RPi_url, instrumento):
         'instrumento':instrumento
     }
     url = RPi_url + "condicionesAmbientales"
-    response = requests.post(url, json=data)
-    response = requests.json()
+    exito = 0
+    def peticion():
+        response = 0
+        exito = 0
+        try:    
+            response = requests.post(url, json=data)
+            exito = 1
+        except:
+            response=0
+            exito = 0
+        return exito,response
+    while exito==0:
+        exito, response = peticion()
     print(response)
-    return response 
+    return response.json()
 
 
 
@@ -567,8 +578,8 @@ def ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, 
             
             
             # Condiciones Ambientales Finales
-            condicionesAmbientales = condicionesAmbientales + list(DatosFluke()) # 4 datos de temperatura
-            condicionesAmbientales.append(DatosVaisala()) # 1 dato de humedad relativa
+            condicionesAmbientales = condicionesAmbientales + condicionesAmbientales(RPi_url, "fluke") # 4 datos de temperatura
+            condicionesAmbientales.append(condicionesAmbientales(RPi_url, "vaisala")) # 1 dato de humedad relativa
 
             condicionesAmbientales = [[str(num) for num in condicionesAmbientales]] #Formato
 
