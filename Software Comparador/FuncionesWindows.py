@@ -132,7 +132,7 @@ def BusquedaClientes(nombreClienteBuscado):
         nombreCliente: nombre del cliente para el cual se va a calibrar
     Salida: una lista con el nombre del cliente, su dirección y el archivo donde está almacenada su información
     """
-    woorkbookClientes = load_workbook(filename="Clientes.xlsx", keep_vba=True) # Apertura del archivo de excel de clientes 
+    woorkbookClientes = load_workbook(filename="Clientes/Clientes.xlsx", keep_vba=True) # Apertura del archivo de excel de clientes 
     hojaClientes = woorkbookClientes.active # Hoja del archivo de excel donde están los clientes y su información
     
     i = 3 # Se inicializa un contador que va a recorrer los números de fila, empezando por la fila 3 porque las filas anteriores son encabezados
@@ -715,7 +715,7 @@ def AgregarCliente(nombreCliente, direccionCliente):
     Esta función permite agregar el nombre y la dirección de un nuevo cliente al archivo de Clientes.
     Además, crea el archivo del nuevo cliente donde se encuentra la información de sus juegos de bloques.
     """
-    workbookClientes = load_workbook(filename="Clientes.xlsx", keep_vba=True) #Apertura del archivo de excel de clientes 
+    workbookClientes = load_workbook(filename="Clientes/Clientes.xlsx", keep_vba=True) #Apertura del archivo de excel de clientes 
     hojaClientes = workbookClientes.active #Hoja del archivo de excel donde están los clientes y su información
     
     i = 3 #Se inicializa el contador para filas en 3 porque en la fila 1 y 2 están los encabezados
@@ -738,7 +738,7 @@ def AgregarCliente(nombreCliente, direccionCliente):
     hojaClientes["B"+str(i)] = direccionCliente
     hojaClientes["C"+str(i)] = nombreArchivoCliente
 
-    workbookClientes.save("./Clientes.xlsx")
+    workbookClientes.save("./Clientes/Clientes.xlsx")
     
     return
 
