@@ -676,7 +676,7 @@ def NuevaCalibracion(nombreCliente, numCertificado, numeroSolicitud, identificac
     
 
 	#Ingreso de interés del cliente y de la calibración al archivo de Excel
-    archivoExcel = AutocompletarInformacionCliente(nombreCliente, direccionCliente, numeroCertificado, numeroSolicitud, identificacionCalibrando, 
+    archivoExcel = AutocompletarInformacionCliente(nombreCliente, direccionCliente, numCertificado, numeroSolicitud, identificacionCalibrando, 
                                     responsableCalibracion, responsableRevision, patron, materialPatron, seleccionSecuencia)
     libroExcel = archivoExcel[0]
     hojaResultadosCalibracion = archivoExcel[1]
