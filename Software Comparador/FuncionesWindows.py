@@ -38,7 +38,7 @@ def ejecutarSecuencia(RPi_url, secuencia, tiempoestabilizacion, numRepeticiones)
     return response
 
 
-def condicionesAmbientales(instrumento):
+def condicionesAmbientales(RPi_url, instrumento):
     data = {
         'instrumento':instrumento
     }
@@ -549,7 +549,7 @@ def ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, 
             ########################
 
             # Condiciones Ambientales Iniciales
-            condicionesAmbientales = list(DatosFluke()) # 4 datos de temperatura
+            condicionesAmbientales = condicionesAmbientales(RPi_url, "fluke") # 4 datos de temperatura
             condicionesAmbientales.append(DatosVaisala) # 1 dato de humedad relativa
 
             

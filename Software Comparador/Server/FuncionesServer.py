@@ -157,20 +157,16 @@ def DatosFluke():
             medicion=data.split()#Separar los 4 datos en una lista
             
             if int(medicion[0]) == 1 and MedicionTemp1==0:
-                MedicionTemp1=float(medicion[1]) #Guardando temperatura 1 en lista
-                print(MedicionTemp1," del 1")
+                MedicionTemp1=float(medicion[1]) #Guardando temperatura 2
                 detenerse += 1  #Condición para salir del while
             elif int(medicion[0]) == 2 and MedicionTemp2==0:
-                MedicionTemp2=float(medicion[1]) #Guardando temperatura 1 en lista
-                print(MedicionTemp2," del 2")
+                MedicionTemp2=float(medicion[1]) #Guardando temperatura 2
                 detenerse += 1  #Condición para salir del while
             elif int(medicion[0]) == 3 and MedicionTemp3==0:
-                MedicionTemp3=float(medicion[1]) #Guardando temperatura 1 en lista
-                print(MedicionTemp3," del 3")
+                MedicionTemp3=float(medicion[1]) #Guardando temperatura 3
                 detenerse += 1  #Condición para salir del while
             elif int(medicion[0]) == 4 and MedicionTemp4==0:
-                MedicionTemp4=float(medicion[1]) #Guardando temperatura 1 en lista
-                print(MedicionTemp4," del 4")
+                MedicionTemp4=float(medicion[1]) #Guardando temperatura 4
                 detenerse += 1  #Condición para salir del while
 
     return MedicionTemp1, MedicionTemp2, MedicionTemp3, MedicionTemp4
