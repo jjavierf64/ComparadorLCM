@@ -449,7 +449,7 @@ def continuarNuevaCalibracion(): # Función para continuar con el proceso de una
     root.update()
 
     # Ejecución de secuencia
-    NuevaCalibracion(cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps)
+    NuevaCalibracion(cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, int(numReps))
     try:
         #ejecutarSecuencia(RPi_url,secuencia,tEstabilizacion,numReps)
     
