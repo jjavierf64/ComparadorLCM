@@ -504,7 +504,7 @@ def ingresarCalibrando():
     modelo = modelo_entry.get()
     grado = grado_entry.get()
     unidad = unidad_combobox.get()
-    # IngresarCalibrando(cliente, objeto, marca, numSerie, materialCalibrando, modelo, grado, unidad)
+    IngresarCalibrando(cliente, objeto, marca, numSerie, materialCalibrando, modelo, grado, unidad)
     return
 
 
