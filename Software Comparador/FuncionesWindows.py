@@ -729,7 +729,7 @@ def AgregarCliente(nombreCliente, direccionCliente):
             else:
                 i += 1 
 
-    machoteCliente = "./Machotes/Machote para nuevo cliente.xlsm"
+    machoteCliente = "./Machotes/Machote para nuevo cliente.xlsx"
     nombreArchivoCliente = nombreCliente + ".xlsx" #El nombre del archivo de Excel va a ser igual al nombre del Cliente
     shutil.copy(machoteCliente, "./Archivos de los clientes/" + nombreArchivoCliente)	
 
