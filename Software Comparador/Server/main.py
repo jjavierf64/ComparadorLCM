@@ -34,8 +34,8 @@ def secuencias():
         numRepeticiones = data.get("numRepeticiones", "Error")
         print("Tiempo de Estabilización: ", tiempoestabilizacion)
         print("Número de Repeticiones: ", numRepeticiones)
-        Centros(tiempoestabilizacion, numRepeticiones)
-        return jsonify(success=True, received_param=parametro), 200
+        output = Centros(tiempoestabilizacion, numRepeticiones)
+        return jsonify(output)
     
     if parametro == "prueba":
         print("Prueba de Motores")

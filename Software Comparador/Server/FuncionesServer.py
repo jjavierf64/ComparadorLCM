@@ -115,7 +115,7 @@ def DatosTESA():
             detenerse = 1           #Condición para salir del while
     return MedicionBloque
     """
-    return 10
+    return 1000.0
 
 
 

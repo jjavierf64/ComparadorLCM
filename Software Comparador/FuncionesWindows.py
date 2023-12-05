@@ -35,7 +35,7 @@ def ejecutarSecuencia(RPi_url, secuencia, tiempoestabilizacion, numRepeticiones)
     url = RPi_url + "secuencias"
     response = requests.post(url, json=data)
     print(response)
-    return response
+    return response.json()
 
 
 def condicionesAmbientales(RPi_url, instrumento):
@@ -506,6 +506,22 @@ def EliminarArchivo(rutaArchivoEliminar):
     else:
         mostrarMensaje("El archivo indicado no existe.")
     return 
+
+
+################## Creación de un archivo csv para Datos ##################
+
+def CrearArchivoCSV(seleccionSecuencia, numCertificado):
+	# Se crea un archivo csv, nombrado con una marca temporal:
+	archivoDatos = "./Calibraciones en curso/" + numCertificado + ".csv" # Nombre del archivo para el almacenaje de datos
+	open(archivoDatos, mode="w", newline="")	#Creación del Archivo
+
+    # Se crean también para el registro de condiciones ambientales
+
+	archivoDatosAmbientales = "./Calibraciones en curso/" + numCertificado + "-Ambientales.csv" # Nombre del archivo para el almacenaje de datos
+	open(archivoDatosAmbientales, mode="w", newline="")	#Creación del Archivo
+
+
+	return archivoDatos,archivoDatosAmbientales
     
 ################## Proceso de calibración de bloques ##################
 
@@ -567,7 +583,7 @@ def ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, 
             
             # Datos de Mediciones de Bloque Comparador
             # listaMedicionesBloque = Centros(tiempoestabilizacion, numRepeticiones)[0]
-            listaMedicionesBloque = Centros(tiempoestabilizacion, numRepeticiones)[0]
+            listaMedicionesBloque = ejecutarSecuencia(tiempoestabilizacion, numRepeticiones)[0]
 
             listaMedicionesBloque = [[str(num) for num in listaMedicionesBloque]] # Formato
 

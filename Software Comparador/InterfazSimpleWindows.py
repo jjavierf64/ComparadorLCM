@@ -157,8 +157,8 @@ def nueva_calibracion():
     numReps_entry = ttk.Entry(ventana_nuevaCalibracion, width=42)
     numReps_entry.grid(row=13, column=1, columnspan=2, pady=5, padx=(20, 5))
 
-    motores_button = ttk.Button(ventana_nuevaCalibracion, text="Posicionar Motores", command=mover_motores)
-    motores_button.grid(row=14, column=0, columnspan=1, pady=10)
+    #motores_button = ttk.Button(ventana_nuevaCalibracion, text="Posicionar Motores", command=mover_motores)
+    #motores_button.grid(row=14, column=0, columnspan=1, pady=10)
 
     continuar_button = ttk.Button(ventana_nuevaCalibracion, text="Continuar", command=continuarNuevaCalibracion)
     continuar_button.grid(row=14, column=2, columnspan=1, pady=10)
@@ -451,9 +451,9 @@ def continuarNuevaCalibracion(): # Función para continuar con el proceso de una
     # Ejecución de secuencia
 
     try:
-        ejecutarSecuencia(RPi_url,secuencia,tEstabilizacion,numReps)
-    # moverManual()
-    # NuevaCalibracion(cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps)
+        #ejecutarSecuencia(RPi_url,secuencia,tEstabilizacion,numReps)
+    
+        NuevaCalibracion(cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps)
         ventana_espera.destroy()
     finally:
         ventana_exito = tk.Toplevel(root)
