@@ -59,8 +59,16 @@ def condicionesAmbientales():
 
     if instrumento == "fluke":
         output = DatosFluke()
-        print("Datos: ", output)
-        return jsonify(output)
+
+    elif instrumento == "vaisala":
+        output = DatosVaisala()
+    
+    else:
+        output = 0
+
+
+    print("Datos: ", output)
+    return jsonify(output)
 
 
  

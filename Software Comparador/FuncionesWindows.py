@@ -44,8 +44,9 @@ def condicionesAmbientales(RPi_url, instrumento):
     }
     url = RPi_url + "condicionesAmbientales"
     response = requests.post(url, json=data)
+    response = requests.json()
     print(response)
-    return response    
+    return response 
 
 
 
@@ -550,7 +551,7 @@ def ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, 
 
             # Condiciones Ambientales Iniciales
             condicionesAmbientales = condicionesAmbientales(RPi_url, "fluke") # 4 datos de temperatura
-            condicionesAmbientales.append(DatosVaisala) # 1 dato de humedad relativa
+            condicionesAmbientales.append(condicionesAmbientales(RPi_url, "vaisala")) # 1 dato de humedad relativa
 
             
             # Datos de Mediciones de Bloque Comparador
@@ -694,6 +695,8 @@ def ReanudarCalibracion(numCertificado, tiempoinicial, tiempoestabilizacion):
 
     return
 
+
+
 ################## Agregar cliente ##################
 
 def AgregarCliente(nombreCliente, direccionCliente):
@@ -727,6 +730,10 @@ def AgregarCliente(nombreCliente, direccionCliente):
     workbookClientes.save("./Clientes.xlsx")
     
     return
+
+
+
+
 
 ################## Ingresar juego de bloques/calibrando ##################
 

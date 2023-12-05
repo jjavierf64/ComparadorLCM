@@ -480,7 +480,7 @@ def reanudarCalibracion():
 def ingresarCliente():
     nuevoCliente = nuevoCliente_entry.get()
     contactoCliente = contactoCliente_entry.get()
-    # AgregarCliente(nuevoCliente, contactoCliente)
+    AgregarCliente(nuevoCliente, contactoCliente)
     return
 
 
