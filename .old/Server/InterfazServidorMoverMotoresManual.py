@@ -7,8 +7,8 @@ En este archivo se presenta el código de una interfaz simple para posicionar mo
 import tkinter as tk
 from tkinter import ttk
 # Definiciones de movimiento de motores y funciones
-import FuncionesServidorMoverMotoresManual
-from FuncionesServidorMoverMotoresManual import *
+import FuncionesComparadorInterfazSimple
+from FuncionesComparadorInterfazSimple import moverManualInterfaz, ActivaPedal
 
 
 

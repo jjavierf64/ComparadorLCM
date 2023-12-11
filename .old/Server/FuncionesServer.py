@@ -195,6 +195,49 @@ def DatosFluke():
     return MedicionTemp1, MedicionTemp2, MedicionTemp3, MedicionTemp4
 
 
+"""
+#OLD
+# def DatosFluke():
+    
+#     serFluke.write(b"READ?1\r\n") #Envío de instrucción para capturar dato de temperatura 1
+#     serFluke.write(b"READ?2\r\n") #Envío de instrucción para capturar dato de temperatura 2
+#     serFluke.write(b"READ?3\r\n") #Envío de instrucción para capturar dato de temperatura 3
+#     serFluke.write(b"READ?4\r\n") #Envío de instrucción para capturar dato de temperatura 4
+
+#     detenerse=0 #Constante para while que captura dato
+    
+#     MedicionTemp1=0 #Creación de variable para almacenar mediciones de temperatura 1
+#     MedicionTemp2=0 #Creación de variable para almacenar mediciones de temperatura 2
+#     MedicionTemp3=0 #Creación de variable para almacenar mediciones de temperatura 3
+#     MedicionTemp4=0 #Creación de variable para almacenar mediciones de temperatura 4
+
+
+#     def recv(serial): #Definición de una función para recibir datos
+#         while True:
+#             data=serial.read(32) #Lectura de 32 bytes
+#             if data == "":
+#                 continue
+#             else:
+#                 break
+#             sleep(0.02)
+#         return data
+#     while detenerse == 0:
+#         data=recv(serFluke) #Llamada de la función
+
+#         if data != b"": #Comparación de datos recibidos, vacío hasta que se de la medición
+#             todas=data.split()#Separar los 4 datos en una lista
+#             print(todas)
+#             MedicionTemp1=float(todas[0]) #Guardando temperatura 1 en lista
+#             MedicionTemp2=float(todas[1]) #Guardando temperatura 2 en lista
+#             MedicionTemp3=float(todas[2]) #Guardando temperatura 3 en lista
+#             MedicionTemp4=float(todas[3]) #Guardando temperatura 4 en lista
+#             detenerse = 1  #Condición para salir del while
+#     return MedicionTemp1, MedicionTemp2, MedicionTemp3, MedicionTemp4
+"""
+
+
+
+
 
 
 ################## Captura de datos Vaisala ##################
@@ -203,6 +246,16 @@ serVaisala=serial.Serial("/dev/ttyUSBD", baudrate=4800, bytesize=serial.SEVENBIT
                              parity=serial.PARITY_EVEN, stopbits=serial.STOPBITS_ONE, timeout= 0.5) #Configuración de puerto
 
 def DatosVaisala():
+    
+    #serVaisala=serial.Serial("/dev/ttyAMA0", baudrate=4800, bytesize=serial.SEVENBITS, parity=serial.PARITY_EVEN, stopbits=serial.STOPBITS_ONE, timeout= 0.5)
+    #serVaisala=serial.Serial("/dev/ttyUSB0", baudrate=19200, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE, timeout= 0.5)
+
+    #serVaisala.write(b"RUN\r\n")
+    #serVaisala.write(b"R\r/\n")
+    #serVaisala.write(b"form "P=" 4.2 P " " U6 \t "T=" t " " U3 \t "RH=" 4.2 rh " " U5 \r\n")
+    #serVaisala.write(b"form 4.2 rh " " \r\n")
+    #serVaisala.write(b"form 4.2 P " " \t 4.2 t " " \t 4.2 rh " " \r\n")
+
     
     serVaisala.write(b'FORM 4.2 " P=" P " " U6 3.2 "T=" T " " U3 3.2 "RH=" RH " " U4\r\n') # Formato para la toma de datos
     serVaisala.write(b"SEND\r\n") #Envío de instrucción para capturar datos del Vaisala
