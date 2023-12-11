@@ -468,8 +468,7 @@ def Completa1(tiempoinicial, tiempoestabilizacion, Repeticiones):
         GPIO.output(pin_enableCalibrationMotor, motorEnabledState)       #habilita los motores
         steperMotor1.motor_go(False, "1/8", stepsP1_43v, .005, False, 2) #Mov de 6 a 5
         steperMotor2.motor_go(False, "Full", stepsP1_23h, .005, False, 1) #Mov de 5 a Esp2
-        steperMotor1.motor_go(True, "1/8", stepsP1_43v, .005, False, 1) #Mov de Esp2 a 2
-        steperMotor1.motor_go(False, "1/8", stepsP1_12, .005, False, 1) #Mov de 2 a 1
+        steperMotor1.motor_go(True, "1/8", stepsP1_12-stepsP1_24v, .005, False, 1) #Mov de Esp2 a 1
         GPIO.output(pin_enableCalibrationMotor, motorDisabledState)       #Modo seguro, motores inhabilitados
 
         ActivaPedal(servo_pin) #Baja palpador
@@ -588,8 +587,7 @@ def Completa2(tiempoinicial, tiempoestabilizacion, Repeticiones):
         GPIO.output(pin_enableCalibrationMotor, motorEnabledState)       #habilita los motores
         steperMotor1.motor_go(False, "1/8", stepsP1_43v, .005, False, 2) #Mov de 6 a 5
         steperMotor2.motor_go(False, "Full", stepsP2_23h, .005, False, 1) #Mov de 5 a Esp2
-        steperMotor1.motor_go(True, "1/8", stepsP1_43v, .005, False, 1) #Mov de Esp2 a 2
-        steperMotor1.motor_go(False, "1/8", stepsP1_12, .005, False, 1) #Mov de 2 a 1
+        steperMotor1.motor_go(True, "1/8", stepsP1_12-stepsP1_24v, .005, False, 1) #Mov de Esp2 a 1
         GPIO.output(pin_enableCalibrationMotor, motorDisabledState)       #Modo seguro, motores inhabilitados
 
         ActivaPedal(servo_pin) #Baja palpador
