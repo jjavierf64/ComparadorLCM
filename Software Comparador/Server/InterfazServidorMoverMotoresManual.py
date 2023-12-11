@@ -29,7 +29,6 @@ exit_label.grid(row = 2, column = 0, pady = (0, 50), padx = 30)
 
 print("Preparacion Pedal")
 ActivaPedal()
-time.sleep(3)
 #GPIO.output(pin_enableCalibrationMotor, motorEnabledState)  # Encender motores
 
 
