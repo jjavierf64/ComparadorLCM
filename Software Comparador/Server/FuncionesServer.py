@@ -91,7 +91,7 @@ stepsP1_43v = 80
 # Motor 2
 ## Configurado para Full de step
 global stepsP1_23h # De punto 2 a 3 en dirección horizontal
-stepsP1_23h = 342
+stepsP1_23h = 340
 
 
 ###
@@ -99,7 +99,7 @@ stepsP1_23h = 342
 # Motor 2
 ## Configurado para Full de step
 global stepsP2_23h # De punto 2 a 3 en dirección horizontal
-stepsP2_23h = 394
+stepsP2_23h = 392
 
 
 
@@ -365,7 +365,7 @@ def Centros(tiempoestabilizacion, Repeticiones):
     ActivaPedal(servo_pin)								#Sube el palpador
     sleep(int(tiempoestabilizacion))        
     GPIO.output(pin_enableCalibrationMotor, motorEnabledState)       #habilita los motores
-    steperMotor1.motor_go(True, "1/8", round(stepsP1_12/2), .005, False, 2) #Mov de 1 a HOME
+    steperMotor1.motor_go(True, "1/8", round(stepsP1_12/2), .0025, False, 2) #Mov de 1 a HOME
     GPIO.output(pin_enableCalibrationMotor, motorDisabledState)       #Modo seguro, motores inhabilitados               
     ActivaPedal(servo_pin)								#Baja el palpador
     
