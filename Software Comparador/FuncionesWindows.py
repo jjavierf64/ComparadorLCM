@@ -154,10 +154,10 @@ def BusquedaClientes(nombreClienteBuscado):
 
 def selectorMachote(seleccionSecuencia):
 	if seleccionSecuencia == "Desviación central" :
-		machote = "./Machotes/Central.xlsm"
+		machote = "./Machotes/RegistroDatos.xlsx"
 		return machote
 	elif seleccionSecuencia == "Desviación central y planitud" :
-		machote = "./Machotes/CentralYPlanitud.xlsm"
+		machote = "./Machotes/RegistroDatos.xlsx"
 		return machote
 		
 ################## Creación de un archivo para la calibración ##################
@@ -167,7 +167,7 @@ def CrearArchivoCalibracion(seleccionSecuencia, numCertificado):
 	machote = selectorMachote(seleccionSecuencia)
 
 	# Se crea un duplicado del machote, nombrado con una marca temporal:
-	archivoCalibracion = "./Calibraciones en curso/" + numCertificado + ".xlsm" # Nombre del archivo para la calibración
+	archivoCalibracion = "./Calibraciones en curso/" + numCertificado + ".xlsx" # Nombre del archivo para la calibración
 	shutil.copy(machote, archivoCalibracion) # Creación del duplicado del machote
 
 	return archivoCalibracion
@@ -246,6 +246,8 @@ def AutocompletarInformacionCliente(nombreCliente, direccionCliente, numeroCerti
 
     return workbookCalibracion, hojaResultadosCalibracion, hojaConversionDatos
 
+
+
 def EncabezadosDesviacionCentral(numRepeticiones, hojaResultadosCalibracion):
     #SI NO SE HA REANUDADO LA CALIBRACIÓN
     #Modificar la hoja que va a almacenar los resultados de la calibración siguiendo la secuencia COMPLETA
@@ -288,6 +290,8 @@ def EncabezadosDesviacionCentral(numRepeticiones, hojaResultadosCalibracion):
         k += 1
         j += 2 
     return numNuevasColumnas
+
+
 
 def EncabezadosCentroYPlanitud(numRepeticiones, hojaResultadosCalibracion):
 
@@ -343,6 +347,8 @@ def EncabezadosCentroYPlanitud(numRepeticiones, hojaResultadosCalibracion):
         j += 6
         return numNuevasColumnas
 
+
+
 ################## Cálculos del promedio y la desviación estándar ###################
 
 def CalculosDesviacionCentral(hojaResultadosCalibracion, numNuevasColumnas, numRepeticiones):
@@ -389,6 +395,9 @@ def CalculosDesviacionCentral(hojaResultadosCalibracion, numNuevasColumnas, numR
         
         l += 1
     return
+
+
+
 
 def CalculosDesviacionYPlanitud(hojaResultadosCalibracion, numNuevasColumnas, numRepeticiones):
     l = 2 #Se inicializa el contador para filas -> Empezamos a agregar valores en la fila 2
@@ -482,6 +491,8 @@ def CalculosDesviacionYPlanitud(hojaResultadosCalibracion, numNuevasColumnas, nu
 
     return
     
+
+
 ################## Selector fila para la hoja de resultados ##################
 
 def selectorFilaResultados(hojaResultadosCalibracion):
@@ -695,7 +706,7 @@ def NuevaCalibracion(nombreCliente, numCertificado, numeroSolicitud, identificac
 
 def ReanudarCalibracion(numCertificado, tiempoinicial, tiempoestabilizacion):
     
-    nombreArchivoEnCurso = numCertificado + ".xlsm" 
+    nombreArchivoEnCurso = numCertificado + ".xlsx" 
     rutaEnCurso = "./Calibraciones en curso/" + nombreArchivoEnCurso
 	
     archivoDatos = "./Calibraciones en curso/" + numCertificado + ".csv" # Nombre del archivo para el almacenaje de datos
