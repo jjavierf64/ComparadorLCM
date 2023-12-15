@@ -43,13 +43,15 @@ RPi_url = "http://192.168.196.100:5000/" # Zerotier
 # RPi_url = "http://0.0.0.0:5000/" # Provisional
 # RPi_url = "http://192.168.3.166:5000/" # Provisional
 
-################## Definición de funciones para la interfaz ##################
+
+
+
+
+################## Definición de funciones de la interfaz ##################
 
 def nueva_calibracion():
     # Ocultar la ventana del menú de opciones una vez que se selecciona una opción
     root.withdraw()
-
-
 
     # Crear una nueva ventana
     ventana_nuevaCalibracion = tk.Toplevel(root)
@@ -236,6 +238,56 @@ def reanudar_calibracion():
                                  command=lambda: regresarVentanaPrincipal(root, ventana_reanudar))
     regresar_button.grid(row=6, column=0, columnspan=1, pady=10)
     return
+
+
+
+def calibracion_abierta(cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps):
+    # Ocultar la ventana del menú de opciones una vez que se selecciona una opción
+    root.withdraw()
+
+    # Crear una nueva ventana
+    ventana_CalibracionAbierta = tk.Toplevel(root)
+    ventana_CalibracionAbierta.title("Proceso de Calibración")
+    ventana_CalibracionAbierta.configure(bg="white")
+    ventana_CalibracionAbierta.protocol("WM_DELETE_WINDOW", lambda: regresarVentanaPrincipal(root, ventana_CalibracionAbierta)) #Cuando se cierre la ventana secundaria, vuelva al menú de opciones
+    ventana_CalibracionAbierta.iconphoto(False, winIcono)
+
+    # Crear un nuevo layout para la ventana de Nueva Calibración
+    title_label = ttk.Label(ventana_CalibracionAbierta, text="Comparador de bloques TESA", font=("Helvetica", 16, "bold"),
+                            background="white")
+    title_label.grid(row=0, column=0, columnspan=2, pady=20)
+
+    subtitle_label = ttk.Label(ventana_CalibracionAbierta, text="Proceso de Calibración", font=("Helvetica", 14),
+                               background="white")
+    subtitle_label.grid(row=1, column=0, columnspan=2, pady=10)
+
+    image = Image.open("./assets/logoLCM.png")
+    image = image.resize((int(image.width * 0.25), int(image.height * 0.25)))  # Ajustar el tamaño del logo
+    image = ImageTk.PhotoImage(image)
+
+    image_label = ttk.Label(ventana_CalibracionAbierta, image=image, background="white")
+    image_label.image = image
+    image_label.grid(row=0, column=2, rowspan=1, padx=10, pady=10)
+
+    info_label = ttk.Label(ventana_CalibracionAbierta, 
+        text= f"Información de la Calibración Actual:\n  · Nombre del Cliente: {cliente}\n  · Número de Certificado: {certificado}\n  · Identificación del Calibrando: {idCalibrando}\n  · Secuencia de Calibración: {secuencia}\n  · Patrón: {patron}\n"
+    )
+    info_label.grid(row=2, column=0, pady=20, padx=20)
+
+
+
+
+    regresar_button = ttk.Button(ventana_CalibracionAbierta, text="Regresar al menú de opciones",
+                                 command=lambda: regresarVentanaPrincipal(root, ventana_CalibracionAbierta))
+    regresar_button.grid(row=6, column=0, columnspan=1, pady=10)
+    return
+
+
+
+
+
+
+
 
 
 def ingresar_cliente():
@@ -454,50 +506,69 @@ def continuarNuevaCalibracion(): # Función para continuar con el proceso de una
     tEstabilizacion = tEstabilizacion_entry.get()
     numReps = numReps_entry.get()
 
-    # Ventana de espera
-    ventana_espera = tk.Toplevel(root)
-    ventana_espera.title("Secuencia en Curso")
-    ventana_espera.configure(bg="white")
-    ventana_espera.focus_set()
 
-    main_label = ttk.Label(ventana_espera,
-                           text="Secuencia en Curso.",
-                           anchor=tk.CENTER, background="white")
-    main_label.grid(row=0, column=0, padx=30, pady=20)
+    # Verificar si existe archivo
+    nombreArchivoCalibracion = "./Calibraciones en curso/" + str(certificado) + "_Info.xlsx"
+    if os.path.exists(nombreArchivoCalibracion):
+        mostrarMensaje("El archivo de calibración ya existe. \nPor favor REANUDAR la calibración.")
+        return
+    
+    else:
+        archivoCalibracion_datos, archivoCalibracion_info = CrearArchivoCalibracion(certificado)
 
-    waiting_icon = ttk.Label(ventana_espera,
-                           text="Por favor espere...",
-                           anchor=tk.CENTER, background="white")
-    waiting_icon.grid(row=1, column=0, padx=30, pady=(0,20))
-    root.update()
+        RellenarInfoCalibracion(archivoCalibracion_info, [cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps])
 
-    # Ejecución de secuencia
-    NuevaCalibracion(cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, int(numReps))
-    try:
-        #ejecutarSecuencia(RPi_url,secuencia,tEstabilizacion,numReps)
+
+
+
+
+    calibracion_abierta(archivoCalibracion_datos, cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps)
+
+
+    # # Ventana de espera
+    # ventana_espera = tk.Toplevel(root)
+    # ventana_espera.title("Secuencia en Curso")
+    # ventana_espera.configure(bg="white")
+    # ventana_espera.focus_set()
+
+    # main_label = ttk.Label(ventana_espera,
+    #                        text="Secuencia en Curso.",
+    #                        anchor=tk.CENTER, background="white")
+    # main_label.grid(row=0, column=0, padx=30, pady=20)
+
+    # waiting_icon = ttk.Label(ventana_espera,
+    #                        text="Por favor espere...",
+    #                        anchor=tk.CENTER, background="white")
+    # waiting_icon.grid(row=1, column=0, padx=30, pady=(0,20))
+    # root.update()
+
+    # # Ejecución de secuencia
+    # NuevaCalibracion(cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, int(numReps))    
+    # try:
+    #     #ejecutarSecuencia(RPi_url,secuencia,tEstabilizacion,numReps)
     
         
-        ventana_espera.destroy()
+    #     ventana_espera.destroy()
 
-        ventana_exito = tk.Toplevel(root)
-        ventana_exito.title("Secuencia Finalizada")
-        ventana_exito.configure(bg="white")
-        ventana_exito.focus_set()
-        main_label = ttk.Label(ventana_exito,
-                           text="Secuencia Terminada con Éxito.",
-                           anchor=tk.CENTER, background="white")
-        main_label.grid(row=0, column=0, padx=30, pady=20)
-        root.update()
-    except:
-        ventana_error = tk.Toplevel(root)
-        ventana_error.title("Secuencia Finalizada")
-        ventana_error.configure(bg="yellow")
-        ventana_error.focus_set()
-        main_label = ttk.Label(ventana_error,
-                           text="ERROR en la Secuencia.",
-                           anchor=tk.CENTER, background="red")
-        main_label.grid(row=0, column=0, padx=30, pady=20)
-        root.update()
+    #     ventana_exito = tk.Toplevel(root)
+    #     ventana_exito.title("Secuencia Finalizada")
+    #     ventana_exito.configure(bg="white")
+    #     ventana_exito.focus_set()
+    #     main_label = ttk.Label(ventana_exito,
+    #                        text="Secuencia Terminada con Éxito.",
+    #                        anchor=tk.CENTER, background="white")
+    #     main_label.grid(row=0, column=0, padx=30, pady=20)
+    #     root.update()
+    # except:
+    #     ventana_error = tk.Toplevel(root)
+    #     ventana_error.title("Secuencia Finalizada")
+    #     ventana_error.configure(bg="yellow")
+    #     ventana_error.focus_set()
+    #     main_label = ttk.Label(ventana_error,
+    #                        text="ERROR en la Secuencia.",
+    #                        anchor=tk.CENTER, background="red")
+    #     main_label.grid(row=0, column=0, padx=30, pady=20)
+    #     root.update()
         
     return 
 

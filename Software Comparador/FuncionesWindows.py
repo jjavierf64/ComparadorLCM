@@ -150,27 +150,37 @@ def BusquedaClientes(nombreClienteBuscado):
 
     return nombreCliente, direccionCliente, archivoCliente
 
-################## Selector de machote ##################
-
-def selectorMachote(seleccionSecuencia):
-	if seleccionSecuencia == "Desviación central" :
-		machote = "./Machotes/RegistroDatos.xlsx"
-		return machote
-	elif seleccionSecuencia == "Desviación central y planitud" :
-		machote = "./Machotes/RegistroDatos.xlsx"
-		return machote
-		
 ################## Creación de un archivo para la calibración ##################
 
-def CrearArchivoCalibracion(seleccionSecuencia, numCertificado):
-	# Se escoge sobre qué machote se va a trabajar a partir de la secuencia de calibración escogida por el usuario:
-	machote = selectorMachote(seleccionSecuencia)
-
+def CrearArchivoCalibracion(numCertificado):
 	# Se crea un duplicado del machote, nombrado con una marca temporal:
-	archivoCalibracion = "./Calibraciones en curso/" + numCertificado + ".xlsx" # Nombre del archivo para la calibración
-	shutil.copy(machote, archivoCalibracion) # Creación del duplicado del machote
+	machote_datos = "./Machotes/RegistroDatos.xlsx"
+	machote_info = "./Machotes/CalibracionInfo.xlsx"
 
-	return archivoCalibracion
+	archivoCalibracion_datos = "./Calibraciones en curso/" + numCertificado + "_Datos.xlsx" # Nombre del archivo para la calibración
+	archivoCalibracion_info = "./Calibraciones en curso/" + numCertificado + "_Info.xlsx" # Nombre del archivo para la calibración
+
+	shutil.copy(machote_datos, archivoCalibracion_datos) # Creación del duplicado del machote
+	shutil.copy(machote_info, archivoCalibracion_info) # Creación del duplicado del machote
+
+	return archivoCalibracion_datos, archivoCalibracion_info
+
+
+################## Completa la información del archivo Info para la calibración ##################
+
+def RellenarInfoCalibracion(nombreArchivo, lista_info):
+    # Rellena la información brindada por la interfaz en un archivo de información
+    workbookInfo = load_workbook(filename=nombreArchivo, keep_vba=True) #Abre el archivo
+    hojaInfo = workbookInfo.active() #Abre la hoja activa del archivo
+
+    i = 2 # el registro empieza en la fila 2
+    for elemento in lista_info:
+        hojaInfo["B"+str(i)].value = elemento  # Se emplea la columa B para almacenar la información
+        i+=1
+    
+    return
+
+
 
 
 ################## Autocompletado de la información que se tiene del cliente y la calibración ##################
