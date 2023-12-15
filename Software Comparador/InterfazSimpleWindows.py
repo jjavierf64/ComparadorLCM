@@ -48,10 +48,13 @@ def nueva_calibracion():
     # Ocultar la ventana del menú de opciones una vez que se selecciona una opción
     root.withdraw()
 
+
+
     # Crear una nueva ventana
     ventana_nuevaCalibracion = tk.Toplevel(root)
     ventana_nuevaCalibracion.title("Nueva Calibración")
     ventana_nuevaCalibracion.configure(bg="white")
+    ventana_nuevaCalibracion.protocol("WM_DELETE_WINDOW", lambda: regresarVentanaPrincipal(root, ventana_nuevaCalibracion)) #Cuando se cierre la ventana secundaria, vuelva al menú de opciones
 
     # Crear un nuevo layout para la ventana de Nueva Calibración
     title_label = ttk.Label(ventana_nuevaCalibracion, text="Comparador de bloques TESA", font=("Helvetica", 16, "bold"),
@@ -177,6 +180,7 @@ def reanudar_calibracion():
     ventana_reanudar = tk.Toplevel(root)
     ventana_reanudar.title("Reanudar Calibración")
     ventana_reanudar.configure(bg="white")
+    ventana_reanudar.protocol("WM_DELETE_WINDOW", lambda: regresarVentanaPrincipal(root, ventana_reanudar)) #Cuando se cierre la ventana secundaria, vuelva al menú de opciones
 
     # Crear un nuevo layout para la ventana de reanudar calibración
     title_label = ttk.Label(ventana_reanudar, text="Comparador de bloques TESA", font=("Helvetica", 16, "bold"),
@@ -239,6 +243,7 @@ def ingresar_cliente():
     ventana_cliente = tk.Toplevel(root)
     ventana_cliente.title("Ingresar Cliente")
     ventana_cliente.configure(bg="white")
+    ventana_cliente.protocol("WM_DELETE_WINDOW", lambda: regresarVentanaPrincipal(root, ventana_cliente)) #Cuando se cierre la ventana secundaria, vuelva al menú de opciones
 
     # Crear un nuevo layout para la ventana de ingresar cliente
     title_label = ttk.Label(ventana_cliente, text="Comparador de bloques TESA", font=("Helvetica", 16, "bold"),
@@ -288,6 +293,7 @@ def ingresar_calibrando():
     ventana_calibrando = tk.Toplevel(root)
     ventana_calibrando.title("Ingresar Cliente")
     ventana_calibrando.configure(bg="white")
+    ventana_calibrando.protocol("WM_DELETE_WINDOW", lambda: regresarVentanaPrincipal(root, ventana_calibrando)) #Cuando se cierre la ventana secundaria, vuelva al menú de opciones
 
     # Crear un nuevo layout para la ventana para ingresar un calibrando
     title_label = ttk.Label(ventana_calibrando, text="Comparador de bloques TESA", font=("Helvetica", 16, "bold"),
@@ -415,7 +421,15 @@ def mover_motores():
     return
 
 
-##########
+
+
+
+
+
+
+
+
+########## Funciones de la Interfaz
 
 def continuarNuevaCalibracion(): # Función para continuar con el proceso de una calibración, dados todos los datos.
     cliente = cliente_combobox.get()
