@@ -146,7 +146,7 @@ def BusquedaClientes(nombreClienteBuscado):
     # numFila permite crear la coordenada de la celda que almacena la información deseada
     nombreCliente = hojaClientes["A"+str(numFila)].value 
     direccionCliente = hojaClientes["B"+str(numFila)].value
-    archivoCliente = hojaClientes["C"+str(numFila)].value
+    archivoCliente = "./Clientes/" + hojaClientes["C"+str(numFila)].value
 
     return nombreCliente, direccionCliente, archivoCliente
 
@@ -171,7 +171,7 @@ def CrearArchivoCalibracion(numCertificado):
 def RellenarInfoCalibracion(nombreArchivo, lista_info):
     # Rellena la información brindada por la interfaz en un archivo de información
     workbookInfo = load_workbook(filename=nombreArchivo, keep_vba=True) #Abre el archivo
-    hojaInfo = workbookInfo.active() #Abre la hoja activa del archivo
+    hojaInfo = workbookInfo.active #Abre la hoja activa del archivo
 
     i = 2 # el registro empieza en la fila 2
     for elemento in lista_info:

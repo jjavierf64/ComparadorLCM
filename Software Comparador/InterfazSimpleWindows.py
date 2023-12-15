@@ -241,7 +241,7 @@ def reanudar_calibracion():
 
 
 
-def calibracion_abierta(cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps):
+def calibracion_abierta(archivoCalibracion_datos, cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps):
     # Ocultar la ventana del menú de opciones una vez que se selecciona una opción
     root.withdraw()
 
