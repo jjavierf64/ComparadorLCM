@@ -5,6 +5,7 @@ En este archivo se presenta el código de una interfaz simple para el comparador
 ################## Importación de librerías ##################
 import tkinter as tk
 from tkinter import ttk
+from ttkthemes import ThemedStyle
 from PIL import Image, ImageTk
 import os
 import openpyxl
@@ -270,14 +271,18 @@ def ingresar_cliente():
     nuevoCliente_entry = ttk.Entry(ventana_cliente, width=42)
     nuevoCliente_entry.grid(row=2, column=1, columnspan=2, pady=5, padx=(20, 5))
 
-    contactoCliente_label = ttk.Label(ventana_cliente, text="Tiempo de estabilización (en segundos):",
+    contactoCliente_label = ttk.Label(ventana_cliente, text="Dirección del Cliente:",
                                       background="white")
     contactoCliente_label.grid(row=3, column=0, pady=5)
     contactoCliente_entry = ttk.Entry(ventana_cliente, width=42)
     contactoCliente_entry.grid(row=3, column=1, columnspan=2, pady=5, padx=(20, 5))
 
+    #Botones
     continuar_button = ttk.Button(ventana_cliente, text="Ingresar cliente", command=ingresarCliente)
-    continuar_button.grid(row=4, column=0, columnspan=1, pady=10)
+    continuar_button.grid(row=4, column=0, columnspan=1, pady=10, padx=10)
+    
+    clientes_actuales_button = ttk.Button(ventana_cliente, text="Ver clientes actuales", command=verClientes)
+    clientes_actuales_button.grid(row=4, column=1, columnspan=1, pady=10, padx=10)
 
     regresar_button = ttk.Button(ventana_cliente, text="Regresar al menú de opciones",
                                  command=lambda: regresarVentanaPrincipal(root, ventana_cliente))
@@ -508,6 +513,29 @@ def ingresarCliente():
     AgregarCliente(nuevoCliente, contactoCliente)
     return
 
+def verClientes():
+    # Crear una lista con los nombres de los clientes ya registrados
+    clientesRegistrados = []
+    archivoClientes = openpyxl.load_workbook("Clientes/Clientes.xlsx")
+    hojaClientes = archivoClientes.active
+
+    numFila = 3  # Se empieza en la fila 3 porque antes están los encabezados
+    for fila in hojaClientes.iter_rows(min_row=3,
+                                       min_col=1,
+                                       max_col=1):
+        for celda in fila:
+            if celda.value != None:
+                clientesRegistrados.append(celda.value)
+    archivoClientes.close()
+
+    textoClientes = "Clientes Registrados Actualmente:\n\n"
+
+    for nombre in clientesRegistrados:
+        textoClientes += "  · " + nombre + "\n"
+
+    mostrarMensaje(textoClientes)
+    return
+
 
 def ingresarCalibrando():
     cliente = cliente_combobox.get()
@@ -526,9 +554,27 @@ def regresarVentanaPrincipal(root, ventana):
     ventana.destroy()  # Destruir la ventana actual
     root.deiconify()  # Traer devuelta la ventana principal
 
+
+# Status del RPi
+def checkRPiStatus(url):
+    try:
+        url = url+"isUp"
+        response = requests.get(url)
+        data = response.json()
+        status = data.get("status", "desconocido")
+        status_label["text"] = f"Estado del Servidor: {status}"
+        status_label["foreground"] = "green"
+    except:
+        status_label["text"] = "Estado del Servidor: error"
+        status_label["foreground"] = "red"
+    return
+
 ################## Ventana inicial ##################
 
 root = tk.Tk()
+themed_style = ThemedStyle(root)
+themed_style.set_theme("adapta")  
+
 root.title("Comparador de bloques TESA")
 root.configure(bg="white")
 
@@ -557,22 +603,6 @@ for i, (text, command) in enumerate(options):
     button = ttk.Button(root, text=text, command=command)
     button.grid(row=i + 2, column=0, columnspan=2, pady=5, padx=10, sticky="we")
 
-
-
-# Status del RPi
-def checkRPiStatus(url):
-    try:
-        url = url+"isUp"
-        response = requests.get(url)
-        data = response.json()
-        print(data)
-        status = data.get("status", "desconocido")
-        status_label["text"] = f"Estado del Servidor: {status}"
-        status_label["foreground"] = "green"
-    except:
-        status_label["text"] = "Estado del Servidor: error"
-        status_label["foreground"] = "red"
-    return
 
 status_label = ttk.Label(root, text="Estado del Servidor: desconocido", background="white", foreground="black")
 status_label.grid(row=10, column=0, sticky=tk.W, pady=(10, 10), padx=(5,5))

@@ -118,8 +118,8 @@ def mostrarMensaje(mensaje):
     top.title("Mensaje")
     top.configure(bg="white")
 
-    message_label = ttk.Label(top, text=mensaje)
-    message_label.pack(pady=10)
+    message_label = ttk.Label(top, text=mensaje, background="white")
+    message_label.pack(pady=20,padx=20)
 
     top.bind("<Return>", on_enter_press)
 
@@ -751,14 +751,17 @@ def AgregarCliente(nombreCliente, direccionCliente):
                                                     min_col=1,
                                                     max_col=1):
         for celdaValorNominal in filaValorNominal:
-            if celdaValorNominal.value == None:
+            if celdaValorNominal.value == None: #Ve si existe algún dato
                 numFila = i
+            elif celdaValorNominal.value == nombreCliente:
+                mostrarMensaje("Existe un Cliente con el mismo nombre.\nPor favor, ingresar otro nombre o corroborar \nque es el mismo cliente.")
+                return 0
             else:
                 i += 1 
 
     machoteCliente = "./Machotes/Machote para nuevo cliente.xlsx"
     nombreArchivoCliente = nombreCliente + ".xlsx" #El nombre del archivo de Excel va a ser igual al nombre del Cliente
-    shutil.copy(machoteCliente, "./Archivos de los clientes/" + nombreArchivoCliente)	
+    shutil.copy(machoteCliente, "./Clientes/" + nombreArchivoCliente)	
 
     #Se agrega la información del cliente al archivo de Clientes
     hojaClientes["A"+str(i)] = nombreCliente
@@ -766,8 +769,8 @@ def AgregarCliente(nombreCliente, direccionCliente):
     hojaClientes["C"+str(i)] = nombreArchivoCliente
 
     workbookClientes.save("./Clientes/Clientes.xlsx")
-    
-    return
+    mostrarMensaje("El cliente se ha registrado con éxito.")
+    return 1
 
 
 
