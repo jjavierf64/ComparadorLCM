@@ -575,11 +575,15 @@ root = tk.Tk()
 themed_style = ThemedStyle(root)
 themed_style.set_theme("adapta")  
 
+icono = tk.PhotoImage(file = "./assets/logoLCM_r.png")
+root.iconphoto(False, icono)
+
+
 root.title("Comparador de bloques TESA")
 root.configure(bg="white")
 
 title_label = ttk.Label(root, text="Comparador de bloques TESA", font=("Helvetica", 16, "bold"), background="white")
-title_label.grid(row=0, column=0, columnspan=2, pady=20)
+title_label.grid(row=0, column=0, columnspan=2, pady=20, padx=20)
 
 subtitle_label = ttk.Label(root, text="Menú de opciones", font=("Helvetica", 14), background="white")
 subtitle_label.grid(row=1, column=0, columnspan=2, pady=10)
@@ -605,7 +609,7 @@ for i, (text, command) in enumerate(options):
 
 
 status_label = ttk.Label(root, text="Estado del Servidor: desconocido", background="white", foreground="black")
-status_label.grid(row=10, column=0, sticky=tk.W, pady=(10, 10), padx=(5,5))
+status_label.grid(row=10, column=0, sticky=tk.W, pady=(10, 10), padx=(20,5))
 
 
 check_button = ttk.Button(root, text="↻", command=lambda:checkRPiStatus(RPi_url))
