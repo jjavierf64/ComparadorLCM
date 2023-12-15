@@ -56,6 +56,7 @@ def nueva_calibracion():
     ventana_nuevaCalibracion.title("Nueva Calibración")
     ventana_nuevaCalibracion.configure(bg="white")
     ventana_nuevaCalibracion.protocol("WM_DELETE_WINDOW", lambda: regresarVentanaPrincipal(root, ventana_nuevaCalibracion)) #Cuando se cierre la ventana secundaria, vuelva al menú de opciones
+    ventana_nuevaCalibracion.iconphoto(False, winIcono)
 
     # Crear un nuevo layout para la ventana de Nueva Calibración
     title_label = ttk.Label(ventana_nuevaCalibracion, text="Comparador de bloques TESA", font=("Helvetica", 16, "bold"),
@@ -182,6 +183,7 @@ def reanudar_calibracion():
     ventana_reanudar.title("Reanudar Calibración")
     ventana_reanudar.configure(bg="white")
     ventana_reanudar.protocol("WM_DELETE_WINDOW", lambda: regresarVentanaPrincipal(root, ventana_reanudar)) #Cuando se cierre la ventana secundaria, vuelva al menú de opciones
+    ventana_reanudar.iconphoto(False, winIcono)
 
     # Crear un nuevo layout para la ventana de reanudar calibración
     title_label = ttk.Label(ventana_reanudar, text="Comparador de bloques TESA", font=("Helvetica", 16, "bold"),
@@ -245,6 +247,7 @@ def ingresar_cliente():
     ventana_cliente.title("Ingresar Cliente")
     ventana_cliente.configure(bg="white")
     ventana_cliente.protocol("WM_DELETE_WINDOW", lambda: regresarVentanaPrincipal(root, ventana_cliente)) #Cuando se cierre la ventana secundaria, vuelva al menú de opciones
+    ventana_cliente.iconphoto(False, winIcono)
 
     # Crear un nuevo layout para la ventana de ingresar cliente
     title_label = ttk.Label(ventana_cliente, text="Comparador de bloques TESA", font=("Helvetica", 16, "bold"),
@@ -299,6 +302,7 @@ def ingresar_calibrando():
     ventana_calibrando.title("Ingresar Cliente")
     ventana_calibrando.configure(bg="white")
     ventana_calibrando.protocol("WM_DELETE_WINDOW", lambda: regresarVentanaPrincipal(root, ventana_calibrando)) #Cuando se cierre la ventana secundaria, vuelva al menú de opciones
+    ventana_calibrando.iconphoto(False, winIcono)
 
     # Crear un nuevo layout para la ventana para ingresar un calibrando
     title_label = ttk.Label(ventana_calibrando, text="Comparador de bloques TESA", font=("Helvetica", 16, "bold"),
@@ -575,8 +579,9 @@ root = tk.Tk()
 themed_style = ThemedStyle(root)
 themed_style.set_theme("adapta")  
 
-icono = tk.PhotoImage(file = "./assets/logoLCM_r.png")
-root.iconphoto(False, icono)
+global winIcono
+winIcono = tk.PhotoImage(file = "./assets/logoLCM_r.png")
+root.iconphoto(False, winIcono)
 
 
 root.title("Comparador de bloques TESA")
