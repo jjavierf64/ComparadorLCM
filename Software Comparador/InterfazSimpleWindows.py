@@ -634,7 +634,7 @@ def regresarVentanaPrincipal(root, ventana):
 def checkRPiStatus(url):
     try:
         url = url+"isUp"
-        response = requests.get(url)
+        response = requests.get(url, timeout=5)
         data = response.json()
         status = data.get("status", "desconocido")
         status_label["text"] = f"Estado del Servidor: {status}"
