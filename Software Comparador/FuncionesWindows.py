@@ -19,7 +19,7 @@ import os                                                           # Biblioteca
 import warnings
 import csv                                                          # Biblioteca para crear archivos csv e interactuar con ellos
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, Scrollbar, Listbox
 import requests
 
 
@@ -788,7 +788,7 @@ def AgregarCliente(nombreCliente, direccionCliente):
 
 ################## Ingresar juego de bloques/calibrando ##################
 
-def IngresarCalibrando(nombreCliente, objeto, marca, numSerie, material, modelo, grado, unidad):
+def IngresarCalibrando(nombreCliente, objeto, cantidad, marca, numSerie, material, modelo, grado, identificacionInterna, unidad):
     archivoCliente = BusquedaClientes(nombreCliente)[2] #Busqueda del archivo del cliente
     workbookCliente = load_workbook(filename=archivoCliente, keep_vba=True)  #Apertura del archivo de excel del cliente
 
@@ -801,67 +801,123 @@ def IngresarCalibrando(nombreCliente, objeto, marca, numSerie, material, modelo,
 
     if existeCalibrando:
         mostrarMensaje("Ya existe un calibrando registrado con el númerio de serie " + numSerie + ".")
+        return
 
     #Crear una hoja para el nuevo calibrando
-    if len(workbookCliente.sheetnames) > 1: #Si ya existen calibrandos registrados en el archivo
-        hojaReferencia = workbookCliente.worksheets[0] #Se selecciona la hoja 1 como una referencia para crear la hoja para el nuevo juevo
-        hojaNuevoCalibrando = workbookCliente.create_sheet(title = numSerie)
-        
-        #Se copia la hoja de referencia en la nueva hoja como plantilla
-        for row in hojaReferencia.iter_rows():
-            for cell in row:
-                new_cell = hojaNuevoCalibrando.cell(row=cell.row, column=cell.column, value=cell.value)
-                if cell.has_style:
-                    new_cell.font = copy(cell.font)
-                    new_cell.border = copy(cell.border)
-                    new_cell.fill = copy (cell.fill)
-                    new_cell.number_format = cell.number_format
-                    new_cell.protection = copy(cell.protection)
-                    new_cell.alignment = copy(cell.alignment)
-    
-    else: #Si no se han registrado calibrandos en el archivo del Cliente
-        hojaNuevoCalibrando = workbookCliente.worksheets[0]
-        hojaNuevoCalibrando.title = numSerie
+    hojaReferencia = workbookCliente.worksheets[0] #Se selecciona la hoja 1 como una referencia para crear la hoja para el nuevo juevo
+    hojaNuevoCalibrando = workbookCliente.copy_worksheet(hojaReferencia)
+    hojaNuevoCalibrando.title = numSerie
+
     
     #Agregar la información del calibrando al archivo del cliente
     hojaNuevoCalibrando["A1"] = "Información del calibrando con identificación " + numSerie
     hojaNuevoCalibrando["C2"] = objeto
-    hojaNuevoCalibrando["C3"] = marca
-    hojaNuevoCalibrando["C4"] = numSerie
-    hojaNuevoCalibrando["C5"] = material #Dropdown con opciones: Acero, cerámica, carburo de tungsteno, carburo de cromo
-    hojaNuevoCalibrando["C6"] = modelo
-    hojaNuevoCalibrando["C7"] = grado
+    hojaNuevoCalibrando["C3"] = int(cantidad)
+    hojaNuevoCalibrando["C4"] = marca
+    hojaNuevoCalibrando["C5"] = numSerie
+    hojaNuevoCalibrando["C6"] = material #Dropdown con opciones: Acero, cerámica, carburo de tungsteno, carburo de cromo
+    hojaNuevoCalibrando["C7"] = modelo
+    hojaNuevoCalibrando["C8"] = grado
+    hojaNuevoCalibrando["C9"] = identificacionInterna
 
-    hojaNuevoCalibrando["B10"] = "Longitud nominal (" + unidad + ")"
+    hojaNuevoCalibrando["B10"] = "Longitud nominal (" + unidad + ")" #Agregar valor nominal e identificación de los bloques del juego
 
-    #Agregar valor nominal e identificación de los bloques del juego
-    agregarNuevoBloque = "sí"
-    numFila = 14 #Se inicia el contador para filas en 14 porque ahí empieza la lista de bloques
-    while agregarNuevoBloque == "sí":
-        valorBloqueIngresar = ventanaEntrada("Valor nomial del bloque a ingresar: ")
-        idBloqueIngresar = ventanaEntrada("Identificación del bloque a ingresar: ")
+
+    ### Ingresar Valores de Bloques
+    
+    global infoBloques, numFila
+    
+    numFila = 14 #Se inicia el contador para filas en 14 porque ahí empieza la lista de bloques ARREGLAR PARA QUE SEA EXTENSIBLE
+    infoBloques = []
+
+
+    def ingresar_bloque():
+        valorBloqueIngresar = longitudNominal_entry.get()
+        idBloqueIngresar = idBloque_entry.get()
+
         #Se agrega la información del bloque a la hoja
         hojaNuevoCalibrando["A"+str(numFila)] = numFila - 13
         hojaNuevoCalibrando["B"+str(numFila)] = valorBloqueIngresar
         hojaNuevoCalibrando["C"+str(numFila)] = idBloqueIngresar
 
-        #Definir el estilo de los bordes de las celdas
-        borde_sencillo = Side(border_style = "thin")
-        borde_cuadrado = Border(top = borde_sencillo,
-                                right = borde_sencillo,
-                                bottom = borde_sencillo,
-                                left = borde_sencillo)
-        
-        #Se le da estilo a la nuevas celdas
-        hojaNuevoCalibrando["A"+str(numFila)].border = borde_cuadrado
-        hojaNuevoCalibrando["B"+str(numFila)].border = borde_cuadrado
-        hojaNuevoCalibrando["C"+str(numFila)].border = borde_cuadrado
-
+        infoBloques.append([valorBloqueIngresar, idBloqueIngresar])
+        print(infoBloques)
         numFila += 1
-        agregarNuevoBloque = ventanaOpciones("¿Desea agregar otro bloque?:", ["sí", "no"])
+        return
     
-    mostrarMensaje("Se han ingresado exitosamente los datos del nuevo calibrando.")
-    workbookCliente.save(archivoCliente)
+    def finalizar_agregar():
+        workbookCliente.save(archivoCliente)
+        mostrarMensaje("Se han ingresado exitosamente los datos del nuevo calibrando.")
+        top.destroy()
+        return
+
+
+#GUI
+    top = tk.Toplevel()
+    top.title("Información Bloque Individual")
+    top.configure(bg="white")
+
+    subtitle_label = ttk.Label(top, text="Información Bloques", font=("Helvetica", 14), background="white")
+    subtitle_label.grid(row=0, column=0, columnspan=2, pady=10)
+
+    longitudNominal_label = ttk.Label(top, text="Longitud Nominal")
+    longitudNominal_label.grid(row=10, column=0, columnspan=1, pady=10)
+
+    longitudNominal_entry = ttk.Entry(top, width=30)
+    longitudNominal_entry.grid(row=10, column=10, columnspan=1, pady=10)        
+    
+    idBloque_label = ttk.Label(top, text="ID del Bloque")
+    idBloque_label.grid(row=20, column=0, columnspan=1, pady=10)
+
+    idBloque_entry = ttk.Entry(top, width=30)
+    idBloque_entry.grid(row=20, column=10, columnspan=1, pady=10)     
+
+    ingresarBloque_button = ttk.Button(top, text="Ingresar Bloque", command=ingresar_bloque)
+    ingresarBloque_button.grid(row=30, column=1, columnspan=1, pady=10)
+
+    scrollbar = Scrollbar(top)
+    scrollbar.grid(row=40, column=20, pady=10)
+
+    listaBloques = Listbox(top, yscrollcommand = scrollbar.set )
+    
+    if len(infoBloques)>=1:
+        for j,bloque in enumerate(infoBloques):
+            listaBloques.insert(END, f"{j+1}. {bloque[0]} {unidad} ID:{bloque[1]}")
+    
+    listaBloques.grid(row=40, column=20, pady=10)
+
+    finalizar_button = ttk.Button(top, text="Finalizar Adiciones", command=finalizar_agregar)
+    finalizar_button.grid(row=50, column=1, columnspan=1, pady=10)
+
+
+
+
+
+    # agregarNuevoBloque = "sí"
+    # while agregarNuevoBloque == "sí":
+    #     valorBloqueIngresar = ventanaEntrada("Valor nominal del bloque a ingresar: ")
+    #     idBloqueIngresar = ventanaEntrada("Identificación del bloque a ingresar: ")
+    #     #Se agrega la información del bloque a la hoja
+    #     hojaNuevoCalibrando["A"+str(numFila)] = numFila - 13
+    #     hojaNuevoCalibrando["B"+str(numFila)] = valorBloqueIngresar
+    #     hojaNuevoCalibrando["C"+str(numFila)] = idBloqueIngresar
+
+    #     #Definir el estilo de los bordes de las celdas
+    #     borde_sencillo = Side(border_style = "thin")
+    #     borde_cuadrado = Border(top = borde_sencillo,
+    #                             right = borde_sencillo,
+    #                             bottom = borde_sencillo,
+    #                             left = borde_sencillo)
+        
+    #     #Se le da estilo a la nuevas celdas
+    #     hojaNuevoCalibrando["A"+str(numFila)].border = borde_cuadrado
+    #     hojaNuevoCalibrando["B"+str(numFila)].border = borde_cuadrado
+    #     hojaNuevoCalibrando["C"+str(numFila)].border = borde_cuadrado
+
+    #     numFila += 1
+    #     agregarNuevoBloque = ventanaOpciones("¿Desea agregar otro bloque?:", ["sí", "no"])
+    
+    
     return
     
 ################## Ocultar advertencias en terminal ##################

@@ -373,7 +373,7 @@ def ingresar_calibrando():
     image_label.image = image
     image_label.grid(row=0, column=2, rowspan=1, padx=10, pady=10)
 
-    global cliente_combobox, objeto_entry, marca_entry, numSerie_entry, materialCalibrando_combobox
+    global cliente_combobox, objeto_entry, marca_entry, numSerie_entry, materialCalibrando_combobox, cantidad_entry, identificacionInterna_entry
     global modelo_entry, grado_entry, unidad_combobox
 
     # Crear una lista con los nombres de los clientes ya registrados
@@ -401,42 +401,52 @@ def ingresar_calibrando():
     objeto_entry = ttk.Entry(ventana_calibrando, width=42)
     objeto_entry.grid(row=3, column=1, columnspan=2, pady=5, padx=(20, 5))
 
+    cantidad_label = ttk.Label(ventana_calibrando, text="Cantidad de bloques o instrumentos:", background="white")
+    cantidad_label.grid(row=4, column=0, pady=5)
+    cantidad_entry = ttk.Entry(ventana_calibrando, width=42)
+    cantidad_entry.grid(row=4, column=1, columnspan=2, pady=5, padx=(20, 5))
+
     marca_label = ttk.Label(ventana_calibrando, text="Marca:", background="white")
-    marca_label.grid(row=4, column=0, pady=5)
+    marca_label.grid(row=5, column=0, pady=5)
     marca_entry = ttk.Entry(ventana_calibrando, width=42)
-    marca_entry.grid(row=4, column=1, columnspan=2, pady=5, padx=(20, 5))
+    marca_entry.grid(row=5, column=1, columnspan=2, pady=5, padx=(20, 5))
 
     numSerie_label = ttk.Label(ventana_calibrando, text="Número de serie:", background="white")
-    numSerie_label.grid(row=5, column=0, pady=5)
+    numSerie_label.grid(row=6, column=0, pady=5)
     numSerie_entry = ttk.Entry(ventana_calibrando, width=42)
-    numSerie_entry.grid(row=5, column=1, columnspan=2, pady=5, padx=(20, 5))
+    numSerie_entry.grid(row=6, column=1, columnspan=2, pady=5, padx=(20, 5))
 
     materialCalibrando_label = ttk.Label(ventana_calibrando, text="Material:", anchor=tk.CENTER, background="white")
-    materialCalibrando_label.grid(row=6, column=0, pady=5, sticky=tk.EW)
+    materialCalibrando_label.grid(row=7, column=0, pady=5, sticky=tk.EW)
     materialCalibrando_combobox = ttk.Combobox(ventana_calibrando, values=["Acero inoxidable", "Cerámica"], width=40)
-    materialCalibrando_combobox.grid(row=6, column=1, columnspan=2, pady=5, padx=(20, 5), sticky="ew")
+    materialCalibrando_combobox.grid(row=7, column=1, columnspan=2, pady=5, padx=(20, 5), sticky="ew")
 
     modelo_label = ttk.Label(ventana_calibrando, text="Modelo:", anchor=tk.CENTER, background="white")
-    modelo_label.grid(row=7, column=0, pady=5, sticky=tk.EW)
+    modelo_label.grid(row=8, column=0, pady=5, sticky=tk.EW)
     modelo_entry = ttk.Entry(ventana_calibrando, width=42)
-    modelo_entry.grid(row=7, column=1, columnspan=2, pady=5, padx=(20, 5), sticky="ew")
+    modelo_entry.grid(row=8, column=1, columnspan=2, pady=5, padx=(20, 5), sticky="ew")
 
     grado_label = ttk.Label(ventana_calibrando, text="Grado declarado: ", anchor=tk.CENTER, background="white")
-    grado_label.grid(row=8, column=0, pady=5, sticky=tk.EW)
+    grado_label.grid(row=9, column=0, pady=5, sticky=tk.EW)
     grado_entry = ttk.Entry(ventana_calibrando, width=42)
-    grado_entry.grid(row=8, column=1, columnspan=2, pady=5, padx=(20, 5), sticky="ew")
+    grado_entry.grid(row=9, column=1, columnspan=2, pady=5, padx=(20, 5), sticky="ew")
+
+    identificacionInterna_label = ttk.Label(ventana_calibrando, text="Identificacion Interna: ", anchor=tk.CENTER, background="white")
+    identificacionInterna_label.grid(row=10, column=0, pady=5, sticky=tk.EW)
+    identificacionInterna_entry = ttk.Entry(ventana_calibrando, width=42)
+    identificacionInterna_entry.grid(row=10, column=1, columnspan=2, pady=5, padx=(20, 5), sticky="ew")
 
     unidad_label = ttk.Label(ventana_calibrando, text="Unidad:", anchor=tk.CENTER, background="white")
-    unidad_label.grid(row=9, column=0, pady=5, sticky=tk.EW)
+    unidad_label.grid(row=11, column=0, pady=5, sticky=tk.EW)
     unidad_combobox = ttk.Combobox(ventana_calibrando, values=["mm", "pulg"], width=40)
-    unidad_combobox.grid(row=9, column=1, columnspan=2, pady=5, padx=(20, 5), sticky="ew")
+    unidad_combobox.grid(row=11, column=1, columnspan=2, pady=5, padx=(20, 5), sticky="ew")
 
     continuar_button = ttk.Button(ventana_calibrando, text="Ingresar calibrando", command=ingresarCalibrando)
-    continuar_button.grid(row=10, column=0, columnspan=1, pady=10)
+    continuar_button.grid(row=12, column=1, columnspan=1, pady=10)
 
     regresar_button = ttk.Button(ventana_calibrando, text="Regresar al menú de opciones",
                                  command=lambda: regresarVentanaPrincipal(root, ventana_calibrando))
-    regresar_button.grid(row=11, column=0, columnspan=1, pady=10)
+    regresar_button.grid(row=12, column=0, columnspan=1, pady=10)
     return
 
 
@@ -615,13 +625,15 @@ def verClientes():
 def ingresarCalibrando():
     cliente = cliente_combobox.get()
     objeto = objeto_entry.get()
+    cantidad = cantidad_entry.get()
     marca = marca_entry.get()
     numSerie = numSerie_entry.get()
     materialCalibrando = materialCalibrando_combobox.get()
     modelo = modelo_entry.get()
     grado = grado_entry.get()
+    identificacionInterna = identificacionInterna_entry.get()
     unidad = unidad_combobox.get()
-    IngresarCalibrando(cliente, objeto, marca, numSerie, materialCalibrando, modelo, grado, unidad)
+    IngresarCalibrando(cliente, objeto, cantidad, marca, numSerie, materialCalibrando, modelo, grado,identificacionInterna, unidad)
     return
 
 
