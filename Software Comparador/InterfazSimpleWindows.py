@@ -647,8 +647,8 @@ def checkRPiStatus(url):
 ################## Ventana inicial ##################
 
 root = tk.Tk()
-# themed_style = ThemedStyle(root)
-# themed_style.set_theme("adapta")  
+themed_style = ThemedStyle(root)
+themed_style.set_theme("adapta")  
 
 global winIcono
 winIcono = tk.PhotoImage(file = "./assets/logoLCM_r.png")
