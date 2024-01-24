@@ -820,106 +820,46 @@ def IngresarCalibrando(nombreCliente, objeto, cantidad, marca, numSerie, materia
     hojaNuevoCalibrando["C8"] = grado
     hojaNuevoCalibrando["C9"] = identificacionInterna
 
-    hojaNuevoCalibrando["B10"] = "Longitud nominal (" + unidad + ")" #Agregar valor nominal e identificación de los bloques del juego
-
-
-    ### Ingresar Valores de Bloques
-    
-    global infoBloques, numFila
-    
-    numFila = 14 #Se inicia el contador para filas en 14 porque ahí empieza la lista de bloques ARREGLAR PARA QUE SEA EXTENSIBLE
-    infoBloques = []
-
-
-    def ingresar_bloque():
-        valorBloqueIngresar = longitudNominal_entry.get()
-        idBloqueIngresar = idBloque_entry.get()
-
-        #Se agrega la información del bloque a la hoja
-        hojaNuevoCalibrando["A"+str(numFila)] = numFila - 13
-        hojaNuevoCalibrando["B"+str(numFila)] = valorBloqueIngresar
-        hojaNuevoCalibrando["C"+str(numFila)] = idBloqueIngresar
-
-        infoBloques.append([valorBloqueIngresar, idBloqueIngresar])
-        print(infoBloques)
-        numFila += 1
-        return
-    
-    def finalizar_agregar():
-        workbookCliente.save(archivoCliente)
-        mostrarMensaje("Se han ingresado exitosamente los datos del nuevo calibrando.")
-        top.destroy()
-        return
-
-
-#GUI
-    top = tk.Toplevel()
-    top.title("Información Bloque Individual")
-    top.configure(bg="white")
-
-    subtitle_label = ttk.Label(top, text="Información Bloques", font=("Helvetica", 14), background="white")
-    subtitle_label.grid(row=0, column=0, columnspan=2, pady=10)
-
-    longitudNominal_label = ttk.Label(top, text="Longitud Nominal")
-    longitudNominal_label.grid(row=10, column=0, columnspan=1, pady=10)
-
-    longitudNominal_entry = ttk.Entry(top, width=30)
-    longitudNominal_entry.grid(row=10, column=10, columnspan=1, pady=10)        
-    
-    idBloque_label = ttk.Label(top, text="ID del Bloque")
-    idBloque_label.grid(row=20, column=0, columnspan=1, pady=10)
-
-    idBloque_entry = ttk.Entry(top, width=30)
-    idBloque_entry.grid(row=20, column=10, columnspan=1, pady=10)     
-
-    ingresarBloque_button = ttk.Button(top, text="Ingresar Bloque", command=ingresar_bloque)
-    ingresarBloque_button.grid(row=30, column=1, columnspan=1, pady=10)
-
-    scrollbar = Scrollbar(top)
-    scrollbar.grid(row=40, column=20, pady=10)
-
-    listaBloques = Listbox(top, yscrollcommand = scrollbar.set )
-    
-    if len(infoBloques)>=1:
-        for j,bloque in enumerate(infoBloques):
-            listaBloques.insert(END, f"{j+1}. {bloque[0]} {unidad} ID:{bloque[1]}")
-    
-    listaBloques.grid(row=40, column=20, pady=10)
-
-    finalizar_button = ttk.Button(top, text="Finalizar Adiciones", command=finalizar_agregar)
-    finalizar_button.grid(row=50, column=1, columnspan=1, pady=10)
-
-
-
-
-
-    # agregarNuevoBloque = "sí"
-    # while agregarNuevoBloque == "sí":
-    #     valorBloqueIngresar = ventanaEntrada("Valor nominal del bloque a ingresar: ")
-    #     idBloqueIngresar = ventanaEntrada("Identificación del bloque a ingresar: ")
-    #     #Se agrega la información del bloque a la hoja
-    #     hojaNuevoCalibrando["A"+str(numFila)] = numFila - 13
-    #     hojaNuevoCalibrando["B"+str(numFila)] = valorBloqueIngresar
-    #     hojaNuevoCalibrando["C"+str(numFila)] = idBloqueIngresar
-
-    #     #Definir el estilo de los bordes de las celdas
-    #     borde_sencillo = Side(border_style = "thin")
-    #     borde_cuadrado = Border(top = borde_sencillo,
-    #                             right = borde_sencillo,
-    #                             bottom = borde_sencillo,
-    #                             left = borde_sencillo)
-        
-    #     #Se le da estilo a la nuevas celdas
-    #     hojaNuevoCalibrando["A"+str(numFila)].border = borde_cuadrado
-    #     hojaNuevoCalibrando["B"+str(numFila)].border = borde_cuadrado
-    #     hojaNuevoCalibrando["C"+str(numFila)].border = borde_cuadrado
-
-    #     numFila += 1
-    #     agregarNuevoBloque = ventanaOpciones("¿Desea agregar otro bloque?:", ["sí", "no"])
-    
-    
+    hojaNuevoCalibrando["B12"] = "Longitud nominal (" + unidad + ")" #Agregar valor nominal e identificación de los bloques del juego
+    workbookCliente.save(archivoCliente)
+    mostrarMensaje("Se han ingresado exitosamente los datos del nuevo calibrando.\nPor favor ingresar los datos de los bloques correspondientes.")
     return
-    
+
+def ingresarBloque(top, cliente, numSerie, unidad, longitudNominal_entry, idBloque_entry):
+    valorBloqueIngresar = longitudNominal_entry.get()
+    idBloqueIngresar = idBloque_entry.get()
+
+    #Se agrega la información del bloque a la hoja
+    archivoCliente = BusquedaClientes(cliente)[2] #Busqueda del archivo del cliente
+    workbookCliente = load_workbook(filename=archivoCliente, keep_vba=True)  #Apertura del archivo de excel del cliente
+    hojaCalibrando = workbookCliente[numSerie]
+
+    numFila, i = 14,14 #Se inicializa el contador para filas en 14
+    for fila in hojaCalibrando.iter_rows(min_row=14, max_row=500, min_col=1, max_col=1):
+        for celda in fila:
+            if celda.value == None: #Ve si existe algún dato
+                numFila = i
+            else:
+                i += 1    
+
+    hojaCalibrando["A"+str(numFila)] = numFila - 13
+    hojaCalibrando["B"+str(numFila)] = valorBloqueIngresar
+    hojaCalibrando["C"+str(numFila)] = idBloqueIngresar
+
+    workbookCliente.save(archivoCliente)
+
+    ultimoBloqueDatos_label = ttk.Label(top, text=f"{numFila - 13}. {valorBloqueIngresar} {unidad} - ID:{idBloqueIngresar}", background="white")
+    ultimoBloqueDatos_label.grid(row=40, column=10, columnspan=1, pady=10)
+
+    return
+
+def finalizar_agregar(workbookCliente,archivoCliente):
+    workbookCliente.save(archivoCliente)
+    mostrarMensaje("Se han ingresado exitosamente los datos del nuevo calibrando.")
+    top.destroy()
+    return
+
+
 ################## Ocultar advertencias en terminal ##################
 
 def fxn():

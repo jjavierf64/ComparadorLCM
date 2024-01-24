@@ -350,6 +350,7 @@ def ingresar_calibrando():
     root.withdraw()
 
     # Crear una nueva ventana
+    global ventana_calibrando
     ventana_calibrando = tk.Toplevel(root)
     ventana_calibrando.title("Ingresar Cliente")
     ventana_calibrando.configure(bg="white")
@@ -448,6 +449,63 @@ def ingresar_calibrando():
                                  command=lambda: regresarVentanaPrincipal(root, ventana_calibrando))
     regresar_button.grid(row=12, column=0, columnspan=1, pady=10)
     return
+
+
+def ingresar_bloque_calibrando(ventana, cliente, numSerie, identificacionInterna, unidad):
+
+    ventana.withdraw()
+    
+    top = tk.Toplevel()
+    top.title("Información Bloque Individual")
+    top.configure(bg="white")
+    top.protocol("WM_DELETE_WINDOW", lambda: regresarVentanaPrincipal(root, top)) #Cuando se cierre la ventana secundaria, vuelva al menú de opciones
+    top.iconphoto(False, winIcono)
+
+    subtitle_label = ttk.Label(top, text="Información Bloques", font=("Helvetica", 14), background="white")
+    subtitle_label.grid(row=0, column=0, columnspan=2, pady=10)
+
+
+    cliente_label = ttk.Label(top, text="Nombre del cliente:", background="white")
+    cliente_label.grid(row=4, column=0, pady=5)
+    cliente_label = ttk.Label(top, text=cliente)
+    cliente_label.grid(row=4, column=10, pady=5)
+
+    idCalibrando_label = ttk.Label(top, text="ID Interno:", background="white")
+    idCalibrando_label.grid(row=6, column=0, pady=5)
+    idCalibrando_label = ttk.Label(top, text=identificacionInterna)
+    idCalibrando_label.grid(row=6, column=10, pady=5)
+
+    serieCalibrando_label = ttk.Label(top, text="Serie del calibrando:", background="white")
+    serieCalibrando_label.grid(row=7, column=0, pady=5)
+    serieCalibrando_label = ttk.Label(top, text=numSerie)
+    serieCalibrando_label.grid(row=7, column=10, pady=5)
+
+    subtituloEntrada_label = ttk.Label(top, text="Entrada de Bloque", font=("Helvetica", 12), background="white")
+    subtituloEntrada_label.grid(row=9, column=0, columnspan=1, pady=10)
+
+    longitudNominal_label = ttk.Label(top, text="Longitud Nominal", background="white")
+    longitudNominal_label.grid(row=10, column=0, columnspan=1, pady=10)
+
+    longitudNominal_entry = ttk.Entry(top, width=30)
+    longitudNominal_entry.grid(row=10, column=10, columnspan=1, pady=10)        
+    
+    idBloque_label = ttk.Label(top, text="ID del Bloque", background="white")
+    idBloque_label.grid(row=20, column=0, columnspan=1, pady=10)
+
+    idBloque_entry = ttk.Entry(top, width=30)
+    idBloque_entry.grid(row=20, column=10, columnspan=1, pady=10)     
+
+    ingresarBloque_button = ttk.Button(top, text="Ingresar Bloque", command=lambda: ingresarBloque(top, cliente, numSerie, unidad, longitudNominal_entry, idBloque_entry))
+    ingresarBloque_button.grid(row=30, column=10, columnspan=1, pady=10)
+
+    ultimoBloque_label = ttk.Label(top, text="Último Bloque Agregado:", background="white")
+    ultimoBloque_label.grid(row=40, column=0, columnspan=1, pady=10) 
+
+    finalizar_button = ttk.Button(top, text="Finalizar Adiciones", command=lambda: regresarVentanaPrincipal(root, top))
+    finalizar_button.grid(row=50, column=10, columnspan=1, pady=10)
+
+    return
+
 
 
 def mover_motores():
@@ -633,8 +691,12 @@ def ingresarCalibrando():
     grado = grado_entry.get()
     identificacionInterna = identificacionInterna_entry.get()
     unidad = unidad_combobox.get()
-    IngresarCalibrando(cliente, objeto, cantidad, marca, numSerie, materialCalibrando, modelo, grado,identificacionInterna, unidad)
+    IngresarCalibrando(cliente, objeto, cantidad, marca, numSerie, materialCalibrando, modelo, grado, identificacionInterna, unidad)
+    
+    ingresar_bloque_calibrando(ventana_calibrando, cliente, numSerie, identificacionInterna, unidad)
+
     return
+
 
 
 def regresarVentanaPrincipal(root, ventana):
@@ -653,7 +715,7 @@ def checkRPiStatus(url):
         status_label["foreground"] = "green"
     except:
         status_label["text"] = "Estado del Servidor: error"
-        status_label["foreground"] = "red"
+        status_label["fo20reground"] = "red"
     return
 
 ################## Ventana inicial ##################
