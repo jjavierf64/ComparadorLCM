@@ -801,6 +801,7 @@ def IngresarCalibrando(nombreCliente, objeto, cantidad, marca, numSerie, materia
 
     if existeCalibrando:
         mostrarMensaje("Ya existe un calibrando registrado con el númerio de serie " + numSerie + ".")
+        isOK = 0
         return
 
     #Crear una hoja para el nuevo calibrando
@@ -825,7 +826,10 @@ def IngresarCalibrando(nombreCliente, objeto, cantidad, marca, numSerie, materia
     mostrarMensaje("Se han ingresado exitosamente los datos del nuevo calibrando.\nPor favor ingresar los datos de los bloques correspondientes.")
     return
 
-def ingresarBloque(top, cliente, numSerie, unidad, longitudNominal_entry, idBloque_entry):
+
+
+
+def ingresarBloque(top, cliente, numSerie, unidad, longitudNominal_entry, idBloque_entry, ultimoBloqueDatos_label):
     valorBloqueIngresar = longitudNominal_entry.get()
     idBloqueIngresar = idBloque_entry.get()
 
@@ -848,8 +852,9 @@ def ingresarBloque(top, cliente, numSerie, unidad, longitudNominal_entry, idBloq
 
     workbookCliente.save(archivoCliente)
 
-    ultimoBloqueDatos_label = ttk.Label(top, text=f"{numFila - 13}. {valorBloqueIngresar} {unidad} - ID:{idBloqueIngresar}", background="white")
-    ultimoBloqueDatos_label.grid(row=40, column=10, columnspan=1, pady=10)
+    ultimoBloqueDatos_label.config(text=f"{numFila - 13}) {valorBloqueIngresar} {unidad} - ID:{idBloqueIngresar}", background="white")
+    # ultimoBloqueDatos_label = ttk.Label(top, text=f"{numFila - 13}) {valorBloqueIngresar} {unidad} - ID:{idBloqueIngresar}", background="white")
+    # ultimoBloqueDatos_label.grid(row=40, column=10, columnspan=1, pady=10)
 
     return
 

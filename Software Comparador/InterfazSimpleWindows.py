@@ -452,7 +452,7 @@ def ingresar_calibrando():
 
 
 def ingresar_bloque_calibrando(ventana, cliente, numSerie, identificacionInterna, unidad):
-
+    global ultimoBloqueDatos_label
     ventana.withdraw()
     
     top = tk.Toplevel()
@@ -467,17 +467,17 @@ def ingresar_bloque_calibrando(ventana, cliente, numSerie, identificacionInterna
 
     cliente_label = ttk.Label(top, text="Nombre del cliente:", background="white")
     cliente_label.grid(row=4, column=0, pady=5)
-    cliente_label = ttk.Label(top, text=cliente)
+    cliente_label = ttk.Label(top, text=cliente, background="white")
     cliente_label.grid(row=4, column=10, pady=5)
 
     idCalibrando_label = ttk.Label(top, text="ID Interno:", background="white")
     idCalibrando_label.grid(row=6, column=0, pady=5)
-    idCalibrando_label = ttk.Label(top, text=identificacionInterna)
+    idCalibrando_label = ttk.Label(top, text=identificacionInterna, background="white")
     idCalibrando_label.grid(row=6, column=10, pady=5)
 
     serieCalibrando_label = ttk.Label(top, text="Serie del calibrando:", background="white")
     serieCalibrando_label.grid(row=7, column=0, pady=5)
-    serieCalibrando_label = ttk.Label(top, text=numSerie)
+    serieCalibrando_label = ttk.Label(top, text=numSerie, background="white")
     serieCalibrando_label.grid(row=7, column=10, pady=5)
 
     subtituloEntrada_label = ttk.Label(top, text="Entrada de Bloque", font=("Helvetica", 12), background="white")
@@ -493,13 +493,15 @@ def ingresar_bloque_calibrando(ventana, cliente, numSerie, identificacionInterna
     idBloque_label.grid(row=20, column=0, columnspan=1, pady=10)
 
     idBloque_entry = ttk.Entry(top, width=30)
-    idBloque_entry.grid(row=20, column=10, columnspan=1, pady=10)     
-
-    ingresarBloque_button = ttk.Button(top, text="Ingresar Bloque", command=lambda: ingresarBloque(top, cliente, numSerie, unidad, longitudNominal_entry, idBloque_entry))
-    ingresarBloque_button.grid(row=30, column=10, columnspan=1, pady=10)
+    idBloque_entry.grid(row=20, column=10, columnspan=1, pady=10) 
 
     ultimoBloque_label = ttk.Label(top, text="Último Bloque Agregado:", background="white")
     ultimoBloque_label.grid(row=40, column=0, columnspan=1, pady=10) 
+    ultimoBloqueDatos_label = ttk.Label(top, text="", background="white")
+    ultimoBloqueDatos_label.grid(row=40, column=10, columnspan=1, pady=10)
+
+    ingresarBloque_button = ttk.Button(top, text="Ingresar Bloque", command=lambda: ingresarBloque(top, cliente, numSerie, unidad, longitudNominal_entry, idBloque_entry, ultimoBloqueDatos_label))
+    ingresarBloque_button.grid(row=30, column=10, columnspan=1, pady=10)
 
     finalizar_button = ttk.Button(top, text="Finalizar Adiciones", command=lambda: regresarVentanaPrincipal(root, top))
     finalizar_button.grid(row=50, column=10, columnspan=1, pady=10)
@@ -681,6 +683,9 @@ def verClientes():
 
 
 def ingresarCalibrando():
+    global isOK
+    isOK = 1
+
     cliente = cliente_combobox.get()
     objeto = objeto_entry.get()
     cantidad = cantidad_entry.get()
@@ -693,7 +698,8 @@ def ingresarCalibrando():
     unidad = unidad_combobox.get()
     IngresarCalibrando(cliente, objeto, cantidad, marca, numSerie, materialCalibrando, modelo, grado, identificacionInterna, unidad)
     
-    ingresar_bloque_calibrando(ventana_calibrando, cliente, numSerie, identificacionInterna, unidad)
+    if isOK:
+        ingresar_bloque_calibrando(ventana_calibrando, cliente, numSerie, identificacionInterna, unidad)
 
     return
 
