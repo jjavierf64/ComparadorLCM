@@ -360,7 +360,9 @@ def EncabezadosCentroYPlanitud(numRepeticiones, hojaResultadosCalibracion):
 
 
 ################## Cálculos del promedio y la desviación estándar ###################
-
+###########
+# OLD BOY #
+###########
 def CalculosDesviacionCentral(hojaResultadosCalibracion, numNuevasColumnas, numRepeticiones):
 
     #Calcular el promedio de la diferencia entre el patrón y el calibrando con fórmulas en Excel
@@ -501,6 +503,15 @@ def CalculosDesviacionYPlanitud(hojaResultadosCalibracion, numNuevasColumnas, nu
 
     return
     
+################## Calibración de Bloque ##################
+
+def procesoCalibracion():
+
+    return 
+
+
+
+
 
 
 ################## Selector fila para la hoja de resultados ##################
@@ -508,6 +519,7 @@ def CalculosDesviacionYPlanitud(hojaResultadosCalibracion, numNuevasColumnas, nu
 def selectorFilaResultados(hojaResultadosCalibracion):
     i = 2 # Se inicializa el contador en 2 porque la fila 1 tiene los encabezados 
     for filaValorNominal in hojaResultadosCalibracion.iter_rows(min_row=2,
+                                                                max_row=500,
                                                                 min_col=1,
                                                                 max_col=1):
         for celdaValorNominal in filaValorNominal:
@@ -530,7 +542,9 @@ def EliminarArchivo(rutaArchivoEliminar):
 
 
 ################## Creación de un archivo csv para Datos ##################
-
+###########
+# OLD BOY #
+###########
 def CrearArchivoCSV(seleccionSecuencia, numCertificado):
 	# Se crea un archivo csv, nombrado con una marca temporal:
 	archivoDatos = "./Calibraciones en curso/" + numCertificado + ".csv" # Nombre del archivo para el almacenaje de datos
@@ -545,14 +559,16 @@ def CrearArchivoCSV(seleccionSecuencia, numCertificado):
 	return archivoDatos,archivoDatosAmbientales
     
 ################## Proceso de calibración de bloques ##################
-
-def ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, numRepeticiones, hojaResultadosCalibracion, hojaConversionDatos, nombreArchivoCalibracion, libroExcel,numCertificado,archivoDatos, archivoDatosAmbientales):
+###########
+# OLD BOY #
+###########
+def ProcesoCalibracionOLD(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, numRepeticiones, hojaResultadosCalibracion, hojaConversionDatos, nombreArchivoCalibracion, libroExcel,numCertificado,archivoDatos, archivoDatosAmbientales):
     
 	#Si se va calibrar los bloques solo con desviación central se hace lo siguiente:
     if seleccionSecuencia == "Desviación central":
         continuarCalibracion = "sí"
         while continuarCalibracion == "sí":
-            valorBloque = Decimal(float(ventanaEntrada("Indique el valor del bloque a Calibrar: "))) ## Debería agregarse un caso de error
+            valorBloque = Decimal(float(ventanaEntrada("Indique el valor del bloque a Calibrar: "))) ## CAMBIAR POR SELECTOR
             numFila = selectorFilaResultados(hojaResultadosCalibracion) # Se halla la fila a trabajar
             hojaResultadosCalibracion["A"+str(numFila)] = valorBloque # Se asigna el valor nominal del bloque ingresado por el usuario
             sleep(int(tiempoinicial)*60)					#Tiempo de estabilización inicial
@@ -684,7 +700,11 @@ def ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, 
             mostrarMensaje("Calibración finalizada. Puede revisar el archivo correspondiente en la carpeta \"Calibraciones Finalizadas\".")   
     return
     
-################## Nueva Calibración ##################
+################## Nueva Calibración ##################   
+
+###########
+# OLD BOY #
+###########
 
 def NuevaCalibracion(nombreCliente, numCertificado, numeroSolicitud, identificacionCalibrando, 
                                     responsableCalibracion, responsableRevision, patron, materialPatron, seleccionSecuencia, tiempoinicial, tiempoestabilizacion, numRepeticiones):
@@ -712,36 +732,24 @@ def NuevaCalibracion(nombreCliente, numCertificado, numeroSolicitud, identificac
     
     return
 
+
 ################## Reanudar Calibración ##################
 
-def ReanudarCalibracion(numCertificado, tiempoinicial, tiempoestabilizacion):
+def obtenerInfoCalibracion(numCertificado):
     
-    nombreArchivoEnCurso = numCertificado + ".xlsx" 
-    rutaEnCurso = "./Calibraciones en curso/" + nombreArchivoEnCurso
-	
-    archivoDatos = "./Calibraciones en curso/" + numCertificado + ".csv" # Nombre del archivo para el almacenaje de datos
-    archivoDatosAmbientales = "./Calibraciones en curso/" + numCertificado + "-Ambientales.csv" 
+    nombreArchivoEnCurso = numCertificado + "_Info.xlsx" 
     
-    if os.path.exists(rutaEnCurso): #Si el archivo de la calibración en curso existe:
-        workbookCalibracionEnCurso = load_workbook(filename = rutaEnCurso, keep_vba = True, data_only = True) #Apertura del archivo de excel de la calibración en curso
-        hojaResultadosCalibracion = workbookCalibracionEnCurso["Introduccion de datos de Calib."] #Se abre la hoja de Excel donde se están registrando los datos de la calibración
-    
-        #Identificar con qué secuencia se está trabajando antes de continuar con la calibración
-        if hojaResultadosCalibracion["S1"].value == "Patrón #1":
-            seleccionSecuencia = "Desviación central"
-        else: 
-            seleccionSecuencia = "Desviación central y planitud"
-        
-        #Identificar el número de repeticiones con el que se está trabajando
-        numRepeticiones = hojaResultadosCalibracion["H2"].value
-    
-        #Se continúa con el proceso de calibración
-        ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, numRepeticiones, hojaResultadosCalibracion, nombreArchivoEnCurso, workbookCalibracionEnCurso, numCertificado,archivoDatos, archivoDatosAmbientales)
+    info = [numCertificado + "_Datos.xlsx"] #Resultados de la información, siguen la forma (archivoCalibracion_datos, cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps)
 
-    else: #Si el archivo indicado no existe
-        mostrarMensaje("No hay una calibración en curso guardada con el número de certificado " + numCertificado +".")
+    workbookInfo = load_workbook(filename=archivoCliente, keep_vba=True)  #Apertura del archivo de excel de la calibración
+    hojaInfo = workbookInfo.active()
 
-    return
+    for fila in hojaInfo.iter_rows(min_row=2, max_row=13, min_col=2, max_col=2):
+        for celda in fila:
+                info.append(celda.value)
+    workbookInfo.close()
+
+    return info
 
 
 

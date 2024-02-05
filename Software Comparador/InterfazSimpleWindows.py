@@ -98,7 +98,7 @@ def nueva_calibracion():
     cliente_label = ttk.Label(ventana_nuevaCalibracion, text="Nombre del cliente:", anchor=tk.CENTER,
                               background="white")
     cliente_label.grid(row=2, column=0, pady=5, sticky=tk.EW)
-    cliente_combobox = ttk.Combobox(ventana_nuevaCalibracion, values=clientesRegistrados, width=40)
+    cliente_combobox = ttk.Combobox(ventana_nuevaCalibracion, values=clientesRegistrados, width=40 ,state= "readonly")
     cliente_combobox.grid(row=2, column=1, columnspan=2, pady=5, padx=(20, 5), sticky="ew")
 
     certificado_label = ttk.Label(ventana_nuevaCalibracion, text="Número de certificado:", background="white")
@@ -130,7 +130,7 @@ def nueva_calibracion():
     patron_label.grid(row=8, column=0, pady=5, sticky=tk.EW)
     patron_combobox = ttk.Combobox(ventana_nuevaCalibracion, values=["Bloques Patrón de Cerámica de 0,05\" a 4\"",
                                                                      "Bloques Patrón de Cerámica de 0,5 mm a 100 mm"],
-                                   width=40)
+                                   width=40 ,state= "readonly")
     patron_combobox.grid(row=8, column=1, columnspan=2, pady=5, padx=(20, 5), sticky="ew")
 
     material_label = ttk.Label(ventana_nuevaCalibracion, text="Material de los bloques patrón: ", anchor=tk.CENTER,
@@ -138,14 +138,14 @@ def nueva_calibracion():
     material_label.grid(row=9, column=0, pady=5, sticky=tk.EW)
     material_combobox = ttk.Combobox(ventana_nuevaCalibracion,
                                      values=["Patrón en acero", "Patrón en Tungsteno", "Patrón en cerámica",
-                                             "Patrón en cromo"], width=40)
+                                             "Patrón en cromo"], width=40 ,state= "readonly")
     material_combobox.grid(row=9, column=1, columnspan=2, pady=5, padx=(20, 5), sticky="ew")
 
     secuencia_label = ttk.Label(ventana_nuevaCalibracion, text="Secuencia de calibración:", anchor=tk.CENTER,
                                 background="white")
     secuencia_label.grid(row=10, column=0, pady=5, sticky=tk.EW)
     secuencia_combobox = ttk.Combobox(ventana_nuevaCalibracion,
-                                      values=["Desviación central", "Desviación central y planitud", "Prueba"], width=40)
+                                      values=["Desviación central", "Desviación central y planitud", "Prueba"], width=40 ,state= "readonly")
     secuencia_combobox.grid(row=10, column=1, columnspan=2, pady=5, padx=(20, 5), sticky="ew")
 
     tInicial_label = ttk.Label(ventana_nuevaCalibracion, text="Tiempo inicial (en minutos):", background="white")
@@ -211,27 +211,17 @@ def reanudar_calibracion():
     for archivo in os.listdir("./Calibraciones en curso/"):
         if os.path.isfile(os.path.join("./Calibraciones en curso/", archivo)):
             nombreArchivo, extension = os.path.splitext(archivo)
-            calibracionesEnCurso.append(nombreArchivo)
+            if nombreArchivo[-5:]=="_Info":
+                calibracionesEnCurso.append(nombreArchivo[:-5])
 
     # Espacios para ingresar las variables requeridas para reanudar calibración
     certificado_label = ttk.Label(ventana_reanudar, text="Seleccione la calibración a reanudar:", anchor=tk.CENTER,
                                   background="white")
     certificado_label.grid(row=2, column=0, pady=5, sticky=tk.EW)
-    certificado_combobox = ttk.Combobox(ventana_reanudar, values=calibracionesEnCurso, width=40)
+    certificado_combobox = ttk.Combobox(ventana_reanudar, values=calibracionesEnCurso, width=40 ,state= "readonly")
     certificado_combobox.grid(row=2, column=1, columnspan=2, pady=5, padx=(20, 5), sticky="ew")
 
-    tInicial_label = ttk.Label(ventana_reanudar, text="Tiempo inicial (en minutos):", background="white")
-    tInicial_label.grid(row=3, column=0, pady=5)
-    tInicial_entry = ttk.Entry(ventana_reanudar, width=42)
-    tInicial_entry.grid(row=3, column=1, columnspan=2, pady=5, padx=(20, 5))
-
-    tEstabilizacion_label = ttk.Label(ventana_reanudar, text="Tiempo de estabilización (en segundos):",
-                                      background="white")
-    tEstabilizacion_label.grid(row=4, column=0, pady=5)
-    tEstabilizacion_entry = ttk.Entry(ventana_reanudar, width=42)
-    tEstabilizacion_entry.grid(row=4, column=1, columnspan=2, pady=5, padx=(20, 5))
-
-    continuar_button = ttk.Button(ventana_reanudar, text="Reanudar calibración", command=reanudarCalibracion)
+    continuar_button = ttk.Button(ventana_reanudar, text="Reanudar calibración", command=lambda: reanudarCalibracion(ventana_reanudar))
     continuar_button.grid(row=5, column=0, columnspan=1, pady=10)
 
     regresar_button = ttk.Button(ventana_reanudar, text="Regresar al menú de opciones",
@@ -241,9 +231,10 @@ def reanudar_calibracion():
 
 
 
-def calibracion_abierta(archivoCalibracion_datos, cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps):
+def calibracion_abierta(ventanaPrevia, archivoCalibracion_datos, cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps):
     # Ocultar la ventana del menú de opciones una vez que se selecciona una opción
     root.withdraw()
+    ventanaPrevia.destroy()
 
     # Crear una nueva ventana
     ventana_CalibracionAbierta = tk.Toplevel(root)
@@ -259,7 +250,7 @@ def calibracion_abierta(archivoCalibracion_datos, cliente, certificado, solicitu
 
     subtitle_label = ttk.Label(ventana_CalibracionAbierta, text="Proceso de Calibración", font=("Helvetica", 14),
                                background="white")
-    subtitle_label.grid(row=1, column=0, columnspan=2, pady=10)
+    subtitle_label.grid(row=10, column=0, columnspan=2, pady=10)
 
     image = Image.open("./assets/logoLCM.png")
     image = image.resize((int(image.width * 0.25), int(image.height * 0.25)))  # Ajustar el tamaño del logo
@@ -267,19 +258,71 @@ def calibracion_abierta(archivoCalibracion_datos, cliente, certificado, solicitu
 
     image_label = ttk.Label(ventana_CalibracionAbierta, image=image, background="white")
     image_label.image = image
-    image_label.grid(row=0, column=2, rowspan=1, padx=10, pady=10)
+    image_label.grid(row=0, column=100, rowspan=1, padx=10, pady=10)
 
     info_label = ttk.Label(ventana_CalibracionAbierta, 
-        text= f"Información de la Calibración Actual:\n  · Nombre del Cliente: {cliente}\n  · Número de Certificado: {certificado}\n  · Identificación del Calibrando: {idCalibrando}\n  · Secuencia de Calibración: {secuencia}\n  · Patrón: {patron}\n"
+        text= f"Información de la Calibración Actual:\n  · Nombre del Cliente: {cliente}\n  · Número de Certificado: {certificado}\n  · Identificación del Calibrando: {idCalibrando}\n  · Secuencia de Calibración: {secuencia}\n  · Patrón: {patron}\n", background="white"
     )
-    info_label.grid(row=2, column=0, pady=20, padx=20)
+    info_label.grid(row=20, column=0, pady=20, padx=20)
 
+
+
+
+# Parte para seleccionar el bloque
+
+    seleccionarBloqueLabel = ttk.Label(ventana_CalibracionAbierta, text="Seleccione el bloque a calibrar (ID, Valor Nominal):", background="white")
+    seleccionarBloqueLabel.grid(row=30, column=0, pady=10)
+
+    bloquesCalibrando = [] #Lista para el registro de IDs y tamaños
+    archivoCliente = BusquedaClientes(cliente)[2] #Busqueda del archivo del cliente
+    workbookCliente = load_workbook(filename=archivoCliente, keep_vba=True)  #Apertura del archivo de excel del cliente
+    hojaCalibrando = workbookCliente[idCalibrando]
+
+    for i,fila in enumerate(hojaCalibrando.iter_rows(min_row=14, max_row=500, min_col=3, max_col=3), start=14):
+        for celda in fila:
+            if celda.value != None: #Ve si existe algún dato y adjunta
+                bloquesCalibrando.append((celda.value, hojaCalibrando["B"+str(i)]))
+    workbookCliente.close()
+
+    bloqueIdValor_combobox = ttk.Combobox(ventana_CalibracionAbierta,
+    values=bloquesCalibrando, width=40,state= "readonly") # Se debe hacer split a la variable
+    bloqueIdValor_combobox.grid(row=30, column=10, pady=10)
+    
+
+    #-- Con valores predefinidos
+    tInicial_tk = tk.StringVar(value=tInicial) 
+    tEstabilizacion_tk = tk.StringVar(value=tEstabilizacion)
+    numReps_tk = tk.StringVar(value=numReps)
+
+
+    tInicial_label = ttk.Label(ventana_CalibracionAbierta, text="Tiempo inicial (en minutos):", background="white")
+    tInicial_label.grid(row=11, column=0, pady=5)
+    tInicial_entry = ttk.Entry(ventana_CalibracionAbierta,textvariable=tInicial_tk, width=42)
+    tInicial_entry.grid(row=11, column=1, columnspan=2, pady=5, padx=(20, 5))
+
+    tEstabilizacion_label = ttk.Label(ventana_CalibracionAbierta, text="Tiempo de estabilización (en segundos):",
+                                      background="white")
+    tEstabilizacion_label.grid(row=12, column=0, pady=5)
+    tEstabilizacion_entry = ttk.Entry(ventana_CalibracionAbierta, textvariable=tEstabilizacion_tk, width=42)
+    tEstabilizacion_entry.grid(row=12, column=1, columnspan=2, pady=5, padx=(20, 5))
+
+    numReps_label = ttk.Label(ventana_CalibracionAbierta, text="Número de repeticiones:", background="white")
+    numReps_label.grid(row=13, column=0, pady=5)
+    numReps_entry = ttk.Entry(ventana_CalibracionAbierta,textvariable=numReps_tk, width=42)
+    numReps_entry.grid(row=13, column=1, columnspan=2, pady=5, padx=(20, 5))
+
+
+    #--
+
+
+    continuar_button = ttk.Button(ventana_CalibracionAbierta, text="Comenzar Calibración", command=lambda: calibrarBloque())
+    continuar_button.grid(row=40, column=0, columnspan=1, pady=10, padx=10)
 
 
 
     regresar_button = ttk.Button(ventana_CalibracionAbierta, text="Regresar al menú de opciones",
                                  command=lambda: regresarVentanaPrincipal(root, ventana_CalibracionAbierta))
-    regresar_button.grid(row=6, column=0, columnspan=1, pady=10)
+    regresar_button.grid(row=100, column=0, columnspan=1, pady=10)
     return
 
 
@@ -394,7 +437,7 @@ def ingresar_calibrando():
     # Espacios para ingresar las variables requeridas para una nueva calibración
     cliente_label = ttk.Label(ventana_calibrando, text="Nombre del cliente:", anchor=tk.CENTER, background="white")
     cliente_label.grid(row=2, column=0, pady=5, sticky=tk.EW)
-    cliente_combobox = ttk.Combobox(ventana_calibrando, values=clientesRegistrados, width=40)
+    cliente_combobox = ttk.Combobox(ventana_calibrando, values=clientesRegistrados, width=40 ,state= "readonly")
     cliente_combobox.grid(row=2, column=1, columnspan=2, pady=5, padx=(20, 5), sticky="ew")
 
     objeto_label = ttk.Label(ventana_calibrando, text="Objeto a calibrar:", background="white")
@@ -419,7 +462,7 @@ def ingresar_calibrando():
 
     materialCalibrando_label = ttk.Label(ventana_calibrando, text="Material:", anchor=tk.CENTER, background="white")
     materialCalibrando_label.grid(row=7, column=0, pady=5, sticky=tk.EW)
-    materialCalibrando_combobox = ttk.Combobox(ventana_calibrando, values=["Acero inoxidable", "Cerámica"], width=40)
+    materialCalibrando_combobox = ttk.Combobox(ventana_calibrando, values=["Acero inoxidable", "Cerámica"], width=40 ,state= "readonly")
     materialCalibrando_combobox.grid(row=7, column=1, columnspan=2, pady=5, padx=(20, 5), sticky="ew")
 
     modelo_label = ttk.Label(ventana_calibrando, text="Modelo:", anchor=tk.CENTER, background="white")
@@ -439,7 +482,7 @@ def ingresar_calibrando():
 
     unidad_label = ttk.Label(ventana_calibrando, text="Unidad:", anchor=tk.CENTER, background="white")
     unidad_label.grid(row=11, column=0, pady=5, sticky=tk.EW)
-    unidad_combobox = ttk.Combobox(ventana_calibrando, values=["mm", "pulg"], width=40)
+    unidad_combobox = ttk.Combobox(ventana_calibrando, values=["mm", "pulg"], width=40 ,state= "readonly")
     unidad_combobox.grid(row=11, column=1, columnspan=2, pady=5, padx=(20, 5), sticky="ew")
 
     continuar_button = ttk.Button(ventana_calibrando, text="Ingresar calibrando", command=ingresarCalibrando)
@@ -562,7 +605,7 @@ def mover_motores():
 
 ########## Funciones de la Interfaz
 
-def continuarNuevaCalibracion(): # Función para continuar con el proceso de una calibración, dados todos los datos.
+def continuarNuevaCalibracion(ventana): # Función para continuar con el proceso de una calibración, dados todos los datos.
     cliente = cliente_combobox.get()
     certificado = certificado_entry.get()
     solicitud = solicitud_entry.get()
@@ -592,7 +635,7 @@ def continuarNuevaCalibracion(): # Función para continuar con el proceso de una
 
 
 
-    calibracion_abierta(archivoCalibracion_datos, cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps)
+    calibracion_abierta(ventana, archivoCalibracion_datos, cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps)
 
 
     # # Ventana de espera
@@ -643,14 +686,24 @@ def continuarNuevaCalibracion(): # Función para continuar con el proceso de una
     return 
 
 
-def reanudarCalibracion():
+def reanudarCalibracion(ventana):
     certificado = certificado_combobox.get()
-    tInicial = tInicial_entry.get()
-    tEstabilizacion = tEstabilizacion_entry.get()
-    # moverManual()
-    # ReanudarCalibracion(certificado, tInicial, tEstabilizacion)
+    
+    archivoCalibracion_datos, cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps = obtenerInfoCalibracion(certificado)
+
+    calibracion_abierta(ventana, archivoCalibracion_datos, cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps)
     return
 
+
+def calibrarBloque():
+    bloqueIdValor = bloqueIdValor_combobox.get()
+    bloqueID, valorNominal = bloqueIdValor.split()
+    tInicial = tInicial_tk.get()
+    tEstabilizacion = tEstabilizacion_tk.get()
+    numReps = numReps_tk.get()
+
+
+    return
 
 def ingresarCliente():
     nuevoCliente = nuevoCliente_entry.get()
