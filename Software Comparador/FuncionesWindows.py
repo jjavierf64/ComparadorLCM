@@ -505,8 +505,46 @@ def CalculosDesviacionYPlanitud(hojaResultadosCalibracion, numNuevasColumnas, nu
     
 ################## Calibración de Bloque ##################
 
-def procesoCalibracion():
+def procesoCalibracion(archivoCalibracion_datos, bloqueID, valorNominal, tInicial, tEstabilizacion, numReps, secuencia):
+    
+    workbookCalibrando = load_workbook(archivoCalibracion_datos, keep_vba=True) #Apertura del archivo de excel de la calibración
+    hojaInfo = workbookInfo.active()
 
+    numFila = selectorFila(hojaInfo) # Elige la fila correspondiente
+
+    hojaInfo[f"A{numFila}"] = valorNominal
+    hojaInfo[f"B{numFila}"] = bloqueID
+    hojaInfo[f"C{numFila}"] = numReps
+
+    sleep(float(tInicial)*60)
+
+    condAmb=condicionesAmbientales(RPi_url, instrumento="fluke")
+    condAmb.append(condicionesAmbientales(RPi_url, instrumento="vaisala"))
+
+    listaMedicionesBloque = ejecutarSecuencia(RPi_url, secuencia, tEstabilizacion, numReps)[0]
+
+    condAmb.append(condicionesAmbientales(RPi_url, instrumento="fluke"))
+    condAmb.append(condicionesAmbientales(RPi_url, instrumento="vaisala"))
+
+# Guardado de datos ambientales
+    for i,columna in enumerate(hojaInfo.iter_cols(
+                                                    min_row=numFila,
+                                                    max_row=numFila,
+                                                    min_col=4,
+                                                    max_col=13)):
+        for cell in columna:
+            cell.value = condAmb[i]
+        
+# Guardado de datos de medición de bloques
+    for i,columna in enumerate(hojaInfo.iter_cols(
+                                                    min_row=numFila,
+                                                    max_row=numFila,
+                                                    min_col=14,
+                                                    max_col=len(listaMedicionesBloque))):
+        for cell in columna:
+            cell.value = listaMedicionesBloque[i]
+    
+    workbookCalibrando.save(archivoCalibracion_datos)
     return 
 
 
@@ -516,7 +554,7 @@ def procesoCalibracion():
 
 ################## Selector fila para la hoja de resultados ##################
 
-def selectorFilaResultados(hojaResultadosCalibracion):
+def selectorFila(hojaResultadosCalibracion):
     i = 2 # Se inicializa el contador en 2 porque la fila 1 tiene los encabezados 
     for filaValorNominal in hojaResultadosCalibracion.iter_rows(min_row=2,
                                                                 max_row=500,
@@ -569,7 +607,7 @@ def ProcesoCalibracionOLD(seleccionSecuencia, tiempoinicial, tiempoestabilizacio
         continuarCalibracion = "sí"
         while continuarCalibracion == "sí":
             valorBloque = Decimal(float(ventanaEntrada("Indique el valor del bloque a Calibrar: "))) ## CAMBIAR POR SELECTOR
-            numFila = selectorFilaResultados(hojaResultadosCalibracion) # Se halla la fila a trabajar
+            numFila = selectorFila(hojaResultadosCalibracion) # Se halla la fila a trabajar
             hojaResultadosCalibracion["A"+str(numFila)] = valorBloque # Se asigna el valor nominal del bloque ingresado por el usuario
             sleep(int(tiempoinicial)*60)					#Tiempo de estabilización inicial
 
@@ -736,12 +774,10 @@ def NuevaCalibracion(nombreCliente, numCertificado, numeroSolicitud, identificac
 ################## Reanudar Calibración ##################
 
 def obtenerInfoCalibracion(numCertificado):
-    
-    nombreArchivoEnCurso = numCertificado + "_Info.xlsx" 
-    
-    info = [numCertificado + "_Datos.xlsx"] #Resultados de la información, siguen la forma (archivoCalibracion_datos, cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps)
+     
+    info = [f"./Calibraciones en curso/{numCertificado}_Datos.xlsx"] #Resultados de la información, siguen la forma (archivoCalibracion_datos, cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps)
 
-    workbookInfo = load_workbook(filename=archivoCliente, keep_vba=True)  #Apertura del archivo de excel de la calibración
+    workbookInfo = load_workbook(filename=f"./Calibraciones en curso/{numCertificado}_Info.xlsx", keep_vba=True)  #Apertura del archivo de excel de la calibración
     hojaInfo = workbookInfo.active()
 
     for fila in hojaInfo.iter_rows(min_row=2, max_row=13, min_col=2, max_col=2):

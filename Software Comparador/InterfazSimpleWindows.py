@@ -39,10 +39,8 @@ grado_entry = None
 unidad_combobox = None
 
 # Dirección del servidor por defecto
+global RPi_url
 RPi_url = "http://192.168.196.100:5000/" # Zerotier
-# RPi_url = "http://0.0.0.0:5000/" # Provisional
-# RPi_url = "http://192.168.3.166:5000/" # Provisional
-
 
 
 
@@ -167,7 +165,7 @@ def nueva_calibracion():
     #motores_button = ttk.Button(ventana_nuevaCalibracion, text="Posicionar Motores", command=mover_motores)
     #motores_button.grid(row=14, column=0, columnspan=1, pady=10)
 
-    continuar_button = ttk.Button(ventana_nuevaCalibracion, text="Continuar", command=continuarNuevaCalibracion)
+    continuar_button = ttk.Button(ventana_nuevaCalibracion, text="Continuar", command=lambda: continuarNuevaCalibracion(ventana_nuevaCalibracion))
     continuar_button.grid(row=14, column=2, columnspan=1, pady=10)
 
     regresar_button = ttk.Button(ventana_nuevaCalibracion, text="Regresar al menú de opciones",
@@ -315,7 +313,7 @@ def calibracion_abierta(ventanaPrevia, archivoCalibracion_datos, cliente, certif
     #--
 
 
-    continuar_button = ttk.Button(ventana_CalibracionAbierta, text="Comenzar Calibración", command=lambda: calibrarBloque())
+    continuar_button = ttk.Button(ventana_CalibracionAbierta, text="Comenzar Calibración", command=lambda: calibrarBloque(archivoCalibracion_datos, secuencia))
     continuar_button.grid(row=40, column=0, columnspan=1, pady=10, padx=10)
 
 
@@ -695,13 +693,14 @@ def reanudarCalibracion(ventana):
     return
 
 
-def calibrarBloque():
+def calibrarBloque(archivoCalibracion_datos, secuencia ):
     bloqueIdValor = bloqueIdValor_combobox.get()
     bloqueID, valorNominal = bloqueIdValor.split()
     tInicial = tInicial_tk.get()
     tEstabilizacion = tEstabilizacion_tk.get()
     numReps = numReps_tk.get()
 
+    procesoCalibracion(archivoCalibracion_datos, secuencia, bloqueID, valorNominal, tInicial, tEstabilizacion, numReps)
 
     return
 
@@ -780,8 +779,8 @@ def checkRPiStatus(url):
 ################## Ventana inicial ##################
 
 root = tk.Tk()
-themed_style = ThemedStyle(root)
-themed_style.set_theme("adapta")  
+#themed_style = ThemedStyle(root)
+#themed_style.set_theme("adapta")  
 
 global winIcono
 winIcono = tk.PhotoImage(file = "./assets/logoLCM_r.png")
