@@ -661,7 +661,7 @@ def ProcesoCalibracionOLD(seleccionSecuencia, tiempoinicial, tiempoestabilizacio
 
 
             ########################
-            # PARTE NUEVA CSV
+            # PARTE NUEVA CSV VIEJA
             ########################
 
             # Condiciones Ambientales Iniciales
