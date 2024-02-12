@@ -528,13 +528,13 @@ def ingresar_bloque_calibrando(ventana, cliente, numSerie, identificacionInterna
     longitudNominal_label.grid(row=10, column=0, columnspan=1, pady=10)
 
     longitudNominal_entry = ttk.Entry(top, width=30)
-    longitudNominal_entry.grid(row=10, column=10, columnspan=1, pady=10)        
+    longitudNominal_entry.grid(row=10, column=10, columnspan=1, pady=10, padx=10)        
     
     idBloque_label = ttk.Label(top, text="ID del Bloque", background="white")
     idBloque_label.grid(row=20, column=0, columnspan=1, pady=10)
 
     idBloque_entry = ttk.Entry(top, width=30)
-    idBloque_entry.grid(row=20, column=10, columnspan=1, pady=10) 
+    idBloque_entry.grid(row=20, column=10, columnspan=1, pady=10, padx=10) 
 
     ultimoBloque_label = ttk.Label(top, text="Último Bloque Agregado:", background="white")
     ultimoBloque_label.grid(row=40, column=0, columnspan=1, pady=10) 

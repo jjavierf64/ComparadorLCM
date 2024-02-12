@@ -132,7 +132,7 @@ def BusquedaClientes(nombreClienteBuscado):
         nombreCliente: nombre del cliente para el cual se va a calibrar
     Salida: una lista con el nombre del cliente, su dirección y el archivo donde está almacenada su información
     """
-    woorkbookClientes = load_workbook(filename="Clientes/Clientes.xlsx", keep_vba=True) # Apertura del archivo de excel de clientes 
+    woorkbookClientes = load_workbook(filename="Clientes/Clientes.xlsx") # Apertura del archivo de excel de clientes 
     hojaClientes = woorkbookClientes.active # Hoja del archivo de excel donde están los clientes y su información
     
     i = 3 # Se inicializa un contador que va a recorrer los números de fila, empezando por la fila 3 porque las filas anteriores son encabezados
@@ -170,7 +170,7 @@ def CrearArchivoCalibracion(numCertificado):
 
 def RellenarInfoCalibracion(nombreArchivo, lista_info):
     # Rellena la información brindada por la interfaz en un archivo de información
-    workbookInfo = load_workbook(filename=nombreArchivo, keep_vba=True) #Abre el archivo
+    workbookInfo = load_workbook(filename=nombreArchivo) #Abre el archivo
     hojaInfo = workbookInfo.active #Abre la hoja activa del archivo
 
     i = 2 # el registro empieza en la fila 2
@@ -195,7 +195,7 @@ def AutocompletarInformacionCliente(nombreCliente, direccionCliente, numeroCerti
     hojaJuego = workbookSolicitantes[identificacionCalibrando] # Selección de la hoja que contiene la información del juego a calibrar
 
     # Carga del archivo de excel creado para la calibración:
-    workbookCalibracion = load_workbook(filename=CrearArchivoCalibracion(seleccionSecuencia, numeroCertificado), keep_vba=True)
+    workbookCalibracion = load_workbook(filename=CrearArchivoCalibracion(seleccionSecuencia, numeroCertificado))
     #Definir los nombres de las hojas del libro de excel en el que se está trabajando:
     hojaConversionDatos = workbookCalibracion["conversion datos"]
     hojaIdentificacionBloques = workbookCalibracion["Ident.Bloques a calibrar"]
@@ -507,7 +507,7 @@ def CalculosDesviacionYPlanitud(hojaResultadosCalibracion, numNuevasColumnas, nu
 
 def procesoCalibracion(archivoCalibracion_datos, bloqueID, valorNominal, tInicial, tEstabilizacion, numReps, secuencia):
     
-    workbookCalibrando = load_workbook(archivoCalibracion_datos, keep_vba=True) #Apertura del archivo de excel de la calibración
+    workbookCalibrando = load_workbook(archivoCalibracion_datos) #Apertura del archivo de excel de la calibración
     hojaInfo = workbookInfo.active()
 
     numFila = selectorFila(hojaInfo) # Elige la fila correspondiente
@@ -777,7 +777,7 @@ def obtenerInfoCalibracion(numCertificado):
      
     info = [f"./Calibraciones en curso/{numCertificado}_Datos.xlsx"] #Resultados de la información, siguen la forma (archivoCalibracion_datos, cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps)
 
-    workbookInfo = load_workbook(filename=f"./Calibraciones en curso/{numCertificado}_Info.xlsx", keep_vba=True)  #Apertura del archivo de excel de la calibración
+    workbookInfo = load_workbook(filename=f"./Calibraciones en curso/{numCertificado}_Info.xlsx")  #Apertura del archivo de excel de la calibración
     hojaInfo = workbookInfo.active()
 
     for fila in hojaInfo.iter_rows(min_row=2, max_row=13, min_col=2, max_col=2):
@@ -796,7 +796,7 @@ def AgregarCliente(nombreCliente, direccionCliente):
     Esta función permite agregar el nombre y la dirección de un nuevo cliente al archivo de Clientes.
     Además, crea el archivo del nuevo cliente donde se encuentra la información de sus juegos de bloques.
     """
-    workbookClientes = load_workbook(filename="Clientes/Clientes.xlsx", keep_vba=True) #Apertura del archivo de excel de clientes 
+    workbookClientes = load_workbook(filename="Clientes/Clientes.xlsx") #Apertura del archivo de excel de clientes 
     hojaClientes = workbookClientes.active #Hoja del archivo de excel donde están los clientes y su información
     
     i = 3 #Se inicializa el contador para filas en 3 porque en la fila 1 y 2 están los encabezados
@@ -834,7 +834,7 @@ def AgregarCliente(nombreCliente, direccionCliente):
 
 def IngresarCalibrando(nombreCliente, objeto, cantidad, marca, numSerie, material, modelo, grado, identificacionInterna, unidad):
     archivoCliente = BusquedaClientes(nombreCliente)[2] #Busqueda del archivo del cliente
-    workbookCliente = load_workbook(filename=archivoCliente, keep_vba=True)  #Apertura del archivo de excel del cliente
+    workbookCliente = load_workbook(filename=archivoCliente)  #Apertura del archivo de excel del cliente
 
     #Revisar si ya existe algún calibrando registrado con el mismo número de serie
     existeCalibrando = False
@@ -879,7 +879,7 @@ def ingresarBloque(top, cliente, numSerie, unidad, longitudNominal_entry, idBloq
 
     #Se agrega la información del bloque a la hoja
     archivoCliente = BusquedaClientes(cliente)[2] #Busqueda del archivo del cliente
-    workbookCliente = load_workbook(filename=archivoCliente, keep_vba=True)  #Apertura del archivo de excel del cliente
+    workbookCliente = load_workbook(filename=archivoCliente)  #Apertura del archivo de excel del cliente
     hojaCalibrando = workbookCliente[numSerie]
 
     numFila, i = 14,14 #Se inicializa el contador para filas en 14
