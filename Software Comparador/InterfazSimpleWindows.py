@@ -273,7 +273,7 @@ def calibracion_abierta(ventanaPrevia, archivoCalibracion_datos, cliente, certif
 
     bloquesCalibrando = [] #Lista para el registro de IDs y tamaños
     archivoCliente = BusquedaClientes(cliente)[2] #Busqueda del archivo del cliente
-    workbookCliente = load_workbook(filename=archivoCliente, keep_vba=True)  #Apertura del archivo de excel del cliente
+    workbookCliente = load_workbook(filename=archivoCliente)  #Apertura del archivo de excel del cliente
     hojaCalibrando = workbookCliente[idCalibrando]
 
     for i,fila in enumerate(hojaCalibrando.iter_rows(min_row=14, max_row=500, min_col=3, max_col=3), start=14):
