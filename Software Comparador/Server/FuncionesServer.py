@@ -178,7 +178,7 @@ def DatosFluke():
 
         if data != b"": #Comparación de datos recibidos, vacío hasta que se de la medición
             medicion=data.split()#Separar los 4 datos en una lista
-            
+            print(medicion)
             if int(medicion[0]) == 1 and MedicionTemp1==0:
                 MedicionTemp1=float(medicion[1]) #Guardando temperatura 2
                 detenerse += 1  #Condición para salir del while
