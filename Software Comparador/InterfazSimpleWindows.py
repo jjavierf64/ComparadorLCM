@@ -287,15 +287,6 @@ def calibracion_abierta(ventanaPrevia, archivoCalibracion_datos, cliente, certif
     bloqueIdValor_combobox.grid(row=30, column=10, pady=10)
     
 
-    #-- Con valores predefinidos
-    #tInicial_tk = tk.StringVar() 
-    #tInicial_tk.set(tInicial)
-    #tEstabilizacion_tk = tk.StringVar()
-    #tEstabilizacion_tk.set(tEstabilizacion)
-    #numReps_tk = tk.StringVar()
-    #numReps_tk.set(numReps)
-
-
     tInicial_label = ttk.Label(ventana_CalibracionAbierta, text="Tiempo inicial (en minutos):", background="white")
     tInicial_label.grid(row=11, column=0, pady=5)
     tInicial_entry = ttk.Entry(ventana_CalibracionAbierta, width=42)
@@ -702,9 +693,9 @@ def reanudarCalibracion(ventana):
 def calibrarBloque(archivoCalibracion_datos, secuencia, bloqueIdValor_combobox, tInicial_entry, tEstabilizacion_entry, numReps_entry ):
     bloqueIdValor = bloqueIdValor_combobox.get()
     bloqueID, valorNominal = bloqueIdValor.split()
-    tInicial = tInicial_tk.get()
-    tEstabilizacion = tEstabilizacion_tk.get()
-    numReps = numReps_tk.get()
+    tInicial = tInicial_entry.get()
+    tEstabilizacion = tEstabilizacion_entry.get()
+    numReps = numReps_entry.get()
 
     procesoCalibracion(archivoCalibracion_datos, secuencia, bloqueID, valorNominal, tInicial, tEstabilizacion, numReps)
 
@@ -779,7 +770,7 @@ def checkRPiStatus(url):
         status_label["foreground"] = "green"
     except:
         status_label["text"] = "Estado del Servidor: error"
-        status_label["fo20reground"] = "red"
+        status_label["foreground"] = "red"
     return
 
 ################## Ventana inicial ##################

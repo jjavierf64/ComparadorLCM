@@ -509,8 +509,8 @@ def CalculosDesviacionYPlanitud(hojaResultadosCalibracion, numNuevasColumnas, nu
 
 def procesoCalibracion(archivoCalibracion_datos, bloqueID, valorNominal, tInicial, tEstabilizacion, numReps, secuencia):
     
-    workbookCalibrando = load_workbook(archivoCalibracion_datos) #Apertura del archivo de excel de la calibración
-    hojaInfo = workbookInfo.active()
+    workbookInfo = load_workbook(archivoCalibracion_datos) #Apertura del archivo de excel de la calibración
+    hojaInfo = workbookInfo.active
 
     numFila = selectorFila(hojaInfo) # Elige la fila correspondiente
 
@@ -768,7 +768,7 @@ def NuevaCalibracion(nombreCliente, numCertificado, numeroSolicitud, identificac
     elif seleccionSecuencia == "Desviación central y planitud":
         EncabezadosCentroYPlanitud(numRepeticiones, hojaResultadosCalibracion)
     
-    ProcesoCalibracion(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, numRepeticiones, hojaResultadosCalibracion, hojaConversionDatos, nombreArchivoCalibracion, libroExcel, numCertificado,archivoDatos, archivoDatosAmbientales)
+    ProcesoCalibracionOLD(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, numRepeticiones, hojaResultadosCalibracion, hojaConversionDatos, nombreArchivoCalibracion, libroExcel, numCertificado,archivoDatos, archivoDatosAmbientales)
     
     return
 
