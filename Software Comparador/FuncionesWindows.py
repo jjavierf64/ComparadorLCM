@@ -178,6 +178,8 @@ def RellenarInfoCalibracion(nombreArchivo, lista_info):
         hojaInfo["B"+str(i)].value = elemento  # Se emplea la columa B para almacenar la información
         i+=1
     
+    workbookInfo.save(nombreArchivo)
+    
     return
 
 
@@ -778,7 +780,7 @@ def obtenerInfoCalibracion(numCertificado):
     info = [f"./Calibraciones en curso/{numCertificado}_Datos.xlsx"] #Resultados de la información, siguen la forma (archivoCalibracion_datos, cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps)
 
     workbookInfo = load_workbook(filename=f"./Calibraciones en curso/{numCertificado}_Info.xlsx")  #Apertura del archivo de excel de la calibración
-    hojaInfo = workbookInfo.active()
+    hojaInfo = workbookInfo.active
 
     for fila in hojaInfo.iter_rows(min_row=2, max_row=13, min_col=2, max_col=2):
         for celda in fila:
