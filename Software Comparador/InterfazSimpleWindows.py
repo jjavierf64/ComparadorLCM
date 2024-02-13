@@ -698,7 +698,6 @@ def calibrarBloque(archivoCalibracion_datos, secuencia, bloqueIdValor_combobox, 
     numReps = numReps_entry.get()
 
     procesoCalibracion(RPi_url, archivoCalibracion_datos, secuencia, bloqueID, valorNominal, tInicial, tEstabilizacion, numReps)
-
     return
 
 def ingresarCliente():

@@ -72,8 +72,6 @@ def condicionesAmbientales():
     # Supongamos que envías un valor llamado "parametro" en tu JSON
     instrumento = data.get('instrumento', '0')
     instrumento = str(instrumento).lower()
-
-    print(data, instrumento)
     
     output = forzar_obtencion_CA(instrumento)
 
