@@ -179,6 +179,7 @@ def RellenarInfoCalibracion(nombreArchivo, lista_info):
         i+=1
     
     workbookInfo.save(nombreArchivo)
+    workbookInfo.close()
     
     return
 
@@ -260,16 +261,11 @@ def AutocompletarInformacionCliente(nombreCliente, direccionCliente, numeroCerti
 
 
 
-def EncabezadosDesviacionCentral(numRepeticiones, hojaResultadosCalibracion):
-    #SI NO SE HA REANUDADO LA CALIBRACIÓN
-    #Modificar la hoja que va a almacenar los resultados de la calibración siguiendo la secuencia COMPLETA
-    #Manejar los resultados de la calibración obtenidos con la secuencia COMPLETA
-    #Completa: 1 Patrón, 1 Calibrando por repetición -> 2 columnas por repetición
-
-    hojaResultadosCalibracion["H2"] = numRepeticiones
-    numNuevasColumnas = 2*int(numRepeticiones) #Se usan dos columnas por cada repetición: una para el patrón y otra para el calibrando
-    hojaResultadosCalibracion.insert_cols(idx=19, amount=numNuevasColumnas) # Insertar el número de columnas necesarias al final de las columnas llenas en la hoja (Columna S)
-
+def EncabezadosDesviacionCentral(archivoCalibracion_datos, numRepeticiones):
+    
+    workbookDatos = load_workbook(archivoCalibracion_datos) #Apertura del archivo de excel de la calibración
+    hojaDatos = workbookDatos.active
+   
     #Definir estilos 
     texto_negrita = Font(bold = True)
     texto_centrado = Alignment(horizontal = "center", vertical="center", wrapText=True)
@@ -278,30 +274,30 @@ def EncabezadosDesviacionCentral(numRepeticiones, hojaResultadosCalibracion):
                             right = borde_sencillo,
                             bottom = borde_sencillo,
                             left = borde_sencillo)
+    
 
-    j = 19 #Se inicializa el contador para las columnas (Columna S)
-    k = 1 #Se inicializa el contador para las repeticiones
+    for k in range(int(numRepeticiones)):#Se usan dos columnas por cada repetición: una para el patrón y otra para el calibrando
+        columnaActual = 14+2*k
 
-    while j <= (19+numNuevasColumnas)-1 and k <= numRepeticiones:
-        letraColumnaPatron = openpyxl.utils.cell.get_column_letter(j) #Obtener la letra de la columna en la que se está trabajando
-        letraColumnaCalibrando = openpyxl.utils.cell.get_column_letter(j+1) #Obtener la letra de la columna de la derecha a la que se está trabajando
+        letraColumnaPatron = openpyxl.utils.cell.get_column_letter(columnaActual) #Obtener la letra de la columna en la que se está trabajando
+        letraColumnaCalibrando = openpyxl.utils.cell.get_column_letter(columnaActual+1) #Obtener la letra de la columna de la derecha a la que se está trabajando
         #Coordenadas de las celdas del patrón y calibrando #repetición
         coordenadaEncabezadoPatron = letraColumnaPatron + "1"
         coordenadaEncabezadoCalibrando = letraColumnaCalibrando + "1"
         #Escribir los encabezados de las nuevas celdas:
-        hojaResultadosCalibracion[coordenadaEncabezadoPatron] = "Patrón #"+str(k)
-        hojaResultadosCalibracion[coordenadaEncabezadoCalibrando] = "Calibrando #"+str(k)
+        hojaDatos[coordenadaEncabezadoPatron] = "Patrón #"+str(k+1)
+        hojaDatos[coordenadaEncabezadoCalibrando] = "Calibrando #"+str(k+1)
         #Darle formato a las nuevas celdas:
-        hojaResultadosCalibracion[coordenadaEncabezadoPatron].font = texto_negrita
-        hojaResultadosCalibracion[coordenadaEncabezadoPatron].alignment = texto_centrado
-        hojaResultadosCalibracion[coordenadaEncabezadoPatron].border = borde_cuadrado
-        hojaResultadosCalibracion[coordenadaEncabezadoCalibrando].font = texto_negrita
-        hojaResultadosCalibracion[coordenadaEncabezadoCalibrando].alignment = texto_centrado
-        hojaResultadosCalibracion[coordenadaEncabezadoCalibrando].border = borde_cuadrado
-    
-        k += 1
-        j += 2 
-    return numNuevasColumnas
+        hojaDatos[coordenadaEncabezadoPatron].font = texto_negrita
+        hojaDatos[coordenadaEncabezadoPatron].alignment = texto_centrado
+        hojaDatos[coordenadaEncabezadoPatron].border = borde_cuadrado
+        hojaDatos[coordenadaEncabezadoCalibrando].font = texto_negrita
+        hojaDatos[coordenadaEncabezadoCalibrando].alignment = texto_centrado
+        hojaDatos[coordenadaEncabezadoCalibrando].border = borde_cuadrado
+
+        
+    workbookDatos.save(archivoCalibracion_datos)
+    workbookDatos.close()
 
 
 
@@ -509,14 +505,14 @@ def CalculosDesviacionYPlanitud(hojaResultadosCalibracion, numNuevasColumnas, nu
 
 def procesoCalibracion(RPi_url, archivoCalibracion_datos, secuencia, bloqueID, valorNominal, tInicial, tEstabilizacion, numReps):
 
-    workbookInfo = load_workbook(archivoCalibracion_datos) #Apertura del archivo de excel de la calibración
-    hojaInfo = workbookInfo.active
+    workbookDatos = load_workbook(archivoCalibracion_datos) #Apertura del archivo de excel de la calibración
+    hojaDatos = workbookDatos.active
 
-    numFila = selectorFila(hojaInfo) # Elige la fila correspondiente
+    numFila = selectorFila(hojaDatos) # Elige la fila correspondiente
 
-    hojaInfo[f"A{numFila}"] = valorNominal
-    hojaInfo[f"B{numFila}"] = bloqueID
-    hojaInfo[f"C{numFila}"] = numReps
+    hojaDatos[f"A{numFila}"] = valorNominal
+    hojaDatos[f"B{numFila}"] = bloqueID
+    hojaDatos[f"C{numFila}"] = numReps
 
     sleep(float(tInicial)*60)
 
@@ -525,11 +521,11 @@ def procesoCalibracion(RPi_url, archivoCalibracion_datos, secuencia, bloqueID, v
 
     listaMedicionesBloque = ejecutarSecuencia(RPi_url, secuencia, tEstabilizacion, numReps)[0]
 
-    condAmb.append(condicionesAmbientales(RPi_url, instrumento="fluke"))
+    condAmb += condicionesAmbientales(RPi_url, instrumento="fluke")
     condAmb.append(condicionesAmbientales(RPi_url, instrumento="vaisala"))
 
 # Guardado de datos ambientales
-    for i,columna in enumerate(hojaInfo.iter_cols(
+    for i,columna in enumerate(hojaDatos.iter_cols(
                                                     min_row=numFila,
                                                     max_row=numFila,
                                                     min_col=4,
@@ -538,15 +534,16 @@ def procesoCalibracion(RPi_url, archivoCalibracion_datos, secuencia, bloqueID, v
             cell.value = condAmb[i]
         
 # Guardado de datos de medición de bloques
-    for i,columna in enumerate(hojaInfo.iter_cols(
+    for i,columna in enumerate(hojaDatos.iter_cols(
                                                     min_row=numFila,
                                                     max_row=numFila,
                                                     min_col=14,
-                                                    max_col=len(listaMedicionesBloque))):
+                                                    max_col=13+len(listaMedicionesBloque))):
         for cell in columna:
             cell.value = listaMedicionesBloque[i]
     
-    workbookInfo.save(archivoCalibracion_datos)
+    workbookDatos.save(archivoCalibracion_datos)
+    workbookDatos.close()
     return 
 
 
@@ -690,6 +687,7 @@ def ProcesoCalibracionOLD(seleccionSecuencia, tiempoinicial, tiempoestabilizacio
         if pausarCalibracion == "Pausar calibración": #Se Pausa la calibración (aún no se realizan cálculos)
             rutaGuardarPausa = "./Calibraciones en curso/" + nombreArchivoCalibracion
             libroExcel.save(rutaGuardarPausa)
+            libroExcel.close()
             mostrarMensaje("Calibración pausada. \nPuede revisar el archivo correspondiente en la carpeta \"Calibraciones en curso\".")
                 
         elif pausarCalibracion == "Finalizar calibración": #Se Finaliza la calibración
@@ -698,6 +696,7 @@ def ProcesoCalibracionOLD(seleccionSecuencia, tiempoinicial, tiempoestabilizacio
             CalculosDesviacionCentral(hojaResultadosCalibracion)
             rutaGuardar = "./Calibraciones Finalizadas/" + nombreArchivoCalibracion #Se guarda el archivo de la calibración a partir del número de Certificado
             libroExcel.save(rutaGuardar)  
+            libroExcel.close() 
             EliminarArchivo("./Calibraciones en curso/" + nombreArchivoCalibracion) #Se elimina el archivo de la calibración de la carpeta "Calibraciones en curso"
 
             # Mover archivos csv
@@ -728,6 +727,7 @@ def ProcesoCalibracionOLD(seleccionSecuencia, tiempoinicial, tiempoestabilizacio
         if pausarCalibracion == "Pausar calibración": #Se Pausa la calibración (aún no se realizan cálculos)
             rutaGuardarPausa = "./Calibraciones en curso/" + nombreArchivoCalibracion
             libroExcel.save(rutaGuardarPausa)
+            libroExcel.close()
             mostrarMensaje("Calibración pausada. \nPuede revisar el archivo correspondiente en la carpeta \"Calibraciones en curso\".")
                 
         elif pausarCalibracion == "Finalizar calibración": #Se Finaliza la calibración
@@ -736,6 +736,7 @@ def ProcesoCalibracionOLD(seleccionSecuencia, tiempoinicial, tiempoestabilizacio
             CalculosDesviacionYPlanitud(hojaResultadosCalibracion)
             rutaGuardar = "./Calibraciones Finalizadas/" + nombreArchivoCalibracion #Se guarda el archivo de la calibración a partir del número de Certificado
             libroExcel.save(rutaGuardar)  
+            libroExcel.close()
             EliminarArchivo("./Calibraciones en curso/" + nombreArchivoCalibracion) #Se elimina el archivo de la calibración de la carpeta "Calibraciones en curso"
             mostrarMensaje("Calibración finalizada. Puede revisar el archivo correspondiente en la carpeta \"Calibraciones Finalizadas\".")   
     return
@@ -825,6 +826,7 @@ def AgregarCliente(nombreCliente, direccionCliente):
     hojaClientes["C"+str(i)] = nombreArchivoCliente
 
     workbookClientes.save("./Clientes/Clientes.xlsx")
+    workbookClientes.close()
     mostrarMensaje("El cliente se ha registrado con éxito.")
     return 1
 
@@ -869,6 +871,7 @@ def IngresarCalibrando(nombreCliente, objeto, cantidad, marca, numSerie, materia
 
     hojaNuevoCalibrando["B12"] = "Longitud nominal (" + unidad + ")" #Agregar valor nominal e identificación de los bloques del juego
     workbookCliente.save(archivoCliente)
+    workbookCliente.close()
     mostrarMensaje("Se han ingresado exitosamente los datos del nuevo calibrando.\nPor favor ingresar los datos de los bloques correspondientes.")
     return
 
@@ -897,6 +900,7 @@ def ingresarBloque(top, cliente, numSerie, unidad, longitudNominal_entry, idBloq
     hojaCalibrando["C"+str(numFila)] = idBloqueIngresar
 
     workbookCliente.save(archivoCliente)
+    workbookCliente.close()
 
     ultimoBloqueDatos_label.config(text=f"{numFila - 13}) {valorBloqueIngresar} {unidad} - ID:{idBloqueIngresar}", background="white")
     # ultimoBloqueDatos_label = ttk.Label(top, text=f"{numFila - 13}) {valorBloqueIngresar} {unidad} - ID:{idBloqueIngresar}", background="white")
@@ -906,6 +910,7 @@ def ingresarBloque(top, cliente, numSerie, unidad, longitudNominal_entry, idBloq
 
 def finalizar_agregar(workbookCliente,archivoCliente):
     workbookCliente.save(archivoCliente)
+    workbookCliente.close()
     mostrarMensaje("Se han ingresado exitosamente los datos del nuevo calibrando.")
     top.destroy()
     return
