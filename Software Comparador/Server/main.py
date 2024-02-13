@@ -65,7 +65,7 @@ def condicionesAmbientales():
         
         return outputForzado
 
-
+    print("Recibí Petición de Condiciones Ambientales")
     # Obtiene los datos en formato JSON de la petición
     data = request.json
 
@@ -73,6 +73,8 @@ def condicionesAmbientales():
     instrumento = data.get('instrumento', '0')
     instrumento = str(instrumento).lower()
 
+    print(data, instrumento)
+    
     output = forzar_obtencion_CA(instrumento)
 
     print("Datos: ", output)

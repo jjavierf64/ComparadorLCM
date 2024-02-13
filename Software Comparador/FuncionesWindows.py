@@ -508,17 +508,6 @@ def CalculosDesviacionYPlanitud(hojaResultadosCalibracion, numNuevasColumnas, nu
 ################## Calibración de Bloque ##################
 
 def procesoCalibracion(archivoCalibracion_datos, bloqueID, valorNominal, tInicial, tEstabilizacion, numReps, secuencia):
-    
-    def obtener_a_fuerza_CA(instrumento):
-        try:
-            condiciones = condicionesAmbientales(RPi_url, instrumento)
-        
-        except:
-            condiciones = obtener_a_fuerza_CA(instrumento)
-        
-        return condiciones
-
-
 
     workbookInfo = load_workbook(archivoCalibracion_datos) #Apertura del archivo de excel de la calibración
     hojaInfo = workbookInfo.active
@@ -531,13 +520,13 @@ def procesoCalibracion(archivoCalibracion_datos, bloqueID, valorNominal, tInicia
 
     sleep(float(tInicial)*60)
 
-    condAmb=obtener_a_fuerza_CA(instrumento="fluke")
-    condAmb.append(obtener_a_fuerza_CA(instrumento="vaisala"))
+    condAmb=condicionesAmbientales(RPi_url, instrumento="fluke")
+    condAmb.append(condicionesAmbientales(RPi_url, instrumento="vaisala"))
 
     listaMedicionesBloque = ejecutarSecuencia(RPi_url, secuencia, tEstabilizacion, numReps)[0]
 
-    condAmb.append(obtener_a_fuerza_CA(instrumento="fluke"))
-    condAmb.append(obtener_a_fuerza_CA(instrumento="vaisala"))
+    condAmb.append(condicionesAmbientales(RPi_url, instrumento="fluke"))
+    condAmb.append(condicionesAmbientales(RPi_url, instrumento="vaisala"))
 
 # Guardado de datos ambientales
     for i,columna in enumerate(hojaInfo.iter_cols(
