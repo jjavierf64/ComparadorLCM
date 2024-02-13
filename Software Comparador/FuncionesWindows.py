@@ -61,7 +61,10 @@ def condicionesAmbientales(RPi_url, instrumento):
     print(response)
     return response.json()
 
-
+def moverDe0a1(RPi_url):
+    url = RPi_url + "moverDe0a1"
+    response = requests.post(url)
+    return response.json()
 
 
 
@@ -124,6 +127,7 @@ def mostrarMensaje(mensaje):
     message_label.pack(pady=20,padx=20)
 
     top.bind("<Return>", on_enter_press)
+    return top
 
 
 ################## Búsqueda de Clientes ##################

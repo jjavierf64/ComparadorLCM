@@ -315,7 +315,12 @@ def calibracion_abierta(ventanaPrevia, archivoCalibracion_datos, cliente, certif
     continuar_button = ttk.Button(ventana_CalibracionAbierta, text="Comenzar Calibración", command=lambda: calibrarBloque(archivoCalibracion_datos, secuencia, bloqueIdValor_combobox,seleccionarPlantilla_combobox, tInicial_entry, tEstabilizacion_entry, numReps_entry))
     continuar_button.grid(row=40, column=0, columnspan=1, pady=10, padx=10)
 
+    recordatorio_label = ttk.Label(ventana_CalibracionAbierta, text= "Recuerde colocar en posición 1", background="white" )
+    recordatorio_label.grid(row=40, column=10, pady=20, padx=20)
 
+    moverDe0a1_button = ttk.Button(ventana_CalibracionAbierta, text="Mover del centro a posición 1",
+                                 command=lambda: moverDe0a1(RPi_url))
+    moverDe0a1_button.grid(row=50, column=10, columnspan=1, pady=10)
 
     regresar_button = ttk.Button(ventana_CalibracionAbierta, text="Regresar al menú de opciones",
                                  command=lambda: regresarVentanaPrincipal(root, ventana_CalibracionAbierta))
@@ -700,8 +705,10 @@ def calibrarBloque(archivoCalibracion_datos, secuencia, bloqueIdValor_combobox, 
     tEstabilizacion = tEstabilizacion_entry.get()
     numReps = numReps_entry.get()
 
-    mostrarMensaje(f"Calibración del Bloque {bloqueID} en Proceso.\nPor favor espere a que finalice.")
+    mensajeProceso = mostrarMensaje(f"Calibración del Bloque {bloqueID} en Proceso.\nPor favor espere a que finalice.")
+    mensajeProceso.update()
     procesoCalibracion(RPi_url, archivoCalibracion_datos, secuencia, bloqueID, valorNominal, tInicial, tEstabilizacion, numReps, plantilla)
+    mensajeProceso.destroy()
     mostrarMensaje(f"Calibración del Bloque {bloqueID} Finalizada.")
 
     
