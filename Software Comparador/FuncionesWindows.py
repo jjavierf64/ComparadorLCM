@@ -267,7 +267,7 @@ def AutocompletarInformacionCliente(nombreCliente, direccionCliente, numeroCerti
 
 
 
-def EncabezadosDesviacionCentral(archivoCalibracion_datos, numRepeticiones):
+def RellenarEncabezados(archivoCalibracion_datos, secuencia, numRepeticiones):
     
     workbookDatos = load_workbook(archivoCalibracion_datos) #Apertura del archivo de excel de la calibración
     hojaDatos = workbookDatos.active
@@ -282,84 +282,55 @@ def EncabezadosDesviacionCentral(archivoCalibracion_datos, numRepeticiones):
                             left = borde_sencillo)
     
 
-    for k in range(int(numRepeticiones)):#Se usan dos columnas por cada repetición: una para el patrón y otra para el calibrando
-        columnaActual = 14+2*k
 
-        letraColumnaPatron = openpyxl.utils.cell.get_column_letter(columnaActual) #Obtener la letra de la columna en la que se está trabajando
-        letraColumnaCalibrando = openpyxl.utils.cell.get_column_letter(columnaActual+1) #Obtener la letra de la columna de la derecha a la que se está trabajando
-        #Coordenadas de las celdas del patrón y calibrando #repetición
-        coordenadaEncabezadoPatron = letraColumnaPatron + "1"
-        coordenadaEncabezadoCalibrando = letraColumnaCalibrando + "1"
-        #Escribir los encabezados de las nuevas celdas:
-        hojaDatos[coordenadaEncabezadoPatron] = "Patrón #"+str(k+1)
-        hojaDatos[coordenadaEncabezadoCalibrando] = "Calibrando #"+str(k+1)
-        #Darle formato a las nuevas celdas:
-        hojaDatos[coordenadaEncabezadoPatron].font = texto_negrita
-        hojaDatos[coordenadaEncabezadoPatron].alignment = texto_centrado
-        hojaDatos[coordenadaEncabezadoPatron].border = borde_cuadrado
-        hojaDatos[coordenadaEncabezadoCalibrando].font = texto_negrita
-        hojaDatos[coordenadaEncabezadoCalibrando].alignment = texto_centrado
-        hojaDatos[coordenadaEncabezadoCalibrando].border = borde_cuadrado
+    if str(secuencia).lower() == "desviación central":
+        for k in range(int(numRepeticiones)):#Se usan dos columnas por cada repetición: una para el patrón y otra para el calibrando
+            columnaActual = 14+2*k
 
+            letraColumnaPatron = openpyxl.utils.cell.get_column_letter(columnaActual) #Obtener la letra de la columna en la que se está trabajando
+            letraColumnaCalibrando = openpyxl.utils.cell.get_column_letter(columnaActual+1) #Obtener la letra de la columna de la derecha a la que se está trabajando
+            #Coordenadas de las celdas del patrón y calibrando #repetición
+            coordenadaEncabezadoPatron = letraColumnaPatron + "1"
+            coordenadaEncabezadoCalibrando = letraColumnaCalibrando + "1"
+            #Escribir los encabezados de las nuevas celdas:
+            hojaDatos[coordenadaEncabezadoPatron] = "Patrón #"+str(k+1)
+            hojaDatos[coordenadaEncabezadoCalibrando] = "Calibrando #"+str(k+1)
+            #Darle formato a las nuevas celdas:
+            hojaDatos[coordenadaEncabezadoPatron].font = texto_negrita
+            hojaDatos[coordenadaEncabezadoPatron].alignment = texto_centrado
+            hojaDatos[coordenadaEncabezadoPatron].border = borde_cuadrado
+            hojaDatos[coordenadaEncabezadoCalibrando].font = texto_negrita
+            hojaDatos[coordenadaEncabezadoCalibrando].alignment = texto_centrado
+            hojaDatos[coordenadaEncabezadoCalibrando].border = borde_cuadrado
+    
+    elif str(secuencia).lower() == "desviación central y planitud":
+        for k in range(int(numRepeticiones)):#Se usan siete columnas por cada repetición: una para el patrón y 6 para el calibrando
+            columnaActual = 14+7*k
+
+            letraColumnaPatron = openpyxl.utils.cell.get_column_letter(columnaActual) #Obtener la letra de la columna que va a guardar los datos del Patrón en cada rep k 
+            letraColumnaCalibrandoCentro = openpyxl.utils.cell.get_column_letter(columnaActual+1) #Obtener la letra de la columna que va a guardar los datos del Centro del Calibrando en cada rep k 
+            letraColumnaCalibrandoEsquina3 = openpyxl.utils.cell.get_column_letter(columnaActual+2) #Obtener la letra de la columna que va a guardar los datos de la Esquina 3 del Calibrando en cada rep k 
+            letraColumnaCalibrandoEsquina4 = openpyxl.utils.cell.get_column_letter(columnaActual+3) #Obtener la letra de la columna que va a guardar los datos de la Esquina 4 del Calibrando en cada rep k 
+            letraColumnaCalibrandoEsquina5 = openpyxl.utils.cell.get_column_letter(columnaActual+4) #Obtener la letra de la columna que va a guardar los datos de la Esquina 5 del Calibrando en cada rep k 
+            letraColumnaCalibrandoEsquina6 = openpyxl.utils.cell.get_column_letter(columnaActual+5) #Obtener la letra de la columna que va a guardar los datos de la Esquina 3 del Calibrando en cada rep k 
+
+            #Escribir los encabezados de las nuevas celdas:
+            hojaDatos[letraColumnaPatron + "1"] = "Patrón (Centro) #"+str(k)
+            hojaDatos[letraColumnaCalibrandoCentro + "1"] = "Calibrando (Centro) #"+str(k)
+            hojaDatos[letraColumnaCalibrandoEsquina3 + "1"] = "Calibrando (Esquina 3) #"+str(k)
+            hojaDatos[letraColumnaCalibrandoEsquina4 + "1"] = "Calibrando (Esquina 4) #"+str(k)
+            hojaDatos[letraColumnaCalibrandoEsquina5 + "1"] = "Calibrando (Esquina 5) #"+str(k)
+            hojaDatos[letraColumnaCalibrandoEsquina6 + "1"] = "Calibrando (Esquina 6) #"+str(k)
+            
+            #Darle formato a las nuevas celdas:
+            for numColumna in range(columnaActual,columnaActual+8):
+                letraColumna = openpyxl.utils.cell.get_column_letter(numColumna)
+                hojaDatos[letraColumna + "1"].font = texto_negrita
+                hojaDatos[letraColumna + "1"].alignment = texto_centrado
+                hojaDatos[letraColumna + "1"].border = borde_cuadrado
         
     workbookDatos.save(archivoCalibracion_datos)
     workbookDatos.close()
-
-
-
-def EncabezadosCentroYPlanitud(numRepeticiones, hojaResultadosCalibracion):
-
-    """
-    SI NO SE HA REANUDADO LA CALIBRACIÓN
-    Modificar la hoja que va a almacenar los resultados de la calibración siguiendo la secuencia CENTROS
-    Manejar los resultados de la calibración obtenidos con la secuencia CENTROS 
-    Centros: 1 Patrón (centro), 5 Calibrando: centro y cuatro esquinas -> 6 columnas por repetición
-    La secuencia Centros hace lo mismo que la secuencia Completa para el caso de los centros de los bloques, pero además 
-    complementa esta calibración con mediciones de planitud para cada uno de los bloques
-    """ 
-    numRepeticiones = int(ventanaEntrada("Indique el número de repeticiones para la calibración: "))
-    hojaResultadosCalibracion["N2"] = numRepeticiones
-    numNuevasColumnas = 6*int(numRepeticiones) #Se usan dos columnas por cada repetición: una para el patrón y otra para el calibrando
-    hojaResultadosCalibracion.insert_cols(idx=25, amount=numNuevasColumnas) # Insertar el número de columnas necesarias al final de las columnas llenas en la hoja
-
-    #Definir estilos 
-    texto_negrita = Font(bold = True)
-    texto_centrado = Alignment(horizontal = "center", vertical="center", wrapText=True)
-    borde_sencillo = Side(border_style = "thin")
-    borde_cuadrado = Border(top = borde_sencillo,
-                            right = borde_sencillo,
-                            bottom = borde_sencillo,
-                            left = borde_sencillo)
-
-    j = 25 #Se inicializa el contador para las columnas
-    k = 1 #Se inicializa el contador para las repeticiones
-
-    while j <= (25+numNuevasColumnas)-1 and k <= numRepeticiones:
-        letraColumnaPatron = openpyxl.utils.cell.get_column_letter(j) #Obtener la letra de la columna que va a guardar los datos del Patrón en cada rep k 
-        letraColumnaCalibrandoCentro = openpyxl.utils.cell.get_column_letter(j+1) #Obtener la letra de la columna que va a guardar los datos del Centro del Calibrando en cada rep k 
-        letraColumnaCalibrandoEsquina3 = openpyxl.utils.cell.get_column_letter(j+2) #Obtener la letra de la columna que va a guardar los datos de la Esquina 3 del Calibrando en cada rep k 
-        letraColumnaCalibrandoEsquina4 = openpyxl.utils.cell.get_column_letter(j+3) #Obtener la letra de la columna que va a guardar los datos de la Esquina 4 del Calibrando en cada rep k 
-        letraColumnaCalibrandoEsquina5 = openpyxl.utils.cell.get_column_letter(j+4) #Obtener la letra de la columna que va a guardar los datos de la Esquina 5 del Calibrando en cada rep k 
-        letraColumnaCalibrandoEsquina6 = openpyxl.utils.cell.get_column_letter(j+5) #Obtener la letra de la columna que va a guardar los datos de la Esquina 3 del Calibrando en cada rep k 
-
-        #Escribir los encabezados de las nuevas celdas:
-        hojaResultadosCalibracion[letraColumnaPatron + "1"] = "Patrón (Centro) #"+str(k)
-        hojaResultadosCalibracion[letraColumnaCalibrandoCentro + "1"] = "Calibrando (Centro) #"+str(k)
-        hojaResultadosCalibracion[letraColumnaCalibrandoEsquina3 + "1"] = "Calibrando (Esquina 3) #"+str(k)
-        hojaResultadosCalibracion[letraColumnaCalibrandoEsquina4 + "1"] = "Calibrando (Esquina 4) #"+str(k)
-        hojaResultadosCalibracion[letraColumnaCalibrandoEsquina5 + "1"] = "Calibrando (Esquina 5) #"+str(k)
-        hojaResultadosCalibracion[letraColumnaCalibrandoEsquina6 + "1"] = "Calibrando (Esquina 6) #"+str(k)
-        
-        #Darle formato a las nuevas celdas:
-        for numColumna in range(j,j+6):
-            letraColumna = openpyxl.utils.cell.get_column_letter(numColumna)
-            hojaResultadosCalibracion[letraColumna + "1"].font = texto_negrita
-            hojaResultadosCalibracion[letraColumna + "1"].alignment = texto_centrado
-            hojaResultadosCalibracion[letraColumna + "1"].border = borde_cuadrado
-    
-        k += 1
-        j += 6
-        return numNuevasColumnas
 
 
 
@@ -747,39 +718,6 @@ def ProcesoCalibracionOLD(seleccionSecuencia, tiempoinicial, tiempoestabilizacio
             mostrarMensaje("Calibración finalizada. Puede revisar el archivo correspondiente en la carpeta \"Calibraciones Finalizadas\".")   
     return
     
-################## Nueva Calibración ##################   
-
-###########
-# OLD BOY #
-###########
-
-def NuevaCalibracion(nombreCliente, numCertificado, numeroSolicitud, identificacionCalibrando, 
-                                    responsableCalibracion, responsableRevision, patron, materialPatron, seleccionSecuencia, tiempoinicial, tiempoestabilizacion, numRepeticiones):
-    
-    nombreCliente, direccionCliente, archivoCliente = BusquedaClientes(nombreCliente)		#Búsqueda de los datos del cliente
-    
-    
-    archivoCalibracion = CrearArchivoCalibracion(seleccionSecuencia, numCertificado)
-    archivoDatos, archivoDatosAmbientales = CrearArchivoCSV(seleccionSecuencia, numCertificado)
-    
-
-	#Ingreso de interés del cliente y de la calibración al archivo de Excel
-    archivoExcel = AutocompletarInformacionCliente(nombreCliente, direccionCliente, numCertificado, numeroSolicitud, identificacionCalibrando, 
-                                    responsableCalibracion, responsableRevision, patron, materialPatron, seleccionSecuencia)
-    libroExcel = archivoExcel[0]
-    hojaResultadosCalibracion = archivoExcel[1]
-    hojaConversionDatos = archivoExcel[2]
-    
-    if seleccionSecuencia == "Desviación central":
-        EncabezadosDesviacionCentral(numRepeticiones, hojaResultadosCalibracion)
-    elif seleccionSecuencia == "Desviación central y planitud":
-        EncabezadosCentroYPlanitud(numRepeticiones, hojaResultadosCalibracion)
-    
-    ProcesoCalibracionOLD(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, numRepeticiones, hojaResultadosCalibracion, hojaConversionDatos, nombreArchivoCalibracion, libroExcel, numCertificado,archivoDatos, archivoDatosAmbientales)
-    
-    return
-
-
 ################## Reanudar Calibración ##################
 
 def obtenerInfoCalibracion(numCertificado):

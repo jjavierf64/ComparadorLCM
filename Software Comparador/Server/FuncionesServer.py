@@ -264,6 +264,7 @@ def moverDe0a1_():
     steperMotor1.motor_go(False, "1/8", round(stepsP1_12/2), .0025, False, 2) #Mov de 0 a 1
     GPIO.output(pin_enableCalibrationMotor, motorDisabledState)       #Modo seguro, motores inhabilitados               
     ActivaPedal(servo_pin)								#Baja el palpador
+    return
 
 
 

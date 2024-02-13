@@ -300,31 +300,33 @@ def calibracion_abierta(ventanaPrevia, archivoCalibracion_datos, cliente, certif
                 bloquesCalibrando.append((celda.value, hojaCalibrando["B"+str(i)].value))
     workbookCliente.close()
 
-    bloqueIdValor_combobox = ttk.Combobox(ventana_CalibracionAbierta, values=bloquesCalibrando, width=42,state= "readonly") # Se debe hacer split a la variable
+    bloqueIdValor_combobox = ttk.Combobox(ventana_CalibracionAbierta, values=bloquesCalibrando, width=40,state= "readonly") # Se debe hacer split a la variable
     bloqueIdValor_combobox.grid(row=30, column=10, pady=10)
     
 
     seleccionarPlantillaLabel =ttk.Label(ventana_CalibracionAbierta, text="Seleccione el tamaño de plantilla:", background="white")
     seleccionarPlantillaLabel.grid(row=35, column=0, pady=10)
 
-    seleccionarPlantilla_combobox = ttk.Combobox(ventana_CalibracionAbierta, values=["Pequeña", "Grande"], width=30 ,state= "readonly")
+    seleccionarPlantilla_combobox = ttk.Combobox(ventana_CalibracionAbierta, values=["Pequeña", "Grande"], width=40 ,state= "readonly")
     seleccionarPlantilla_combobox.grid(row=35, column=10, pady=10)
     #--
 
+    recordatorio_label = ttk.Label(ventana_CalibracionAbierta, text= "Recuerde colocar la Plantilla en Posición 1 ", background="white" )
+    recordatorio_label.grid(row=40, column=0, pady=20, padx=20)
 
-    continuar_button = ttk.Button(ventana_CalibracionAbierta, text="Comenzar Calibración", command=lambda: calibrarBloque(archivoCalibracion_datos, secuencia, bloqueIdValor_combobox,seleccionarPlantilla_combobox, tInicial_entry, tEstabilizacion_entry, numReps_entry))
-    continuar_button.grid(row=40, column=0, columnspan=1, pady=10, padx=10)
-
-    recordatorio_label = ttk.Label(ventana_CalibracionAbierta, text= "Recuerde colocar en posición 1", background="white" )
-    recordatorio_label.grid(row=40, column=10, pady=20, padx=20)
-
-    moverDe0a1_button = ttk.Button(ventana_CalibracionAbierta, text="Mover del centro a posición 1",
+    moverDe0a1_button = ttk.Button(ventana_CalibracionAbierta, text="Mover del Centro a Posición 1",
                                  command=lambda: moverDe0a1(RPi_url))
-    moverDe0a1_button.grid(row=50, column=10, columnspan=1, pady=10)
+    moverDe0a1_button.grid(row=40, column=10, columnspan=1, pady=10)
+    
+    continuar_button = ttk.Button(ventana_CalibracionAbierta, text="Realizar Calibración", command=lambda: calibrarBloque(archivoCalibracion_datos, secuencia, bloqueIdValor_combobox,seleccionarPlantilla_combobox, tInicial_entry, tEstabilizacion_entry, numReps_entry))
+    continuar_button.grid(row=80, column=0, columnspan=2, pady=10, padx=10)
 
-    regresar_button = ttk.Button(ventana_CalibracionAbierta, text="Regresar al menú de opciones",
+    regresar_button = ttk.Button(ventana_CalibracionAbierta, text="Pausar Calibración y Regresar al Menú",
                                  command=lambda: regresarVentanaPrincipal(root, ventana_CalibracionAbierta))
     regresar_button.grid(row=100, column=0, columnspan=1, pady=10)
+    
+    finalizar_button = ttk.Button(ventana_CalibracionAbierta, text="Finalizar y Guardar Calibración", command=lambda: finalizarCalibracion(archivoCalibracion_datos, cliente, certificado, secuencia, numReps) )
+    finalizar_button.grid(row=100, column=10, columnspan=1, pady=10)
     return
 
 
@@ -710,9 +712,51 @@ def calibrarBloque(archivoCalibracion_datos, secuencia, bloqueIdValor_combobox, 
     procesoCalibracion(RPi_url, archivoCalibracion_datos, secuencia, bloqueID, valorNominal, tInicial, tEstabilizacion, numReps, plantilla)
     mensajeProceso.destroy()
     mostrarMensaje(f"Calibración del Bloque {bloqueID} Finalizada.")
+    return
+
+def finalizarCalibracion(archivoCalibracion_datos, cliente, certificado, secuencia, numReps):
+    
+    
+    RellenarEncabezados(archivoCalibracion_datos, secuencia, numReps)
+
+    # Combinar archivos
+    archivoCalibracion_info=f"./Calibraciones en curso/{certificado}_Info.xlsx"
+
+    workbookCombinado = load_workbook(filename=archivoCalibracion_datos)
+    
+    hojaDatosComb = workbookCombinado.active
+    hojaDatosComb.title = "Datos"
+    
+    workbookInfo = load_workbook(filename=archivoCalibracion_info)
+    hojaInfo = workbookInfo.active
+
+    workbookCombinado.create_sheet("Información")
+    hojaInfoComb = workbookCombinado["Información"]
+    
+    for row in hojaInfo.iter_rows(values_only=False):
+        for cell in row:
+            new_cell = hojaInfoComb.cell(row=cell.row, column=cell.column, value=cell.value)
+
+            if cell.has_style:
+                new_cell.font = copy(cell.font)
+                new_cell.border = copy(cell.border)
+                new_cell.fill = copy(cell.fill)
+                new_cell.number_format = copy(cell.number_format)
+                new_cell.alignment = copy(cell.alignment)
+
+
+    workbookCombinado.save(f"./Calibraciones Finalizadas/{certificado}-{cliente}.xlsx")
+    workbookCombinado.close()
+    workbookInfo.close()
+
+    # Eliminar Archivos Restantes
+    EliminarArchivo(archivoCalibracion_info)
+
+
+
 
     
-    return
+
 
 def ingresarCliente():
     nuevoCliente = nuevoCliente_entry.get()

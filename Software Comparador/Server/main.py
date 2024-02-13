@@ -21,7 +21,7 @@ def ejecutar_script():
 def moverDe0a1():
     moverDe0a1_()
     # Retorna una respuesta
-    return jsonify(success=True, received_param=parametro), 200
+    return jsonify(success=True), 200
 
 
 @app.route('/secuencias', methods=['POST', 'GET'])  # Ruta para la petición de ejecución de comandos
