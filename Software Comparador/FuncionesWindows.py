@@ -507,7 +507,7 @@ def CalculosDesviacionYPlanitud(hojaResultadosCalibracion, numNuevasColumnas, nu
     
 ################## Calibración de Bloque ##################
 
-def procesoCalibracion(archivoCalibracion_datos, bloqueID, valorNominal, tInicial, tEstabilizacion, numReps, secuencia):
+def procesoCalibracion(RPi_url, archivoCalibracion_datos, bloqueID, valorNominal, tInicial, tEstabilizacion, numReps, secuencia):
 
     workbookInfo = load_workbook(archivoCalibracion_datos) #Apertura del archivo de excel de la calibración
     hojaInfo = workbookInfo.active

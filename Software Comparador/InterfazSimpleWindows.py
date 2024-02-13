@@ -697,7 +697,7 @@ def calibrarBloque(archivoCalibracion_datos, secuencia, bloqueIdValor_combobox, 
     tEstabilizacion = tEstabilizacion_entry.get()
     numReps = numReps_entry.get()
 
-    procesoCalibracion(archivoCalibracion_datos, secuencia, bloqueID, valorNominal, tInicial, tEstabilizacion, numReps)
+    procesoCalibracion(RPi_url, archivoCalibracion_datos, secuencia, bloqueID, valorNominal, tInicial, tEstabilizacion, numReps)
 
     return
 
