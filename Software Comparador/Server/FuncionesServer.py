@@ -286,7 +286,7 @@ def Centros(tiempoestabilizacion, Repeticiones):
         sleep(int(tiempoestabilizacion))						#Se le da un tiempo al palpador abajo en el bloque patrón
         ActivaPedal(servo_pin)								#Sube el palpador
         MedicionBloque=DatosTESA()                   		#Justo después de levantar el palpador TESA toma la medición
-        #print(MedicionBloque)
+        print(MedicionBloque)
         listaMediciones.append(MedicionBloque)              	#Valor del patrón en posición 1 (centro patrón)
         
         #Movimiento de posición 1 a 2 con el palpador arriba
@@ -300,7 +300,7 @@ def Centros(tiempoestabilizacion, Repeticiones):
         ActivaPedal(servo_pin)                              #Sube el palpador
         MedicionBloque=DatosTESA()                   		#Justo después de levantar el palpador TESA toma la medición
         listaMediciones.append(MedicionBloque)               	#Valor del calibrando en posición 2 (centro calibrando)
-        #print(MedicionBloque)
+        print(MedicionBloque)
         
         #Movimiento de 2 a 1 con el palpador arriba
         GPIO.output(pin_enableCalibrationMotor, motorEnabledState)       #habilita los motores
@@ -308,7 +308,7 @@ def Centros(tiempoestabilizacion, Repeticiones):
         GPIO.output(pin_enableCalibrationMotor, motorDisabledState)       #Modo seguro, motores inhabilitados
         ActivaPedal(servo_pin)								#Baja el palpador (termina cada repetición con el palpador abajo)
 
-    
+        
     ActivaPedal(servo_pin)								#Sube el palpador
     sleep(int(tiempoestabilizacion))        
     GPIO.output(pin_enableCalibrationMotor, motorEnabledState)       #habilita los motores

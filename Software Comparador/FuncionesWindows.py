@@ -557,7 +557,7 @@ def procesoCalibracion(archivoCalibracion_datos, bloqueID, valorNominal, tInicia
         for cell in columna:
             cell.value = listaMedicionesBloque[i]
     
-    workbookCalibrando.save(archivoCalibracion_datos)
+    workbookInfo.save(archivoCalibracion_datos)
     return 
 
 
