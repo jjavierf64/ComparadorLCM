@@ -26,11 +26,13 @@ import requests
 ################# Comunicación con el RPI - Servidor #######################
 
 
-def ejecutarSecuencia(RPi_url, secuencia, tiempoestabilizacion, numRepeticiones):
+def ejecutarSecuencia(RPi_url, secuencia, tiempoinicial, tiempoestabilizacion, numRepeticiones, plantilla):
     data = {
         'secuencia':secuencia,
+        'tiempoinicial':tiempoinicial,
         'tiempoestabilizacion':tiempoestabilizacion,
-        'numRepeticiones':numRepeticiones
+        'numRepeticiones':numRepeticiones,
+        'plantilla':plantilla
     }
     url = RPi_url + "secuencias"
     response = requests.post(url, json=data)
@@ -503,7 +505,7 @@ def CalculosDesviacionYPlanitud(hojaResultadosCalibracion, numNuevasColumnas, nu
     
 ################## Calibración de Bloque ##################
 
-def procesoCalibracion(RPi_url, archivoCalibracion_datos, secuencia, bloqueID, valorNominal, tInicial, tEstabilizacion, numReps):
+def procesoCalibracion(RPi_url, archivoCalibracion_datos, secuencia, bloqueID, valorNominal, tInicial, tEstabilizacion, numReps, plantilla):
 
     workbookDatos = load_workbook(archivoCalibracion_datos) #Apertura del archivo de excel de la calibración
     hojaDatos = workbookDatos.active
@@ -519,7 +521,7 @@ def procesoCalibracion(RPi_url, archivoCalibracion_datos, secuencia, bloqueID, v
     condAmb=condicionesAmbientales(RPi_url, instrumento="fluke")
     condAmb.append(condicionesAmbientales(RPi_url, instrumento="vaisala"))
 
-    listaMedicionesBloque = ejecutarSecuencia(RPi_url, secuencia, tEstabilizacion, numReps)[0]
+    listaMedicionesBloque = ejecutarSecuencia(RPi_url, secuencia, tInicial, tEstabilizacion, numReps, plantilla)[0]
 
     condAmb += condicionesAmbientales(RPi_url, instrumento="fluke")
     condAmb.append(condicionesAmbientales(RPi_url, instrumento="vaisala"))

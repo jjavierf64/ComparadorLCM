@@ -30,11 +30,37 @@ def secuencias():
 
     # Distintos tipos de secuencias posibles
     if parametro == "desviación central":
+
+        tiempoinicial = data.get("tiempoinicial", "Error")
         tiempoestabilizacion = data.get("tiempoestabilizacion", "Error")
         numRepeticiones = data.get("numRepeticiones", "Error")
         print("Tiempo de Estabilización: ", tiempoestabilizacion)
         print("Número de Repeticiones: ", numRepeticiones)
-        output = Centros(tiempoestabilizacion, numRepeticiones)
+        
+        output = Centros(tiempoinicial, tiempoestabilizacion, numRepeticiones)
+        
+        return jsonify(output)
+
+    if parametro == "desviación central y planitud":
+        
+        tiempoinicial = data.get("tiempoinicial", "Error")
+        tiempoestabilizacion = data.get("tiempoestabilizacion", "Error")
+        numRepeticiones = data.get("numRepeticiones", "Error")
+        print("Tiempo de Estabilización: ", tiempoestabilizacion)
+        print("Número de Repeticiones: ", numRepeticiones)
+
+        plantilla = data.get('plantilla','0')
+        plantilla = str(plantilla).lower()
+
+        if plantilla == 'pequeña':
+            output = Completa1(tiempoestabilizacion, numRepeticiones)
+        elif plantilla == 'grande':
+            output = Completa2(tiempoestabilizacion, numRepeticiones)
+        else:
+            print("Error, parámetro de plantilla no recibido")
+            return jsonify(success=False, received_param=parametro), 500
+
+        
         return jsonify(output)
     
     if parametro == "prueba":

@@ -264,29 +264,7 @@ def calibracion_abierta(ventanaPrevia, archivoCalibracion_datos, cliente, certif
     info_label.grid(row=10, column=0, pady=20, padx=20)
 
 
-
-
-# Parte para seleccionar el bloque
-
-    seleccionarBloqueLabel = ttk.Label(ventana_CalibracionAbierta, text="Seleccione el bloque a calibrar (ID, Valor Nominal):", background="white")
-    seleccionarBloqueLabel.grid(row=30, column=0, pady=10)
-
-    bloquesCalibrando = [] #Lista para el registro de IDs y tamaños
-    archivoCliente = BusquedaClientes(cliente)[2] #Busqueda del archivo del cliente
-    workbookCliente = load_workbook(filename=archivoCliente)  #Apertura del archivo de excel del cliente
-    hojaCalibrando = workbookCliente[idCalibrando]
-
-    for i,fila in enumerate(hojaCalibrando.iter_rows(min_row=14, max_row=500, min_col=3, max_col=3), start=14):
-        for celda in fila:
-            if celda.value != None: #Ve si existe algún dato y adjunta
-                bloquesCalibrando.append((celda.value, hojaCalibrando["B"+str(i)].value))
-    workbookCliente.close()
-
-    bloqueIdValor_combobox = ttk.Combobox(ventana_CalibracionAbierta,
-    values=bloquesCalibrando, width=40,state= "readonly") # Se debe hacer split a la variable
-    bloqueIdValor_combobox.grid(row=30, column=10, pady=10)
-    
-
+# Valores por defecto
     tInicial_label = ttk.Label(ventana_CalibracionAbierta, text="Tiempo inicial (en minutos):", background="white")
     tInicial_label.grid(row=11, column=0, pady=5)
     tInicial_entry = ttk.Entry(ventana_CalibracionAbierta, width=42)
@@ -306,11 +284,35 @@ def calibracion_abierta(ventanaPrevia, archivoCalibracion_datos, cliente, certif
     numReps_entry.insert(0, numReps)
     numReps_entry.grid(row=13, column=10, columnspan=2, pady=5, padx=(20, 5))
 
+# Parte para seleccionar el bloque y su plantilla
 
+    seleccionarBloqueLabel = ttk.Label(ventana_CalibracionAbierta, text="Seleccione el bloque a calibrar (ID, Valor Nominal):", background="white")
+    seleccionarBloqueLabel.grid(row=30, column=0, pady=10)
+
+    bloquesCalibrando = [] #Lista para el registro de IDs y tamaños
+    archivoCliente = BusquedaClientes(cliente)[2] #Busqueda del archivo del cliente
+    workbookCliente = load_workbook(filename=archivoCliente)  #Apertura del archivo de excel del cliente
+    hojaCalibrando = workbookCliente[idCalibrando]
+
+    for i,fila in enumerate(hojaCalibrando.iter_rows(min_row=14, max_row=500, min_col=3, max_col=3), start=14):
+        for celda in fila:
+            if celda.value != None: #Ve si existe algún dato y adjunta
+                bloquesCalibrando.append((celda.value, hojaCalibrando["B"+str(i)].value))
+    workbookCliente.close()
+
+    bloqueIdValor_combobox = ttk.Combobox(ventana_CalibracionAbierta, values=bloquesCalibrando, width=42,state= "readonly") # Se debe hacer split a la variable
+    bloqueIdValor_combobox.grid(row=30, column=10, pady=10)
+    
+
+    seleccionarPlantillaLabel =ttk.Label(ventana_CalibracionAbierta, text="Seleccione el tamaño de plantilla:", background="white")
+    seleccionarPlantillaLabel.grid(row=35, column=0, pady=10)
+
+    seleccionarPlantilla_combobox = ttk.Combobox(ventana_CalibracionAbierta, values=["Pequeña", "Grande"], width=30 ,state= "readonly")
+    seleccionarPlantilla_combobox.grid(row=35, column=10, pady=10)
     #--
 
 
-    continuar_button = ttk.Button(ventana_CalibracionAbierta, text="Comenzar Calibración", command=lambda: calibrarBloque(archivoCalibracion_datos, secuencia, bloqueIdValor_combobox, tInicial_entry, tEstabilizacion_entry, numReps_entry))
+    continuar_button = ttk.Button(ventana_CalibracionAbierta, text="Comenzar Calibración", command=lambda: calibrarBloque(archivoCalibracion_datos, secuencia, bloqueIdValor_combobox,seleccionarPlantilla_combobox, tInicial_entry, tEstabilizacion_entry, numReps_entry))
     continuar_button.grid(row=40, column=0, columnspan=1, pady=10, padx=10)
 
 
@@ -690,14 +692,19 @@ def reanudarCalibracion(ventana):
     return
 
 
-def calibrarBloque(archivoCalibracion_datos, secuencia, bloqueIdValor_combobox, tInicial_entry, tEstabilizacion_entry, numReps_entry ):
+def calibrarBloque(archivoCalibracion_datos, secuencia, bloqueIdValor_combobox, seleccionarPlantilla_combobox, tInicial_entry, tEstabilizacion_entry, numReps_entry ):
     bloqueIdValor = bloqueIdValor_combobox.get()
     bloqueID, valorNominal = bloqueIdValor.split()
+    plantilla = seleccionarPlantilla_combobox.get()
     tInicial = tInicial_entry.get()
     tEstabilizacion = tEstabilizacion_entry.get()
     numReps = numReps_entry.get()
 
-    procesoCalibracion(RPi_url, archivoCalibracion_datos, secuencia, bloqueID, valorNominal, tInicial, tEstabilizacion, numReps)
+    mostrarMensaje(f"Calibración del Bloque {bloqueID} en Proceso.\nPor favor espere a que finalice.")
+    procesoCalibracion(RPi_url, archivoCalibracion_datos, secuencia, bloqueID, valorNominal, tInicial, tEstabilizacion, numReps, plantilla)
+    mostrarMensaje(f"Calibración del Bloque {bloqueID} Finalizada.")
+
+    
     return
 
 def ingresarCliente():

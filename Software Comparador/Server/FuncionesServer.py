@@ -261,7 +261,7 @@ def ActivaPedal(servo_pin=26):
 
 ################## Secuencia desviación de longitud central ##################
 
-def Centros(tiempoestabilizacion, Repeticiones):
+def Centros(tiempoinicial, tiempoestabilizacion, Repeticiones):
 	# Tiempo de estabilización entra en segundos
 	
     global valorNominalBloque
@@ -275,11 +275,10 @@ def Centros(tiempoestabilizacion, Repeticiones):
     listaMediciones=[]
     
     #Antes de empezar a medir es necesario que el palpador vuelva a subir un momento sobre el patrón
-    """
     ActivaPedal(servo_pin)								#Sube el palpador
-    sleep(10)					#Se le da un tiempo al palpador arriba sobre el bloque patrón
+    sleep(float(tiempoinicial)*60)					#Se le da un tiempo al palpador arriba sobre el bloque patrón
     ActivaPedal(servo_pin)								#Baja el palpador  
-    """
+    
     for i in range(int(Repeticiones)):
 		
 		#Medición del bloque patrón (inicia con el palpador abajo)
@@ -344,7 +343,7 @@ def Completa1(tiempoinicial, tiempoestabilizacion, Repeticiones):
     
     listaMediciones=[]
     
-    sleep(int(tiempoinicial)*60)
+    sleep(float(tiempoinicial)*60)
     
     for i in range(int(Repeticiones)):
 
@@ -463,7 +462,7 @@ def Completa2(tiempoinicial, tiempoestabilizacion, Repeticiones):
     
     listaMediciones=[]
     
-    sleep(int(tiempoinicial)*60)
+    sleep(float(tiempoinicial)*60)
     
     for i in range(int(Repeticiones)):
 
