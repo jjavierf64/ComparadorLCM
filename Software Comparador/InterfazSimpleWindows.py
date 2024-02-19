@@ -266,23 +266,23 @@ def calibracion_abierta(ventanaPrevia, archivoCalibracion_datos, cliente, certif
 
 # Valores por defecto
     tInicial_label = ttk.Label(ventana_CalibracionAbierta, text="Tiempo inicial (en minutos):", background="white")
-    tInicial_label.grid(row=11, column=0, pady=5)
+    tInicial_label.grid(row=11, column=0, pady=10)
     tInicial_entry = ttk.Entry(ventana_CalibracionAbierta, width=42)
     tInicial_entry.insert(0, tInicial)
-    tInicial_entry.grid(row=11, column=10, columnspan=2, pady=5, padx=(20, 5))
+    tInicial_entry.grid(row=11, column=10, columnspan=1, pady=10, padx=10)
 
     tEstabilizacion_label = ttk.Label(ventana_CalibracionAbierta, text="Tiempo de estabilización (en segundos):",
                                       background="white")
-    tEstabilizacion_label.grid(row=12, column=0, pady=5)
+    tEstabilizacion_label.grid(row=12, column=0, pady=10)
     tEstabilizacion_entry = ttk.Entry(ventana_CalibracionAbierta, width=42)
     tEstabilizacion_entry.insert(0, tEstabilizacion)
-    tEstabilizacion_entry.grid(row=12, column=10, columnspan=2, pady=5, padx=(20, 5))
+    tEstabilizacion_entry.grid(row=12, column=10, columnspan=1, pady=10, padx=10)
 
     numReps_label = ttk.Label(ventana_CalibracionAbierta, text="Número de repeticiones:", background="white")
-    numReps_label.grid(row=13, column=0, pady=5)
+    numReps_label.grid(row=13, column=0, pady=10)
     numReps_entry = ttk.Entry(ventana_CalibracionAbierta, width=42)
     numReps_entry.insert(0, numReps)
-    numReps_entry.grid(row=13, column=10, columnspan=2, pady=5, padx=(20, 5))
+    numReps_entry.grid(row=13, column=10, columnspan=1, pady=10, padx=10)
 
 # Parte para seleccionar el bloque y su plantilla
 
@@ -305,27 +305,37 @@ def calibracion_abierta(ventanaPrevia, archivoCalibracion_datos, cliente, certif
     
 
     seleccionarPlantillaLabel =ttk.Label(ventana_CalibracionAbierta, text="Seleccione el tamaño de plantilla:", background="white")
-    seleccionarPlantillaLabel.grid(row=35, column=0, pady=10)
+    seleccionarPlantillaLabel.grid(row=35, column=0, pady=10, padx=10)
 
     seleccionarPlantilla_combobox = ttk.Combobox(ventana_CalibracionAbierta, values=["Pequeña", "Grande"], width=40 ,state= "readonly")
-    seleccionarPlantilla_combobox.grid(row=35, column=10, pady=10)
+    seleccionarPlantilla_combobox.grid(row=35, column=10, pady=10, padx=10)
     #--
 
+    #Mover Plantilla
     recordatorio_label = ttk.Label(ventana_CalibracionAbierta, text= "Recuerde colocar la Plantilla en Posición 1 ", background="white" )
-    recordatorio_label.grid(row=40, column=0, pady=20, padx=20)
+    recordatorio_label.grid(row=40, column=0, pady=20, padx=10)
 
-    moverDe0a1_button = ttk.Button(ventana_CalibracionAbierta, text="Mover del Centro a Posición 1",
+    moverDe0a1_button = ttk.Button(ventana_CalibracionAbierta, text="Mover del Centro a Posición 1", 
                                  command=lambda: moverDe0a1(RPi_url))
-    moverDe0a1_button.grid(row=40, column=10, columnspan=1, pady=10)
-    
-    continuar_button = ttk.Button(ventana_CalibracionAbierta, text="Realizar Calibración", command=lambda: calibrarBloque(archivoCalibracion_datos, secuencia, bloqueIdValor_combobox,seleccionarPlantilla_combobox, tInicial_entry, tEstabilizacion_entry, numReps_entry))
-    continuar_button.grid(row=80, column=0, columnspan=2, pady=10, padx=10)
+    moverDe0a1_button.grid(row=40, column=10, columnspan=1, pady=10, padx=10)
 
-    regresar_button = ttk.Button(ventana_CalibracionAbierta, text="Pausar Calibración y Regresar al Menú",
+    #Mover Plato
+    moverPlato_label = ttk.Label(ventana_CalibracionAbierta, text= "Presione el botón para mover el plato giratorio ", background="white" )
+    moverPlato_label.grid(row=50, column=0, pady=20, padx=10)
+
+    moverPlato_button = ttk.Button(ventana_CalibracionAbierta, text="Mover Plato", 
+                                 command=lambda: moverPlato())
+    moverPlato_button.grid(row=50, column=10, columnspan=1, pady=10, padx=10)
+    
+    # Continuar
+    continuar_button = ttk.Button(ventana_CalibracionAbierta, text="⮩ Realizar Calibración",  command=lambda: calibrarBloque(archivoCalibracion_datos, secuencia, bloqueIdValor_combobox,seleccionarPlantilla_combobox, tInicial_entry, tEstabilizacion_entry, numReps_entry))
+    continuar_button.grid(row=80, column=0, columnspan=1, pady=10, padx=10)
+
+    regresar_button = ttk.Button(ventana_CalibracionAbierta, text="⮪ Pausar Calibración y Regresar al Menú", 
                                  command=lambda: regresarVentanaPrincipal(root, ventana_CalibracionAbierta))
     regresar_button.grid(row=100, column=0, columnspan=1, pady=10)
     
-    finalizar_button = ttk.Button(ventana_CalibracionAbierta, text="Finalizar y Guardar Calibración", command=lambda: finalizarCalibracion(archivoCalibracion_datos, cliente, certificado, secuencia, numReps) )
+    finalizar_button = ttk.Button(ventana_CalibracionAbierta, text="🗸 Finalizar y Guardar Calibración",  command=lambda: finalizarCalibracion(archivoCalibracion_datos, cliente, certificado, secuencia, numReps) )
     finalizar_button.grid(row=100, column=10, columnspan=1, pady=10)
     return
 
@@ -713,6 +723,36 @@ def calibrarBloque(archivoCalibracion_datos, secuencia, bloqueIdValor_combobox, 
     mensajeProceso.destroy()
     mostrarMensaje(f"Calibración del Bloque {bloqueID} Finalizada.")
     return
+
+def moverPlato():
+    ventana = tk.Toplevel(root)
+    ventana.title("Mover Plato")
+    ventana.configure(bg="white")
+    ventana.iconphoto(False, winIcono)
+
+    title_label = ttk.Label(ventana, text="Seleccione la posición deseada", font=("Helvetica", 12, "bold"),
+                            background="white")
+    title_label.grid(row=0, column=0, columnspan=2, pady=10, padx=20)
+
+    pos1 = ttk.Button(ventana, text="1", width=20,
+                                 command=lambda: moverPlatoRemoto(RPi_url, "1"))
+    pos1.grid(row=1, column=0, columnspan=1, pady=10)
+    
+    pos2 = ttk.Button(ventana, text="2", width=20,
+                                 command=lambda: moverPlatoRemoto(RPi_url, "2"))
+    pos2.grid(row=1, column=1, columnspan=1, pady=10)
+    
+    pos3 = ttk.Button(ventana, text="3", width=20,
+                                 command=lambda: moverPlatoRemoto(RPi_url, "3"))
+    pos3.grid(row=2, column=0, columnspan=1, pady=10)
+
+    pos4 = ttk.Button(ventana, text="4", width=20,
+                                 command=lambda: moverPlatoRemoto(RPi_url, "4"))
+    pos4.grid(row=2, column=1, columnspan=1, pady=10)
+    
+    return
+
+
 
 def finalizarCalibracion(archivoCalibracion_datos, cliente, certificado, secuencia, numReps):
     

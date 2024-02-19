@@ -66,6 +66,14 @@ def moverDe0a1(RPi_url):
     response = requests.post(url)
     return response.json()
 
+def moverPlatoRemoto(RPi_url, pos):
+    url = RPi_url + "moverPlato"
+    data = {
+        'posición':pos
+    }
+    response = requests.post(url, json=data)
+    return response.json()
+
 
 
 ################## Ventanas Pop-up para valores de entrada y mensajes ##################

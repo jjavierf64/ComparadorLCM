@@ -67,15 +67,6 @@ GPIO.output(sleepMot3, GPIO.LOW)       #Sleep debe estar en LOW para deshabilita
 GPIO.setmode(GPIO.BCM)              #Numeración Broadcom
 GPIO.setup(pin_startRotationLimitSensor, GPIO.IN)    #Se define como entrada el sensor
 
-posicionStep=0                      #Variable de posición angular del disco
-required=0                          #Variable de pasos requeridos par llegar
-                                    #a la posicion deseada
-listo=0                             #Variable que determina cuando terminó
-
-
-#gohome()                            #gire el disco hasta home porque se inició el programa
-
-
 
 ######## Longitudes de Plantillas en Steps
 #### Plantilla1
@@ -265,6 +256,26 @@ def moverDe0a1_():
     GPIO.output(pin_enableCalibrationMotor, motorDisabledState)       #Modo seguro, motores inhabilitados               
     ActivaPedal(servo_pin)								#Baja el palpador
     return
+
+
+################## Mover Plato Giratorio ########################
+
+"""
+def moverPlato_(pos):
+    def gohome():
+
+        return
+    if pos == "2":
+        #mover home y luego a 2
+    elif pos == "3":
+        #mover home y luego a 3
+    elif pos == "4":
+        #mover home y luego a 4
+    else:
+        #mover home
+    
+    return
+"""
 
 
 

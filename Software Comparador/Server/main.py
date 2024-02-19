@@ -23,6 +23,16 @@ def moverDe0a1():
     # Retorna una respuesta
     return jsonify(success=True), 200
 
+@app.route('/moverPlato', methods=['POST'])
+def moverPlato():
+    data = request.json
+    pos = data.get('posición', '0')
+    if pos != '0':
+        moverPlato_(pos)
+    # Retorna una respuesta
+        return jsonify(success=True), 200
+    else:
+        return jsonify(success=False, received_param=pos), 500
 
 @app.route('/secuencias', methods=['POST', 'GET'])  # Ruta para la petición de ejecución de comandos
 def secuencias():
