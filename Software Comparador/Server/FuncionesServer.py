@@ -42,8 +42,7 @@ direction3 = 19                     #Pin de sentido de giro
 step3 = 16                          #Pin de dar paso
 pin_enablePlateMotor = 23
 
-sleepMot3 = 12                        #Pin para controlar el sleep del motor de ordenamiento
-                                    #Si está en 1 está activo, en 0 está en sleep
+
 pin_startRotationLimitSensor = 4               #Pin para el sensor infrarrojo de rotacion de angulo nicial
 pin_endRotationLimitSensor = 3                 #Pin para el sensor infrarrojo de rotacion de angulo final
 
@@ -60,13 +59,10 @@ GPIO.setup(pin_enablePlateMotor, GPIO.OUT)
                                                                                                                                            
 GPIO.output(pin_enablePlateMotor, motorDisabledState)       #Modo seguro, motores de plato inhabilitados
 
-GPIO.setup(sleepMot3, GPIO.OUT)                                                                                                                                                
-GPIO.output(sleepMot3, GPIO.LOW)       #Sleep debe estar en LOW para deshabilitarse
-
 
 GPIO.setmode(GPIO.BCM)              #Numeración Broadcom
 GPIO.setup(pin_startRotationLimitSensor, GPIO.IN)    #Se define como entrada el sensor
-
+GPIO.setup(pin_endRotationLimitSensor, GPIO.IN)    #Se define como entrada el sensor
 
 ######## Longitudes de Plantillas en Steps
 #### Plantilla1
