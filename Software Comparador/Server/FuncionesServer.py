@@ -260,22 +260,31 @@ def moverDe0a1_():
 
 ################## Mover Plato Giratorio ########################
 
-"""
-def moverPlato_(pos):
-    def gohome():
 
-        return
-    if pos == "2":
-        #mover home y luego a 2
-    elif pos == "3":
-        #mover home y luego a 3
-    elif pos == "4":
-        #mover home y luego a 4
-    else:
-        #mover home
+def moverPlato_(pos):
+    #Mover el plato a la posición 1 o home
+    start = GPIO.input(pin_startRotationLimitSensor)
+    clockwise=True  #dirección de giro normal
+    while start !=1:
+        #Movimiento de posición 1 a 2 con el palpador arriba
+        GPIO.output(pin_enablePlateMotor, motorEnabledState)       #habilita los motores
+        steperMotorPlate.motor_go(clockwise, "1/16", 16, .0005, False, 0)
+        GPIO.output(pin_enablePlateMotor, motorDisabledState)       #Modo seguro, motores inhabilitados
+        
+        start = GPIO.input(pin_startRotationLimitSensor) #Vuelve a obtener valores de inicio y fin
+        end = GPIO.input(pin_endRotationLimitSensor)
+        
+        if end ==1: #Si se salta el primer sensor y el segundo lo detecta, invierte el giro
+            clockwise = False 
+    
+    pos = int(pos)
+
+    GPIO.output(pin_enablePlateMotor, motorEnabledState)       #habilita los motores
+    steperMotorPlate.motor_go(clockwise, "1/16", pos*10_000, .0005, False, 1)
+    GPIO.output(pin_enablePlateMotor, motorDisabledState)       #Modo seguro, motores inhabilitados
     
     return
-"""
+
 
 
 
