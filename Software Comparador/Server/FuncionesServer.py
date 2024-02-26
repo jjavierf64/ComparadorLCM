@@ -262,26 +262,41 @@ def moverDe0a1_():
 
 
 def moverPlato_(pos):
-    #Mover el plato a la posición 1 o home
-    start = GPIO.input(pin_startRotationLimitSensor)
-    clockwise=True  #dirección de giro normal
-    while start !=1:
-        #Movimiento de posición 1 a 2 con el palpador arriba
-        GPIO.output(pin_enablePlateMotor, motorEnabledState)       #habilita los motores
-        steperMotorPlate.motor_go(clockwise, "1/16", 16, .0005, False, 0)
-        GPIO.output(pin_enablePlateMotor, motorDisabledState)       #Modo seguro, motores inhabilitados
-        
-        start = GPIO.input(pin_startRotationLimitSensor) #Vuelve a obtener valores de inicio y fin
-        end = GPIO.input(pin_endRotationLimitSensor)
-        
-        if end ==1: #Si se salta el primer sensor y el segundo lo detecta, invierte el giro
-            clockwise = False 
-    
-    pos = int(pos)
+    def gohome(): #Función para mover el plato a la posición 1 o home
+        start = GPIO.input(pin_startRotationLimitSensor)
+        clockwise=True  #dirección de giro normal
+        while start !=1:
+            #Movimiento de posición 1 a 2 con el palpador arriba
+            GPIO.output(pin_enablePlateMotor, motorEnabledState)       #habilita los motores
+            steperMotorPlate.motor_go(clockwise, "1/16", 16, .00045, False, 0)
+            GPIO.output(pin_enablePlateMotor, motorDisabledState)       #Modo seguro, motores inhabilitados
+            
+            start = GPIO.input(pin_startRotationLimitSensor) #Vuelve a obtener valores de inicio y fin
+            end = GPIO.input(pin_endRotationLimitSensor)
+            
+            if end ==1: #Si se salta el primer sensor y el segundo lo detecta, invierte el giro
+                clockwise = False 
+        return
 
-    GPIO.output(pin_enablePlateMotor, motorEnabledState)       #habilita los motores
-    steperMotorPlate.motor_go(clockwise, "1/16", pos*10_000, .0005, False, 1)
-    GPIO.output(pin_enablePlateMotor, motorDisabledState)       #Modo seguro, motores inhabilitados
+    def moveTo(numSteps):
+        GPIO.output(pin_enablePlateMotor, motorEnabledState)       #habilita los motores
+        steperMotorPlate.motor_go(False, "1/16", numSteps, .00045, False, 1)
+        GPIO.output(pin_enablePlateMotor, motorDisabledState)       #Modo seguro, motores inhabilitados
+        return
+
+    
+    #mover home 
+    gohome()
+    
+    if pos == "2":
+        #mover a 2
+        moveTo(6_500)
+    elif pos == "3":
+        #mover a 3
+        moveTo(13_000)
+    elif pos == "4":
+        #mover a 4
+        moveTo(19_500)
     
     return
 
