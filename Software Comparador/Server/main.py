@@ -69,9 +69,9 @@ def secuencias():
         plantilla = str(plantilla).lower()
 
         if plantilla == 'pequeña':
-            output = Completa1(tiempoestabilizacion, numRepeticiones)
+            output = Completa1(tiempoinicial, tiempoestabilizacion, numRepeticiones)
         elif plantilla == 'grande':
-            output = Completa2(tiempoestabilizacion, numRepeticiones)
+            output = Completa2(tiempoinicial, tiempoestabilizacion, numRepeticiones)
         else:
             print("Error, parámetro de plantilla no recibido")
             return jsonify(success=False, received_param=parametro), 500
