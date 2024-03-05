@@ -314,7 +314,7 @@ def Centros(tiempoinicial, tiempoestabilizacion, Repeticiones):
     
     #Antes de empezar a medir es necesario que el palpador vuelva a subir un momento sobre el patrón
     ActivaPedal(servo_pin)								#Sube el palpador
-    sleep(float(tiempoinicial)*60)					#Se le da un tiempo al palpador arriba sobre el bloque patrón
+    sleep(5)					#Se le da un tiempo al palpador arriba sobre el bloque patrón
     ActivaPedal(servo_pin)								#Baja el palpador  
     
     for i in range(int(Repeticiones)):
@@ -345,7 +345,7 @@ def Centros(tiempoinicial, tiempoestabilizacion, Repeticiones):
         GPIO.output(pin_enableCalibrationMotor, motorDisabledState)       #Modo seguro, motores inhabilitados
         ActivaPedal(servo_pin)								#Baja el palpador (termina cada repetición con el palpador abajo)
 
-        
+    sleep(5)
     ActivaPedal(servo_pin)								#Sube el palpador
     sleep(int(tiempoestabilizacion))        
     GPIO.output(pin_enableCalibrationMotor, motorEnabledState)       #habilita los motores
@@ -382,7 +382,7 @@ def Completa1(tiempoinicial, tiempoestabilizacion, Repeticiones):
     listaMediciones=[]
     
     ActivaPedal(servo_pin) #Sube palpador
-    sleep(float(tiempoinicial)*60)
+    sleep(5)
     
     for i in range(int(Repeticiones)):
 
@@ -501,7 +501,7 @@ def Completa2(tiempoinicial, tiempoestabilizacion, Repeticiones):
     
     listaMediciones=[]
     ActivaPedal(servo_pin) #Sube palpador
-    sleep(float(tiempoinicial)*60)
+    sleep(5)
     
     for i in range(int(Repeticiones)):
 

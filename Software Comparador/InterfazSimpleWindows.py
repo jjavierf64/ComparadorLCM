@@ -775,8 +775,6 @@ def finalizarCalibracion(root, ventana_CalibracionAbierta, archivoCalibracion_da
 
     # Eliminar Archivos Restantes
     EliminarArchivo(archivoCalibracion_info)
-    archivoCalibracion_datos=f"./Calibraciones en curso/{certificado}_Datos.xlsx"
-    EliminarArchivo(archivoCalibracion_datos)
 
     regresarVentanaPrincipal(root, ventana_CalibracionAbierta)
     return
