@@ -143,7 +143,7 @@ def nueva_calibracion():
                                 background="white")
     secuencia_label.grid(row=10, column=0, pady=5, sticky=tk.EW)
     secuencia_combobox = ttk.Combobox(ventana_nuevaCalibracion,
-                                      values=["Desviación central", "Desviación central y planitud", "Prueba"], width=40 ,state= "readonly")
+                                      values=["Desviación central", "Desviación central y planitud"], width=40 ,state= "readonly")
     secuencia_combobox.grid(row=10, column=1, columnspan=2, pady=5, padx=(20, 5), sticky="ew")
 
     tInicial_label = ttk.Label(ventana_nuevaCalibracion, text="Tiempo inicial (en minutos):", background="white")
@@ -229,7 +229,23 @@ def reanudar_calibracion():
 
 
 
-def calibracion_abierta(ventanaPrevia, archivoCalibracion_datos, cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps):
+def calibracion_abierta(ventanaPrevia, archivoCalibracion_datos, cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps, unidad):
+    
+    # definir función para detección automática de plantilla
+    def detect_plantilla(event):
+        bloqueID_oculto, valorNominal_oculto, unidad_oculto = event.widget.get().split()
+        seleccionarPlantilla_combobox.current(0)
+
+        if unidad_oculto == "mm" and float(valorNominal_oculto) > 10:
+            seleccionarPlantilla_combobox.current(1)
+        elif unidad_oculto == "pulg" and float(valorNominal_oculto) > 0.15:
+            seleccionarPlantilla_combobox.current(1)
+
+
+        return
+
+
+
     # Ocultar la ventana del menú de opciones una vez que se selecciona una opción
     root.withdraw()
     ventanaPrevia.destroy()
@@ -297,11 +313,12 @@ def calibracion_abierta(ventanaPrevia, archivoCalibracion_datos, cliente, certif
     for i,fila in enumerate(hojaCalibrando.iter_rows(min_row=14, max_row=500, min_col=3, max_col=3), start=14):
         for celda in fila:
             if celda.value != None: #Ve si existe algún dato y adjunta
-                bloquesCalibrando.append((celda.value, hojaCalibrando["B"+str(i)].value))
+                bloquesCalibrando.append((celda.value, hojaCalibrando["B"+str(i)].value, unidad))
     workbookCliente.close()
 
     bloqueIdValor_combobox = ttk.Combobox(ventana_CalibracionAbierta, values=bloquesCalibrando, width=40,state= "readonly") # Se debe hacer split a la variable
     bloqueIdValor_combobox.grid(row=30, column=10, pady=10)
+    bloqueIdValor_combobox.bind('<<ComboboxSelected>>', detect_plantilla)
     
 
     seleccionarPlantillaLabel =ttk.Label(ventana_CalibracionAbierta, text="Seleccione el tamaño de plantilla:", background="white")
@@ -633,6 +650,23 @@ def continuarNuevaCalibracion(ventana): # Función para continuar con el proceso
     tEstabilizacion = tEstabilizacion_entry.get()
     numReps = numReps_entry.get()
 
+    #Verificar si existe idCalibrando y registrar unidades
+    archivoCliente = BusquedaClientes(cliente)[2]
+    workbookCliente = load_workbook(filename=archivoCliente)  #Apertura del archivo de excel del cliente
+
+    #Revisar si ya existe algún calibrando registrado con el mismo número de serie
+    existeCalibrando = False
+    if idCalibrando in workbookCliente.sheetnames:
+        existeCalibrando = True
+
+    if not existeCalibrando:
+        mostrarMensaje("El ID de calibrando no existe. \nPor favor registrar calibrando.")
+        return
+    
+    hojaCalibrando = workbookCliente[idCalibrando]
+
+    unidad = hojaCalibrando["Z1"].value
+
 
     # Verificar si existe archivo
     nombreArchivoCalibracion = "./Calibraciones en curso/" + str(certificado) + "_Info.xlsx"
@@ -643,75 +677,25 @@ def continuarNuevaCalibracion(ventana): # Función para continuar con el proceso
     else:
         archivoCalibracion_datos, archivoCalibracion_info = CrearArchivoCalibracion(certificado)
 
-        RellenarInfoCalibracion(archivoCalibracion_info, [cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps])
+        RellenarInfoCalibracion(archivoCalibracion_info, [cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps, unidad])
 
+    calibracion_abierta(ventana, archivoCalibracion_datos, cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps, unidad)
 
-
-
-    print(f"Funcion Nueva, T INICIAL {tInicial}")
-    calibracion_abierta(ventana, archivoCalibracion_datos, cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps)
-
-
-    # # Ventana de espera
-    # ventana_espera = tk.Toplevel(root)
-    # ventana_espera.title("Secuencia en Curso")
-    # ventana_espera.configure(bg="white")
-    # ventana_espera.focus_set()
-
-    # main_label = ttk.Label(ventana_espera,
-    #                        text="Secuencia en Curso.",
-    #                        anchor=tk.CENTER, background="white")
-    # main_label.grid(row=0, column=0, padx=30, pady=20)
-
-    # waiting_icon = ttk.Label(ventana_espera,
-    #                        text="Por favor espere...",
-    #                        anchor=tk.CENTER, background="white")
-    # waiting_icon.grid(row=1, column=0, padx=30, pady=(0,20))
-    # root.update()
-
-    # # Ejecución de secuencia
-    # NuevaCalibracion(cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, int(numReps))    
-    # try:
-    #     #ejecutarSecuencia(RPi_url,secuencia,tEstabilizacion,numReps)
-    
-        
-    #     ventana_espera.destroy()
-
-    #     ventana_exito = tk.Toplevel(root)
-    #     ventana_exito.title("Secuencia Finalizada")
-    #     ventana_exito.configure(bg="white")
-    #     ventana_exito.focus_set()
-    #     main_label = ttk.Label(ventana_exito,
-    #                        text="Secuencia Terminada con Éxito.",
-    #                        anchor=tk.CENTER, background="white")
-    #     main_label.grid(row=0, column=0, padx=30, pady=20)
-    #     root.update()
-    # except:
-    #     ventana_error = tk.Toplevel(root)
-    #     ventana_error.title("Secuencia Finalizada")
-    #     ventana_error.configure(bg="yellow")
-    #     ventana_error.focus_set()
-    #     main_label = ttk.Label(ventana_error,
-    #                        text="ERROR en la Secuencia.",
-    #                        anchor=tk.CENTER, background="red")
-    #     main_label.grid(row=0, column=0, padx=30, pady=20)
-    #     root.update()
-        
     return 
 
 
 def reanudarCalibracion(ventana):
     certificado = certificado_combobox.get()
     
-    archivoCalibracion_datos, cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps = obtenerInfoCalibracion(certificado)
+    archivoCalibracion_datos, cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps, unidad = obtenerInfoCalibracion(certificado)
 
-    calibracion_abierta(ventana, archivoCalibracion_datos, cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps)
+    calibracion_abierta(ventana, archivoCalibracion_datos, cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps, unidad)
     return
 
 
 def calibrarBloque(archivoCalibracion_datos, secuencia, bloqueIdValor_combobox, seleccionarPlantilla_combobox, tInicial_entry, tEstabilizacion_entry, numReps_entry ):
     bloqueIdValor = bloqueIdValor_combobox.get()
-    bloqueID, valorNominal = bloqueIdValor.split()
+    bloqueID, valorNominal, unidad = bloqueIdValor.split()
     plantilla = seleccionarPlantilla_combobox.get()
     tInicial = tInicial_entry.get()
     tEstabilizacion = tEstabilizacion_entry.get()

@@ -563,168 +563,6 @@ def EliminarArchivo(rutaArchivoEliminar):
     return 
 
 
-################## Creación de un archivo csv para Datos ##################
-###########
-# OLD BOY #
-###########
-def CrearArchivoCSV(seleccionSecuencia, numCertificado):
-	# Se crea un archivo csv, nombrado con una marca temporal:
-	archivoDatos = "./Calibraciones en curso/" + numCertificado + ".csv" # Nombre del archivo para el almacenaje de datos
-	open(archivoDatos, mode="w", newline="")	#Creación del Archivo
-
-    # Se crean también para el registro de condiciones ambientales
-
-	archivoDatosAmbientales = "./Calibraciones en curso/" + numCertificado + "-Ambientales.csv" # Nombre del archivo para el almacenaje de datos
-	open(archivoDatosAmbientales, mode="w", newline="")	#Creación del Archivo
-
-
-	return archivoDatos,archivoDatosAmbientales
-    
-################## Proceso de calibración de bloques ##################
-###########
-# OLD BOY #
-###########
-def ProcesoCalibracionOLD(seleccionSecuencia, tiempoinicial, tiempoestabilizacion, numRepeticiones, hojaResultadosCalibracion, hojaConversionDatos, nombreArchivoCalibracion, libroExcel,numCertificado,archivoDatos, archivoDatosAmbientales):
-    
-	#Si se va calibrar los bloques solo con desviación central se hace lo siguiente:
-    if seleccionSecuencia == "Desviación central":
-        continuarCalibracion = "sí"
-        while continuarCalibracion == "sí":
-            valorBloque = Decimal(float(ventanaEntrada("Indique el valor del bloque a Calibrar: "))) ## CAMBIAR POR SELECTOR
-            numFila = selectorFila(hojaResultadosCalibracion) # Se halla la fila a trabajar
-            hojaResultadosCalibracion["A"+str(numFila)] = valorBloque # Se asigna el valor nominal del bloque ingresado por el usuario
-            sleep(int(tiempoinicial)*60)					#Tiempo de estabilización inicial
-
-			
-			
-			#Se realizan las mediciones de los bloques y se guardan en una lista [patrón, calibrando, patrón, calibrando,...]
-
-
-            ########################
-            # PARTE VIEJA
-            ########################
-
-			#Medición y registro de las condiciones ambientales iniciales
-            """listaMedicionesTemperatura = DatosFluke()
-            hojaResultadosCalibracion["I"+str(numFila)] = listaMedicionesTemperatura[0]
-            hojaResultadosCalibracion["J"+str(numFila)] = listaMedicionesTemperatura[1]
-            hojaResultadosCalibracion["K"+str(numFila)] = listaMedicionesTemperatura[2]
-            hojaResultadosCalibracion["L"+str(numFila)] = listaMedicionesTemperatura[3]
-            hojaResultadosCalibracion["M"+str(numFila)] = DatosVaisala()	#Dato de humedad relativa inicial"""
-			
-            numColumnaMediciones = 19 #Contador inicia en 19 porque ese es el número de la columna a partir del cual se empiezan a registar las mediciones de los bloques (Colummna S)
-            """
-
-            for numMedicion in range(len(listaMedicionesBloque)):
-                letraColumnaMedicion = openpyxl.utils.cell.get_column_letter(numColumnaMediciones)
-                hojaResultadosCalibracion[letraColumnaMedicion+str(numFila)] = listaMedicionesBloque[numMedicion]
-                numColumnaMediciones += 1
-            """
-			
-			#Medición y registro de las condiciones ambientales finales
-            """listaMedicionesTemperatura = DatosFluke()
-            hojaResultadosCalibracion["N"+str(numFila)] = listaMedicionesTemperatura[0]
-            hojaResultadosCalibracion["O"+str(numFila)] = listaMedicionesTemperatura[1]
-            hojaResultadosCalibracion["P"+str(numFila)] = listaMedicionesTemperatura[2]
-            hojaResultadosCalibracion["Q"+str(numFila)] = listaMedicionesTemperatura[3]
-            hojaResultadosCalibracion["R"+str(numFila)] = DatosVaisala()	#Dato de humedad relativa final"""
-            
-
-
-            ########################
-            # PARTE NUEVA CSV VIEJA
-            ########################
-
-            # Condiciones Ambientales Iniciales
-            condicionesAmbientales = condicionesAmbientales(RPi_url, "fluke") # 4 datos de temperatura
-            condicionesAmbientales.append(condicionesAmbientales(RPi_url, "vaisala")) # 1 dato de humedad relativa
-
-            
-            # Datos de Mediciones de Bloque Comparador
-            # listaMedicionesBloque = Centros(tiempoestabilizacion, numRepeticiones)[0]
-            listaMedicionesBloque = ejecutarSecuencia(tiempoestabilizacion, numRepeticiones)[0]
-
-            listaMedicionesBloque = [[str(num) for num in listaMedicionesBloque]] # Formato
-
-
-            with open(archivoDatos, mode="a", newline="") as archivo:
-                writer = csv.writer(archivo, delimiter=';')
-                writer.writerows(listaMedicionesBloque)
-            
-            
-            # Condiciones Ambientales Finales
-            condicionesAmbientales = condicionesAmbientales + condicionesAmbientales(RPi_url, "fluke") # 4 datos de temperatura
-            condicionesAmbientales.append(condicionesAmbientales(RPi_url, "vaisala")) # 1 dato de humedad relativa
-
-            condicionesAmbientales = [[str(num) for num in condicionesAmbientales]] #Formato
-
-            with open(archivoDatosAmbientales, mode="a", newline="") as archivo:
-                writer = csv.writer(archivo, delimiter=';')
-                writer.writerows(condicionesAmbientales)
-
-
-
-
-
-            continuarCalibracion = ventanaOpciones("¿Desea continuar con la calibración?:", ["sí", "no"]) 
-            
-        pausarCalibracion = ventanaOpciones("¿Desea Pausar la calibración o ya ha finalizado?", ["Pausar calibración", "Finalizar calibración"]) 
-        if pausarCalibracion == "Pausar calibración": #Se Pausa la calibración (aún no se realizan cálculos)
-            rutaGuardarPausa = "./Calibraciones en curso/" + nombreArchivoCalibracion
-            libroExcel.save(rutaGuardarPausa)
-            libroExcel.close()
-            mostrarMensaje("Calibración pausada. \nPuede revisar el archivo correspondiente en la carpeta \"Calibraciones en curso\".")
-                
-        elif pausarCalibracion == "Finalizar calibración": #Se Finaliza la calibración
-            duracionCalibracion = str(ventanaEntrada("Duración de la calibración (en días):"))
-            hojaConversionDatos["L7"] = duracionCalibracion + " días" 
-            CalculosDesviacionCentral(hojaResultadosCalibracion)
-            rutaGuardar = "./Calibraciones Finalizadas/" + nombreArchivoCalibracion #Se guarda el archivo de la calibración a partir del número de Certificado
-            libroExcel.save(rutaGuardar)  
-            libroExcel.close() 
-            EliminarArchivo("./Calibraciones en curso/" + nombreArchivoCalibracion) #Se elimina el archivo de la calibración de la carpeta "Calibraciones en curso"
-
-            # Mover archivos csv
-            shutil.move(archivoDatos, "./Calibraciones Finalizadas/" + numCertificado +".csv")
-            shutil.move(archivoDatosAmbientales, "./Calibraciones Finalizadas/" + numCertificado +"-Ambientales.csv")
-
-            mostrarMensaje("Calibración finalizada. Puede revisar el archivo correspondiente en la carpeta \"Calibraciones Finalizadas\".")
-				
-	#Si se va a calibrar los bloques con desviación + planitud
-    elif seleccionSecuencia == "Desviación central y planitud":
-        continuarCalibracion = "sí"
-        while continuarCalibracion == "sí":
-            #Inluir aquí código para desviación central y planitud
-            #
-            #
-            #
-            #
-            #
-            #
-            #
-            #
-            #
-            #
-            #
-            continuarCalibracion = ventanaOpciones("¿Desea continuar con la calibración?: ", ["sí", "no"]) 
-            
-        pausarCalibracion = ventanaOpciones("¿Desea Pausar la calibración o ya ha finalizado?", ["Pausar calibración", "Finalizar calibración"]) 
-        if pausarCalibracion == "Pausar calibración": #Se Pausa la calibración (aún no se realizan cálculos)
-            rutaGuardarPausa = "./Calibraciones en curso/" + nombreArchivoCalibracion
-            libroExcel.save(rutaGuardarPausa)
-            libroExcel.close()
-            mostrarMensaje("Calibración pausada. \nPuede revisar el archivo correspondiente en la carpeta \"Calibraciones en curso\".")
-                
-        elif pausarCalibracion == "Finalizar calibración": #Se Finaliza la calibración
-            duracionCalibracion = str(ventanaEntrada("Duración de la calibración (en días):"))
-            hojaConversionDatos["L7"] = duracionCalibracion + " días" 
-            CalculosDesviacionYPlanitud(hojaResultadosCalibracion)
-            rutaGuardar = "./Calibraciones Finalizadas/" + nombreArchivoCalibracion #Se guarda el archivo de la calibración a partir del número de Certificado
-            libroExcel.save(rutaGuardar)  
-            libroExcel.close()
-            EliminarArchivo("./Calibraciones en curso/" + nombreArchivoCalibracion) #Se elimina el archivo de la calibración de la carpeta "Calibraciones en curso"
-            mostrarMensaje("Calibración finalizada. Puede revisar el archivo correspondiente en la carpeta \"Calibraciones Finalizadas\".")   
-    return
     
 ################## Reanudar Calibración ##################
 
@@ -735,14 +573,31 @@ def obtenerInfoCalibracion(numCertificado):
     workbookInfo = load_workbook(filename=f"./Calibraciones en curso/{numCertificado}_Info.xlsx")  #Apertura del archivo de excel de la calibración
     hojaInfo = workbookInfo.active
 
-    for fila in hojaInfo.iter_rows(min_row=2, max_row=13, min_col=2, max_col=2):
+    for fila in hojaInfo.iter_rows(min_row=2, max_row=14, min_col=2, max_col=2):
         for celda in fila:
                 info.append(celda.value)
     workbookInfo.close()
 
     return info
 
+def obtenerUnidadesCalibrando(cliente, idCalibrando):
+    archivoCliente = BusquedaClientes(cliente)[2]
+    workbookCliente = load_workbook(filename=archivoCliente)  #Apertura del archivo de excel del cliente
 
+    #Revisar si ya existe algún calibrando registrado con el mismo número de serie
+    existeCalibrando = False
+    if idCalibrando in workbookCliente.sheetnames:
+        existeCalibrando = True
+
+    if not existeCalibrando:
+        mostrarMensaje("El ID de calibrando no existe. \nPor favor registrar calibrando.")
+        return
+    
+    hojaCalibrando = workbookCliente[idCalibrando]
+
+    unidad = hojaCalibrando["Z1"]
+
+    return unidad
 
 ################## Agregar cliente ##################
 
@@ -820,6 +675,7 @@ def IngresarCalibrando(nombreCliente, objeto, cantidad, marca, numSerie, materia
     hojaNuevoCalibrando["C7"] = modelo
     hojaNuevoCalibrando["C8"] = grado
     hojaNuevoCalibrando["C9"] = identificacionInterna
+    hojaNuevoCalibrando["Z1"] = unidad
 
     hojaNuevoCalibrando["B12"] = "Longitud nominal (" + unidad + ")" #Agregar valor nominal e identificación de los bloques del juego
     workbookCliente.save(archivoCliente)
