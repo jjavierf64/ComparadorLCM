@@ -313,7 +313,7 @@ def RellenarEncabezados(archivoCalibracion_datos, secuencia, numRepeticiones):
     
     elif str(secuencia).lower() == "desviación central y planitud":
         for k in range(int(numRepeticiones)):#Se usan siete columnas por cada repetición: una para el patrón y 6 para el calibrando
-            columnaActual = 14+7*k
+            columnaActual = 14+6*k
 
             letraColumnaPatron = openpyxl.utils.cell.get_column_letter(columnaActual) #Obtener la letra de la columna que va a guardar los datos del Patrón en cada rep k 
             letraColumnaCalibrandoCentro = openpyxl.utils.cell.get_column_letter(columnaActual+1) #Obtener la letra de la columna que va a guardar los datos del Centro del Calibrando en cada rep k 

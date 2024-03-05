@@ -335,7 +335,7 @@ def calibracion_abierta(ventanaPrevia, archivoCalibracion_datos, cliente, certif
                                  command=lambda: regresarVentanaPrincipal(root, ventana_CalibracionAbierta))
     regresar_button.grid(row=100, column=0, columnspan=1, pady=10)
     
-    finalizar_button = ttk.Button(ventana_CalibracionAbierta, text="🗸 Finalizar y Guardar Calibración",  command=lambda: finalizarCalibracion(archivoCalibracion_datos, cliente, certificado, secuencia, numReps) )
+    finalizar_button = ttk.Button(ventana_CalibracionAbierta, text="🗸 Finalizar y Guardar Calibración",  command=lambda: finalizarCalibracion(root, ventana_CalibracionAbierta, archivoCalibracion_datos, cliente, certificado, secuencia, numReps) )
     finalizar_button.grid(row=100, column=10, columnspan=1, pady=10)
     return
 
@@ -754,7 +754,7 @@ def moverPlato():
 
 
 
-def finalizarCalibracion(archivoCalibracion_datos, cliente, certificado, secuencia, numReps):
+def finalizarCalibracion(root, ventana_CalibracionAbierta, archivoCalibracion_datos, cliente, certificado, secuencia, numReps):
     
     
     RellenarEncabezados(archivoCalibracion_datos, secuencia, numReps)
@@ -791,6 +791,11 @@ def finalizarCalibracion(archivoCalibracion_datos, cliente, certificado, secuenc
 
     # Eliminar Archivos Restantes
     EliminarArchivo(archivoCalibracion_info)
+    archivoCalibracion_datos=f"./Calibraciones en curso/{certificado}_Datos.xlsx"
+    EliminarArchivo(archivoCalibracion_datos)
+
+    regresarVentanaPrincipal(root, ventana_CalibracionAbierta)
+    return
 
 
 
