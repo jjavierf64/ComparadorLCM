@@ -99,8 +99,6 @@ serTESA=serial.Serial("/dev/ttyUSBI", baudrate=1200, bytesize=serial.SEVENBITS, 
                           stopbits=serial.STOPBITS_TWO, xonxoff=True, timeout=0.5) #Configuración de puerto
 
 def DatosTESA():                                   
-    sleep(5) #Por seguridad
-    ActivaPedal() # Activa Pedal para tomar el dato
     detenerse=0                     #Constante para while que captura dato
     def recv(serial):               #Definición de una función para recibir datos
         while True:
@@ -125,8 +123,6 @@ def DatosTESA():
                 MedicionBloque=medicion #Guardando dato en lista
             detenerse = 1           #Condición para salir del while
     
-    sleep(5) #Por seguridad
-    ActivaPedal() #Vuelve al estado original por seguridad
     return MedicionBloque
 
 
@@ -385,6 +381,7 @@ def Completa1(tiempoinicial, tiempoestabilizacion, Repeticiones):
     
     listaMediciones=[]
     
+    ActivaPedal(servo_pin) #Sube palpador
     sleep(float(tiempoinicial)*60)
     
     for i in range(int(Repeticiones)):
@@ -503,7 +500,7 @@ def Completa2(tiempoinicial, tiempoestabilizacion, Repeticiones):
     tic=time.perf_counter()                                 #Toma el tiempo inicial
     
     listaMediciones=[]
-    
+    ActivaPedal(servo_pin) #Sube palpador
     sleep(float(tiempoinicial)*60)
     
     for i in range(int(Repeticiones)):
