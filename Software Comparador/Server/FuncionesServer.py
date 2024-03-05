@@ -99,6 +99,7 @@ serTESA=serial.Serial("/dev/ttyUSBI", baudrate=1200, bytesize=serial.SEVENBITS, 
                           stopbits=serial.STOPBITS_TWO, xonxoff=True, timeout=0.5) #Configuración de puerto
 
 def DatosTESA():                                   
+    ActivaPedal() # Activa Pedal para tomar el dato
     detenerse=0                     #Constante para while que captura dato
     def recv(serial):               #Definición de una función para recibir datos
         while True:
@@ -122,6 +123,9 @@ def DatosTESA():
                 medicion=float(divisionDatos[1])    #Pasando de string a decimal
                 MedicionBloque=medicion #Guardando dato en lista
             detenerse = 1           #Condición para salir del while
+    
+    sleep(1) #Por seguridad
+    ActivaPedal() #Vuelve al estado original por seguridad
     return MedicionBloque
 
 
