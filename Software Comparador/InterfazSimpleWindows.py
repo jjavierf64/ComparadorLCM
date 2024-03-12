@@ -241,6 +241,18 @@ def calibracion_abierta(ventanaPrevia, archivoCalibracion_datos, cliente, certif
         elif unidad_oculto == "pulg" and float(valorNominal_oculto) > 0.15:
             seleccionarPlantilla_combobox.current(1)
 
+        
+            # Movimiento de disco de bloques
+        if unidad_oculto == "mm":
+            if float(valorNominal_oculto) > 10:
+                moverPlatoRemoto(RPi_url, 1)
+            elif float(valorNominal_oculto) < 10:
+                moverPlatoRemoto(RPi_url, 1)
+        elif unidad_oculto == "pulg": 
+            if float(valorNominal_oculto) > 0.15:
+                moverPlatoRemoto(RPi_url, 1)
+                
+
 
         return
 
