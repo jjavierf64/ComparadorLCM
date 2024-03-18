@@ -306,8 +306,6 @@ def Centros(tiempoinicial, tiempoestabilizacion, Repeticiones):
 	
     global valorNominalBloque
     global dato
-    
-    #obtenerAnguloBloque(valorNominalBloque[dato])          #Moverse a la siguiente pareja de bloques
     global t1
     t1=time.time()                                   #finaliza el conteo de espera de bloques
     tic=time.perf_counter()                                 #Toma el tiempo inicial
@@ -349,13 +347,12 @@ def Centros(tiempoinicial, tiempoestabilizacion, Repeticiones):
 
     sleep(5)
     ActivaPedal(servo_pin)								#Sube el palpador
-    sleep(int(tiempoestabilizacion))        
+    sleep(5)
     GPIO.output(pin_enableCalibrationMotor, motorEnabledState)       #habilita los motores
     steperMotor1.motor_go(True, "1/8", round(stepsP1_12/2), .0025, False, 2) #Mov de 1 a HOME
     GPIO.output(pin_enableCalibrationMotor, motorDisabledState)       #Modo seguro, motores inhabilitados               
     ActivaPedal(servo_pin)								#Baja el palpador
     
-    #obtenerAnguloBloque(valorNominalBloques[dato])          #Moverse a la siguiente pareja de bloques
     toc=time.perf_counter()                                 #Toma el tiempo final
     global tiempoCorrida
     tiempoCorrida=toc-tic                                   #retorna el tiempo de corrida en segundos
@@ -462,6 +459,7 @@ def Completa1(tiempoinicial, tiempoestabilizacion, Repeticiones):
         MedicionBloque=DatosTESA() #Llama función TESA
         listaMediciones.append(MedicionBloque)  #Valor del patrón en posición 1 (centro)
         print(MedicionBloque)
+        sleep(5)
 
     
     GPIO.output(pin_enableCalibrationMotor, motorEnabledState)       #habilita los motores
@@ -577,6 +575,7 @@ def Completa2(tiempoinicial, tiempoestabilizacion, Repeticiones):
         MedicionBloque=DatosTESA() #Llama función TESA
         listaMediciones.append(MedicionBloque)  #Valor del patrón en posición 1 (centro)
         print(MedicionBloque)
+        sleep(5)
 
     
     GPIO.output(pin_enableCalibrationMotor, motorEnabledState)       #habilita los motores
