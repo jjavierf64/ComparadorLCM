@@ -53,7 +53,7 @@ def nueva_calibracion():
     subtitle_label = ttk.Label(ventana_nuevaCalibracion, text="Nueva calibración", font=("Helvetica", 14), background="white")
     subtitle_label.grid(row=1, column=0, columnspan=2, pady=10)
 
-    image = Image.open("logoLCM.png")  
+    image = Image.open("./assets/logoLCM.png")  
     image = image.resize((int(image.width * 0.25), int(image.height * 0.25)))  #Ajustar el tamaño del logo
     image = ImageTk.PhotoImage(image)
 
@@ -66,7 +66,7 @@ def nueva_calibracion():
     
     #Crear una lista con los nombres de los clientes ya registrados
     clientesRegistrados = []
-    archivoClientes = openpyxl.load_workbook("Clientes.xlsx")
+    archivoClientes = openpyxl.load_workbook("Clientes/Clientes.xlsx")
     hojaClientes = archivoClientes.active
     
     numFila = 3 #Se empieza en la fila 3 porque antes están los encabezados
@@ -165,7 +165,7 @@ def reanudar_calibracion():
     subtitle_label = ttk.Label(ventana_reanudar, text="Reanudar calibración", font=("Helvetica", 14), background="white")
     subtitle_label.grid(row=1, column=0, columnspan=2, pady=10)
 
-    image = Image.open("logoLCM.png")  
+    image = Image.open("./assets/logoLCM.png")  
     image = image.resize((int(image.width * 0.25), int(image.height * 0.25)))  #Ajustar el tamaño del logo
     image = ImageTk.PhotoImage(image)
 
@@ -221,7 +221,7 @@ def ingresar_cliente():
     subtitle_label = ttk.Label(ventana_cliente, text="Ingresar nuevo cliente", font=("Helvetica", 14), background="white")
     subtitle_label.grid(row=1, column=0, columnspan=2, pady=10)
 
-    image = Image.open("logoLCM.png")  
+    image = Image.open("./assets/logoLCM.png")  
     image = image.resize((int(image.width * 0.25), int(image.height * 0.25)))  #Ajustar el tamaño del logo
     image = ImageTk.PhotoImage(image)
 
@@ -265,7 +265,7 @@ def ingresar_calibrando():
     subtitle_label = ttk.Label(ventana_calibrando, text="Ingresar calibrando", font=("Helvetica", 14), background="white")
     subtitle_label.grid(row=1, column=0, columnspan=2, pady=10)
 
-    image = Image.open("logoLCM.png")  
+    image = Image.open("./assets/logoLCM.png")  
     image = image.resize((int(image.width * 0.25), int(image.height * 0.25)))  #Ajustar el tamaño del logo
     image = ImageTk.PhotoImage(image)
 
@@ -278,7 +278,7 @@ def ingresar_calibrando():
     
     #Crear una lista con los nombres de los clientes ya registrados
     clientesRegistrados = []
-    archivoClientes = openpyxl.load_workbook("Clientes.xlsx")
+    archivoClientes = openpyxl.load_workbook("Clientes/Clientes.xlsx")
     hojaClientes = archivoClientes.active
     
     numFila = 3 #Se empieza en la fila 3 porque antes están los encabezados
@@ -360,7 +360,6 @@ def mover_motores():
 
     def funcionMotores(event):
         print(event.keysym)
-        print(type(event.keysym))
         moverManualInterfaz(event)
 
 
@@ -443,7 +442,7 @@ title_label.grid(row=0, column=0, columnspan=2, pady=20)
 subtitle_label = ttk.Label(root, text="Menú de opciones", font=("Helvetica", 14), background="white")
 subtitle_label.grid(row=1, column=0, columnspan=2, pady=10)
 
-image = Image.open("logoLCM.png")  
+image = Image.open("./assets/logoLCM.png")  
 image = image.resize((int(image.width * 0.25), int(image.height * 0.25)))  
 image = ImageTk.PhotoImage(image)
 

@@ -48,7 +48,7 @@ direction3 = 19                     #Pin de sentido de giro
 step3 = 16                          #Pin de dar paso
 pin_enablePlateMotor = 23
 
-sleepMot3=12                        #Pin para controlar el sleep del motor de ordenamiento
+sleepMot3 = 12                        #Pin para controlar el sleep del motor de ordenamiento
                                     #Si está en 1 está activo, en 0 está en sleep
 pin_startRotationLimitSensor = 4               #Pin para el sensor infrarrojo de rotacion de angulo nicial
 pin_endRotationLimitSensor = 3                 #Pin para el sensor infrarrojo de rotacion de angulo final
@@ -90,16 +90,18 @@ def moverManualInterfaz(event):
         
         
         if tecla == "Up":
-            steperMotor1.motor_go(False, "Full", 20, 0, False, 0)		
+            print("Motor 1 go up")
+            steperMotor1.motor_go(False, "Full", 2, 0.001, False, 0)		
 
         elif tecla == "Down":
-            steperMotor1.motor_go(True, "Full", 20, 0, False, 0)
+            print("Motor 1 go down")
+            steperMotor1.motor_go(True, "Full", 2, 0.001, False, 0)
 
         elif tecla == "Left":
-            steperMotor2.motor_go(False, "Full", 20, 0, False, 0)		
+            steperMotor2.motor_go(False, "Full", 2, 0.001, False, 0)		
 
         elif tecla == "Right":
-            steperMotor2.motor_go(True, "Full", 20, 0, False, 0)
+            steperMotor2.motor_go(True, "Full", 2, 0.001, False, 0)
             
     except:
         GPIO.output(pin_enableCalibrationMotor, motorDisabledState)   # Apagar motores
