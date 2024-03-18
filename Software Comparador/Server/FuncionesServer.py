@@ -375,8 +375,6 @@ def Completa1(tiempoinicial, tiempoestabilizacion, Repeticiones):
     
     global valorNominalBloque
     global dato
-    
-    #obtenerAnguloBloque(valorNominalBloque[dato])          #Moverse a la siguiente pareja de bloques
     global t1
     t1=time.time()                                   #finaliza el conteo de espera de bloques
     tic=time.perf_counter()                                 #Toma el tiempo inicial
@@ -471,9 +469,7 @@ def Completa1(tiempoinicial, tiempoestabilizacion, Repeticiones):
     GPIO.output(pin_enableCalibrationMotor, motorDisabledState)       #Modo seguro, motores inhabilitados
 
     ActivaPedal(servo_pin) #Baja palpador
-    
-    listaMediciones.append(MedicionBloque)
-    #obtenerAnguloBloque(valorNominalBloques[dato])          #Moverse a la siguiente pareja de bloques
+
     toc=time.perf_counter()                                 #Toma el tiempo final
     global tiempoCorrida
     tiempoCorrida=toc-tic                            #retorna el tiempo de corrida en segundos
@@ -494,9 +490,7 @@ def Completa1(tiempoinicial, tiempoestabilizacion, Repeticiones):
 def Completa2(tiempoinicial, tiempoestabilizacion, Repeticiones):
         
     global valorNominalBloque
-    global dato
-    
-    #obtenerAnguloBloque(valorNominalBloque[dato])          #Moverse a la siguiente pareja de bloques
+    global dato    
     global t1
     t1=time.time()                                   #finaliza el conteo de espera de bloques
     tic=time.perf_counter()                                 #Toma el tiempo inicial
@@ -591,8 +585,6 @@ def Completa2(tiempoinicial, tiempoestabilizacion, Repeticiones):
 
     ActivaPedal(servo_pin) #Baja palpador
     
-    listaMediciones.append(MedicionBloque)
-    #obtenerAnguloBloque(valorNominalBloques[dato])          #Moverse a la siguiente pareja de bloques
     toc=time.perf_counter()                                 #Toma el tiempo final
     global tiempoCorrida
     tiempoCorrida=toc-tic                            #retorna el tiempo de corrida en segundos
