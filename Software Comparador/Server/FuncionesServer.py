@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+
 """
 Funciones para el funcionamiento correcto del servidor
 """
