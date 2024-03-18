@@ -313,7 +313,7 @@ def RellenarEncabezados(archivoCalibracion_datos, secuencia, numRepeticiones):
     
     elif str(secuencia).lower() == "desviación central y planitud":
         for k in range(int(numRepeticiones)):#Se usan siete columnas por cada repetición: una para el patrón y 6 para el calibrando
-            columnaActual = 14+6*k
+            columnaActual = 14+7*k
 
             letraColumnaPatron = openpyxl.utils.cell.get_column_letter(columnaActual) #Obtener la letra de la columna que va a guardar los datos del Patrón en cada rep k 
             letraColumnaCalibrandoCentro = openpyxl.utils.cell.get_column_letter(columnaActual+1) #Obtener la letra de la columna que va a guardar los datos del Centro del Calibrando en cada rep k 
@@ -321,6 +321,7 @@ def RellenarEncabezados(archivoCalibracion_datos, secuencia, numRepeticiones):
             letraColumnaCalibrandoEsquina4 = openpyxl.utils.cell.get_column_letter(columnaActual+3) #Obtener la letra de la columna que va a guardar los datos de la Esquina 4 del Calibrando en cada rep k 
             letraColumnaCalibrandoEsquina5 = openpyxl.utils.cell.get_column_letter(columnaActual+4) #Obtener la letra de la columna que va a guardar los datos de la Esquina 5 del Calibrando en cada rep k 
             letraColumnaCalibrandoEsquina6 = openpyxl.utils.cell.get_column_letter(columnaActual+5) #Obtener la letra de la columna que va a guardar los datos de la Esquina 3 del Calibrando en cada rep k 
+            letraColumnaPatronRepetido = openpyxl.utils.cell.get_column_letter(columnaActual+6) #Obtener la letra de la columna que va a guardar los datos de la Esquina 3 del Calibrando en cada rep k 
 
             #Escribir los encabezados de las nuevas celdas:
             hojaDatos[letraColumnaPatron + "1"] = "Patrón (Centro) #"+str(k)
@@ -329,6 +330,7 @@ def RellenarEncabezados(archivoCalibracion_datos, secuencia, numRepeticiones):
             hojaDatos[letraColumnaCalibrandoEsquina4 + "1"] = "Calibrando (Esquina 4) #"+str(k)
             hojaDatos[letraColumnaCalibrandoEsquina5 + "1"] = "Calibrando (Esquina 5) #"+str(k)
             hojaDatos[letraColumnaCalibrandoEsquina6 + "1"] = "Calibrando (Esquina 6) #"+str(k)
+            hojaDatos[letraColumnaPatronRepetido + "1"] = "Patrón (Centro Repetido) #"+str(k)
             
             #Darle formato a las nuevas celdas:
             for numColumna in range(columnaActual,columnaActual+8):
