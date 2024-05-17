@@ -578,15 +578,25 @@ def unificarArchivos(rutaDatos, rutaMacro):
 
     for ws_name in ["Datos", "Información"]:
         if ws_name in workbookDatos.sheetnames:
-            # Get the source worksheet
+            
             sheetDatos = workbookDatos[ws_name]
-            # Create a new worksheet in the target workbook
+            
             sheetMacro = workbookMacro.create_sheet(title=f"Registro{ws_name}")
             
-            # Copy the content
+            # Copy contenido
             for row in sheetDatos.iter_rows():
                 for cell in row:
                     sheetMacro[cell.coordinate].value = cell.value
+            
+            # Copiar estilo
+            for row in sheetDatos.iter_rows():
+                for cell in row:
+                    sheetMacro[cell.coordinate].font = cell.font
+                    sheetMacro[cell.coordinate].border = cell.border
+                    sheetMacro[cell.coordinate].fill = cell.fill
+                    sheetMacro[cell.coordinate].number_format = cell.number_format
+                    sheetMacro[cell.coordinate].protection = cell.protection
+                    sheetMacro[cell.coordinate].alignment = cell.alignment
     
     
     
