@@ -794,6 +794,15 @@ def finalizarCalibracion(root, ventana_CalibracionAbierta, archivoCalibracion_da
     rutaMacro = f"./Calibraciones Finalizadas/{certificado}-{cliente}.xlsm"
     unificarArchivos(rutaDatos, rutaMacro)
 
+    # Create an instance of the Excel application
+    excel = win32com.client.Dispatch("Excel.Application")
+    excel.Visible = False
+    workbook = excel.Workbooks.Open(rutaMacro)
+    excel.Application.Run(f'{workbook.Name}!ImportarTodo.ImportarTodo')
+    workbook.Save()
+    workbook.Close(SaveChanges=False)
+    excel.Application.Quit()
+
     regresarVentanaPrincipal(root, ventana_CalibracionAbierta)
     return
 
