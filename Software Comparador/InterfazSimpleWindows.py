@@ -780,13 +780,18 @@ def finalizarCalibracion(root, ventana_CalibracionAbierta, archivoCalibracion_da
                 new_cell.number_format = copy(cell.number_format)
                 new_cell.alignment = copy(cell.alignment)
 
-
-    workbookCombinado.save(f"./Calibraciones Finalizadas/{certificado}-{cliente}.xlsx")
+    rutaDatos = f"./Calibraciones Finalizadas/DATOS_DE_{certificado}-{cliente}.xlsx"
+    workbookCombinado.save(rutaDatos)
     workbookCombinado.close()
     workbookInfo.close()
 
     # Eliminar Archivos Restantes
     EliminarArchivo(archivoCalibracion_info)
+
+    # PARTE NUEVA PARA ÚNICO ARCHIVO DE MACRO
+
+    rutaMacro = f"./Calibraciones Finalizadas/{certificado}-{cliente}.xlsm"
+    unificarArchivos(rutaDatos, rutaMacro)
 
     regresarVentanaPrincipal(root, ventana_CalibracionAbierta)
     return

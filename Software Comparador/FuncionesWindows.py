@@ -565,6 +565,39 @@ def EliminarArchivo(rutaArchivoEliminar):
     return 
 
 
+################## Eliminar archivo ##################
+def unificarArchivos(rutaDatos, rutaMacro):
+    
+    machoteMacro = "./Machotes/MacroFinal.xlsm"
+    shutil.copy(machoteMacro, rutaMacro)	
+
+    workbookDatos = load_workbook(filename=rutaDatos)
+    workbookMacro = load_workbook(filename=rutaMacro,keep_vba=True)
+    
+    # Traspaso de Info
+
+    for ws_name in ["Datos", "Información"]:
+        if ws_name in workbookDatos.sheetnames:
+            # Get the source worksheet
+            sheetDatos = workbookDatos[ws_name]
+            # Create a new worksheet in the target workbook
+            sheetMacro = workbookMacro.create_sheet(title=f"Registro{ws_name}")
+            
+            # Copy the content
+            for row in sheetDatos.iter_rows():
+                for cell in row:
+                    sheetMacro[cell.coordinate].value = cell.value
+    
+    
+    
+    workbookDatos.close()
+    
+    workbookMacro.save(rutaMacro)
+    workbookMacro.close()
+
+    EliminarArchivo(rutaDatos)
+    return
+
     
 ################## Reanudar Calibración ##################
 
