@@ -21,7 +21,7 @@ import csv                                                          # Biblioteca
 import tkinter as tk
 from tkinter import ttk, Scrollbar, Listbox
 import requests
-
+import win32com.client
 
 ################# Comunicación con el RPI - Servidor #######################
 
