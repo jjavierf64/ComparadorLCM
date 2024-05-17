@@ -664,6 +664,7 @@ def continuarNuevaCalibracion(ventana): # Función para continuar con el proceso
 
     #Verificar si existe idCalibrando y registrar unidades
     archivoCliente = BusquedaClientes(cliente)[2]
+    direccionCliente = BusquedaClientes(cliente)[1]
     workbookCliente = load_workbook(filename=archivoCliente)  #Apertura del archivo de excel del cliente
 
     #Revisar si ya existe algún calibrando registrado con el mismo número de serie
@@ -689,7 +690,7 @@ def continuarNuevaCalibracion(ventana): # Función para continuar con el proceso
     else:
         archivoCalibracion_datos, archivoCalibracion_info = CrearArchivoCalibracion(certificado)
 
-        RellenarInfoCalibracion(archivoCalibracion_info, [cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps, unidad])
+        RellenarInfoCalibracion(archivoCalibracion_info, [cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps, unidad, direccionCliente])
 
     calibracion_abierta(ventana, archivoCalibracion_datos, cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps, unidad)
 
