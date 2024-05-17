@@ -786,8 +786,6 @@ def finalizarCalibracion(root, ventana_CalibracionAbierta, archivoCalibracion_da
     workbookCombinado.close()
     workbookInfo.close()
 
-    # Eliminar Archivos Restantes
-    EliminarArchivo(archivoCalibracion_info)
 
     # PARTE NUEVA PARA ÚNICO ARCHIVO DE MACRO
 
@@ -802,6 +800,12 @@ def finalizarCalibracion(root, ventana_CalibracionAbierta, archivoCalibracion_da
     workbook.Save()
     workbook.Close(SaveChanges=False)
     excel.Application.Quit()
+
+
+    # Eliminar Archivos Restantes
+    EliminarArchivo(archivoCalibracion_info)
+    EliminarArchivo(rutaDatos)
+
 
     regresarVentanaPrincipal(root, ventana_CalibracionAbierta)
     return

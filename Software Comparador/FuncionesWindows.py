@@ -586,17 +586,15 @@ def unificarArchivos(rutaDatos, rutaMacro):
             # Copy contenido
             for row in sheetDatos.iter_rows():
                 for cell in row:
-                    sheetMacro[cell.coordinate].value = cell.value
-            
-            # Copiar estilo
-            for row in sheetDatos.iter_rows():
-                for cell in row:
-                    sheetMacro[cell.coordinate].font = cell.font
-                    sheetMacro[cell.coordinate].border = cell.border
-                    sheetMacro[cell.coordinate].fill = cell.fill
-                    sheetMacro[cell.coordinate].number_format = cell.number_format
-                    sheetMacro[cell.coordinate].protection = cell.protection
-                    sheetMacro[cell.coordinate].alignment = cell.alignment
+
+                    new_cell = sheetMacro.cell(row=cell.row, column=cell.column, value=cell.value)
+
+                    if cell.has_style:
+                        new_cell.font = copy(cell.font)
+                        new_cell.border = copy(cell.border)
+                        new_cell.fill = copy(cell.fill)
+                        new_cell.number_format = copy(cell.number_format)
+                        new_cell.alignment = copy(cell.alignment)
     
     
     
@@ -604,8 +602,6 @@ def unificarArchivos(rutaDatos, rutaMacro):
     
     workbookMacro.save(rutaMacro)
     workbookMacro.close()
-
-    EliminarArchivo(rutaDatos)
     return
 
     
