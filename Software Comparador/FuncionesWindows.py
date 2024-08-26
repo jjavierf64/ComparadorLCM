@@ -22,6 +22,7 @@ import tkinter as tk
 from tkinter import ttk, Scrollbar, Listbox
 import requests
 import win32com.client
+import subprocess
 
 ################# Comunicación con el RPI - Servidor #######################
 
@@ -37,7 +38,11 @@ def ejecutarSecuencia(RPi_url, secuencia, tiempoinicial, tiempoestabilizacion, n
     url = RPi_url + "secuencias"
     response = requests.post(url, json=data)
     print(response)
-    return response.json()
+    try:
+        return response.json()
+    except:
+        mostrarMensaje("Error en la secuencia.\n\nPor favor reiniciar servicio y continuar\ncon la calibracion.")
+        return ""
 
 
 def condicionesAmbientales(RPi_url, instrumento):
@@ -73,6 +78,12 @@ def moverPlatoRemoto(RPi_url, pos):
     }
     response = requests.post(url, json=data)
     return response.json()
+
+def activarPedalRemoto(RPi_url):
+    url = RPi_url + "activarPedalRemoto"
+    response = requests.post(url)
+    return response.json()
+
 
 
 
@@ -495,7 +506,9 @@ def procesoCalibracion(RPi_url, archivoCalibracion_datos, secuencia, bloqueID, v
     workbookDatos = load_workbook(archivoCalibracion_datos) #Apertura del archivo de excel de la calibración
     hojaDatos = workbookDatos.active
 
-    numFila = selectorFila(hojaDatos) # Elige la fila correspondiente
+    #Eliminar Fila si existe el registro y devuelve la fila
+    #numFila = selectorFila(hojaDatos) # Elige la fila correspondiente
+    numFila = seleccionarFilaSegunID(hojaDatos,bloqueID) # Elige la fila correspondiente
 
     hojaDatos[f"A{numFila}"] = valorNominal
     hojaDatos[f"B{numFila}"] = bloqueID
@@ -506,7 +519,12 @@ def procesoCalibracion(RPi_url, archivoCalibracion_datos, secuencia, bloqueID, v
     condAmb=condicionesAmbientales(RPi_url, instrumento="fluke")
     condAmb.append(condicionesAmbientales(RPi_url, instrumento="vaisala"))
 
-    listaMedicionesBloque = ejecutarSecuencia(RPi_url, secuencia, tInicial, tEstabilizacion, numReps, plantilla)[0]
+    listaMedicionesBloque = ejecutarSecuencia(RPi_url, secuencia, tInicial, tEstabilizacion, numReps, plantilla)
+    
+    if listaMedicionesBloque:
+        listaMedicionesBloque = listaMedicionesBloque[0]
+    else:
+        return
 
     condAmb += condicionesAmbientales(RPi_url, instrumento="fluke")
     condAmb.append(condicionesAmbientales(RPi_url, instrumento="vaisala"))
@@ -531,6 +549,19 @@ def procesoCalibracion(RPi_url, archivoCalibracion_datos, secuencia, bloqueID, v
     
     workbookDatos.save(archivoCalibracion_datos)
     workbookDatos.close()
+
+    outputString = f"Calibración del Bloque {bloqueID} Finalizada.\n\nResultados de la medición:\n"
+    if secuencia.lower() == "desviación central":
+        outputString += "No.  Patrón   Calibrando\n"
+        for i in range(int(numReps)):
+            outputString += str(i+1)+f"   {listaMedicionesBloque[i*2]}   {listaMedicionesBloque[i*2+1]}\n"
+    
+    elif secuencia.lower() == "desviación central y planitud":
+        outputString += "No.  Patrón  Cal-C  Cal-E1  Cal-E2  Cal-E3  Cal-E4  Patrón\n"
+        for i in range(int(numReps)):
+            outputString += str(i+1)+f"  -  {listaMedicionesBloque[i*7]}  -   {listaMedicionesBloque[i*7+1]}  -  {listaMedicionesBloque[i*7+2]}  -  {listaMedicionesBloque[i*7+3]}  -  {listaMedicionesBloque[i*7+4]}  -  {listaMedicionesBloque[i*7+5]}  -  {listaMedicionesBloque[i*7+6]}\n"
+
+    mostrarMensaje(outputString)
     return 
 
 
@@ -552,7 +583,28 @@ def selectorFila(hojaResultadosCalibracion):
             else:
                 i += 1
     return numFila
-    
+
+def seleccionarFilaSegunID(hojaResultadosCalibracion, bloqueID):
+    salir = 0
+    i = 2 # Se inicializa el contador en 2 porque la fila 1 tiene los encabezados 
+    for filaValorNominal in hojaResultadosCalibracion.iter_rows(min_row=2,
+                                                                max_row=500,
+                                                                min_col=2,
+                                                                max_col=2):
+        for celdaValorNominal in filaValorNominal:
+            if celdaValorNominal.value == bloqueID:
+                numFila = filaValorNominal[0].row
+                salir = 1
+                hojaResultadosCalibracion.delete_rows(filaValorNominal[0].row, 1)
+            elif celdaValorNominal.value == None:
+                numFila = filaValorNominal[0].row
+                salir = 1
+            else:
+                i += 1
+        
+        if salir:
+            break
+    return numFila
 ################## Eliminar archivo ##################
 
 def EliminarArchivo(rutaArchivoEliminar):
@@ -712,9 +764,12 @@ def IngresarCalibrando(nombreCliente, objeto, cantidad, marca, numSerie, materia
     hojaNuevoCalibrando["C3"] = int(cantidad)
     hojaNuevoCalibrando["C4"] = marca
     hojaNuevoCalibrando["C5"] = numSerie
-    hojaNuevoCalibrando["C6"] = material #Dropdown con opciones: Acero, cerámica, carburo de tungsteno, carburo de cromo
+    hojaNuevoCalibrando["C6"] = material
     hojaNuevoCalibrando["C7"] = modelo
-    hojaNuevoCalibrando["C8"] = grado
+    try:
+        hojaNuevoCalibrando["C8"] = int(grado)
+    except:
+        hojaNuevoCalibrando["C8"] = grado
     hojaNuevoCalibrando["C9"] = identificacionInterna
     hojaNuevoCalibrando["Z1"] = unidad
 
@@ -763,6 +818,16 @@ def finalizar_agregar(workbookCliente,archivoCliente):
     mostrarMensaje("Se han ingresado exitosamente los datos del nuevo calibrando.")
     top.destroy()
     return
+
+################## Abrir Windows Explorer ##################
+
+def abrir_explorador(ruta):
+    try:
+        subprocess.Popen(['explorer', ruta])
+    except FileNotFoundError:
+        print("No se encontró el comando 'explorer'.")
+
+
 
 
 ################## Ocultar advertencias en terminal ##################
