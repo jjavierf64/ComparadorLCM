@@ -302,6 +302,20 @@ def moverPlato_(pos):
 ################## Secuencia desviación de longitud central ##################
 
 def Centros(tiempoinicial, tiempoestabilizacion, Repeticiones):
+    def tomar_medicion(tiempoestabilizacion): #Subfuncion para tomar medicion
+        try:
+            sleep(int(tiempoestabilizacion))				    #Se le da un tiempo al palpador abajo en el bloque patrón
+            ActivaPedal(servo_pin)								#Sube el palpador
+            MedicionBloque=DatosTESA()                   		#Justo después de levantar el palpador TESA toma la medición
+        except:
+            sleep(5)
+            ActivaPedal(servo_pin)
+            MedicionBloque = tomar_medicion(tiempoestabilizacion)
+        
+        return MedicionBloque
+
+
+
 	# Tiempo de estabilización entra en segundos
 	
     global valorNominalBloque
@@ -320,26 +334,24 @@ def Centros(tiempoinicial, tiempoestabilizacion, Repeticiones):
     for i in range(int(Repeticiones)):
 		
 		#Medición del bloque patrón (inicia con el palpador abajo)
-        sleep(int(tiempoestabilizacion))						#Se le da un tiempo al palpador abajo en el bloque patrón
-        ActivaPedal(servo_pin)								#Sube el palpador
-        MedicionBloque=DatosTESA()                   		#Justo después de levantar el palpador TESA toma la medición
+        MedicionBloque = tomar_medicion(tiempoestabilizacion)
         print(MedicionBloque)
         listaMediciones.append(MedicionBloque)              	#Valor del patrón en posición 1 (centro patrón)
         
         #Movimiento de posición 1 a 2 con el palpador arriba
+        sleep(1) #Esperar a que suba el palpador
         GPIO.output(pin_enableCalibrationMotor, motorEnabledState)       #habilita los motores
         steperMotor1.motor_go(True, "1/8", stepsP1_12, .0025, False, 2)
         GPIO.output(pin_enableCalibrationMotor, motorDisabledState)       #Modo seguro, motores inhabilitados	
         
         #Medición del calibrando
         ActivaPedal(servo_pin)                              #Baja el palpador
-        sleep(int(tiempoestabilizacion))                    #Se le da un tiempo al palpador arriba sobre el calibrando
-        ActivaPedal(servo_pin)                              #Sube el palpador
-        MedicionBloque=DatosTESA()                   		#Justo después de levantar el palpador TESA toma la medición
+        MedicionBloque=tomar_medicion(tiempoestabilizacion)                 		#Justo después de levantar el palpador TESA toma la medición
         listaMediciones.append(MedicionBloque)               	#Valor del calibrando en posición 2 (centro calibrando)
         print(MedicionBloque)
         
         #Movimiento de 2 a 1 con el palpador arriba
+        sleep(1) #Esperar a que suba el palpador
         GPIO.output(pin_enableCalibrationMotor, motorEnabledState)       #habilita los motores
         steperMotor1.motor_go(False, "1/8", stepsP1_12, .0025, False, 2)
         GPIO.output(pin_enableCalibrationMotor, motorDisabledState)       #Modo seguro, motores inhabilitados
@@ -369,7 +381,19 @@ def Centros(tiempoinicial, tiempoestabilizacion, Repeticiones):
 ################## Secuencia desviación de longitud central + planitud (Plantilla 1) ##################
 
 def Completa1(tiempoinicial, tiempoestabilizacion, Repeticiones):
-    
+    def tomar_medicion(tiempoestabilizacion): #Subfuncion para tomar medicion
+        try:
+            sleep(int(tiempoestabilizacion))				    #Se le da un tiempo al palpador abajo en el bloque patrón
+            ActivaPedal(servo_pin)								#Sube el palpador
+            MedicionBloque=DatosTESA()                   		#Justo después de levantar el palpador TESA toma la medición
+        except:
+            sleep(5)
+            ActivaPedal(servo_pin)
+            MedicionBloque = tomar_medicion(tiempoestabilizacion)
+        
+        return MedicionBloque
+
+
     global valorNominalBloque
     global dato
     global t1
@@ -380,27 +404,28 @@ def Completa1(tiempoinicial, tiempoestabilizacion, Repeticiones):
     
     ActivaPedal(servo_pin) #Sube palpador
     sleep(5)
+    ActivaPedal(servo_pin) #Baja palpador
     
     for i in range(int(Repeticiones)):
-
-        ActivaPedal(servo_pin) #Baja palpador
-        sleep(int(tiempoestabilizacion)) #Tiempo de estabilización
-        ActivaPedal(servo_pin) #Sube palpador
-        MedicionBloque=DatosTESA() #Llama función TESA
+        
+        #Medición del bloque patrón (inicia con el palpador abajo)
+        MedicionBloque=tomar_medicion(tiempoestabilizacion)
         listaMediciones.append(MedicionBloque) #Valor del patrón en posición 1 (centro)
         print(MedicionBloque)
 
+        #Movimiento de posición 1 a 2 con el palpador arriba
+        sleep(1) #Esperar a que suba el palpador
         GPIO.output(pin_enableCalibrationMotor, motorEnabledState)       #habilita los motores
         steperMotor1.motor_go(True, "1/8", stepsP1_12, .005, False, 2) #Mov de 1 a 2
         GPIO.output(pin_enableCalibrationMotor, motorDisabledState)       #Modo seguro, motores inhabilitados
 
+        #Medición del calibrando
         ActivaPedal(servo_pin) #Baja palpador
-        sleep(int(tiempoestabilizacion)) #Tiempo de estabilización
-        ActivaPedal(servo_pin) #Sube palpador
-        MedicionBloque=DatosTESA() #Llama función TESA
+        MedicionBloque=tomar_medicion(tiempoestabilizacion)
         listaMediciones.append(MedicionBloque)  #Valor del calibrando en posición 2 (esquina)
         print(MedicionBloque)
-        
+
+        sleep(1) #Esperar a que suba el palpador
         GPIO.output(pin_enableCalibrationMotor, motorEnabledState)       #habilita los motores
         steperMotor1.motor_go(False, "1/8", stepsP1_24v, .005, False, 2) #Mov1 de 2 a 3
         steperMotor2.motor_go(False, "Full", stepsP1_23h, .005, False, 1) #Mov2 de 2 a 3
@@ -408,45 +433,41 @@ def Completa1(tiempoinicial, tiempoestabilizacion, Repeticiones):
         GPIO.output(pin_enableCalibrationMotor, motorDisabledState)       #Modo seguro, motores inhabilitados
 
         ActivaPedal(servo_pin) #Baja palpador
-        sleep(int(tiempoestabilizacion)) #Tiempo de estabilización
-        ActivaPedal(servo_pin) #Sube palpador
-        MedicionBloque=DatosTESA() #Llama función TESA
+        MedicionBloque=tomar_medicion(tiempoestabilizacion)
         listaMediciones.append(MedicionBloque) #Valor del calibrando en posición 3 (esquina)
         print(MedicionBloque)
         
+        sleep(1) #Esperar a que suba el palpador
         GPIO.output(pin_enableCalibrationMotor, motorEnabledState)       #habilita los motores            
         steperMotor1.motor_go(False, "1/8", stepsP1_43v, .005, False, 2) #Mov de 3 a 4
         GPIO.output(pin_enableCalibrationMotor, motorDisabledState)       #Modo seguro, motores inhabilitados
 
         ActivaPedal(servo_pin) #Baja palpador
-        sleep(int(tiempoestabilizacion)) #Tiempo de estabilización
-        ActivaPedal(servo_pin) #Sube palpador
-        MedicionBloque=DatosTESA() #Llama función TESA
+        MedicionBloque=tomar_medicion(tiempoestabilizacion)
         listaMediciones.append(MedicionBloque)  #Valor del calibrando en posición 4 (esquina)
         print(MedicionBloque)
-        
+
+        sleep(1) #Esperar a que suba el palpador
         GPIO.output(pin_enableCalibrationMotor, motorEnabledState)       #habilita los motores
         steperMotor2.motor_go(True, "Full", stepsP1_23h*2 , .005, False, 2) #Mov de 4 a 5
         GPIO.output(pin_enableCalibrationMotor, motorDisabledState)       #Modo seguro, motores inhabilitados
 
         ActivaPedal(servo_pin) #Baja palpador
-        sleep(int(tiempoestabilizacion)) #Tiempo de estabilización
-        ActivaPedal(servo_pin) #Sube palpador
-        MedicionBloque=DatosTESA() #Llama función TESA
+        MedicionBloque=tomar_medicion(tiempoestabilizacion)
         listaMediciones.append(MedicionBloque)  #Valor del calibrando en posición 5 (esquina)
         print(MedicionBloque)
-        
+
+        sleep(1) #Esperar a que suba el palpador
         GPIO.output(pin_enableCalibrationMotor, motorEnabledState)       #habilita los motores
         steperMotor1.motor_go(True, "1/8", stepsP1_43v, .005, False, 2) #Mov de 5 a 6
         GPIO.output(pin_enableCalibrationMotor, motorDisabledState)       #Modo seguro, motores inhabilitados
 
         ActivaPedal(servo_pin) #Baja palpador
-        sleep(int(tiempoestabilizacion)) #Tiempo de estabilización
-        ActivaPedal(servo_pin) #Sube palpador
-        MedicionBloque=DatosTESA() #Llama función TESA
+        MedicionBloque=tomar_medicion(tiempoestabilizacion)
         listaMediciones.append(MedicionBloque)  #Valor del calibrando en posición 6 (esquina)
         print(MedicionBloque)
-        
+
+        sleep(1) #Esperar a que suba el palpador
         GPIO.output(pin_enableCalibrationMotor, motorEnabledState)       #habilita los motores
         steperMotor1.motor_go(False, "1/8", stepsP1_43v, .005, False, 2) #Mov de 6 a 5
         steperMotor2.motor_go(False, "Full", stepsP1_23h, .005, False, 1) #Mov de 5 a Esp2
@@ -454,14 +475,17 @@ def Completa1(tiempoinicial, tiempoestabilizacion, Repeticiones):
         GPIO.output(pin_enableCalibrationMotor, motorDisabledState)       #Modo seguro, motores inhabilitados
 
         ActivaPedal(servo_pin) #Baja palpador
-        sleep(int(tiempoestabilizacion)) #Tiempo de estabilización
-        ActivaPedal(servo_pin) #Sube palpador
-        MedicionBloque=DatosTESA() #Llama función TESA
+        MedicionBloque=tomar_medicion(tiempoestabilizacion)
         listaMediciones.append(MedicionBloque)  #Valor del patrón en posición 1 (centro)
         print(MedicionBloque)
         sleep(5)
+        ActivaPedal(servo_pin) #Baja palpador
+        
 
     
+    sleep(5)
+    ActivaPedal(servo_pin) #Sube palpador
+    sleep(5)
     GPIO.output(pin_enableCalibrationMotor, motorEnabledState)       #habilita los motores
     steperMotor1.motor_go(True, "1/8", round(stepsP1_12/2), .005, False, 2) #Mov de 1 a HOME
     GPIO.output(pin_enableCalibrationMotor, motorDisabledState)       #Modo seguro, motores inhabilitados
@@ -486,7 +510,19 @@ def Completa1(tiempoinicial, tiempoestabilizacion, Repeticiones):
 ################## Secuencia desviación de longitud central + planitud (Plantilla 2) ##################
 
 def Completa2(tiempoinicial, tiempoestabilizacion, Repeticiones):
+    def tomar_medicion(tiempoestabilizacion): #Subfuncion para tomar medicion
+        try:
+            sleep(int(tiempoestabilizacion))				    #Se le da un tiempo al palpador abajo en el bloque patrón
+            ActivaPedal(servo_pin)								#Sube el palpador
+            MedicionBloque=DatosTESA()                   		#Justo después de levantar el palpador TESA toma la medición
+        except:
+            sleep(5)
+            ActivaPedal(servo_pin)
+            MedicionBloque = tomar_medicion(tiempoestabilizacion)
         
+        return MedicionBloque
+
+
     global valorNominalBloque
     global dato    
     global t1
@@ -496,27 +532,25 @@ def Completa2(tiempoinicial, tiempoestabilizacion, Repeticiones):
     listaMediciones=[]
     ActivaPedal(servo_pin) #Sube palpador
     sleep(5)
+    ActivaPedal(servo_pin) #Baja palpador
     
     for i in range(int(Repeticiones)):
 
-        ActivaPedal(servo_pin) #Baja palpador
-        sleep(int(tiempoestabilizacion)) #Tiempo de estabilización
-        ActivaPedal(servo_pin) #Sube palpador
-        MedicionBloque=DatosTESA() #Llama función TESA
+        MedicionBloque = tomar_medicion(tiempoestabilizacion) #Tomar medición
         listaMediciones.append(MedicionBloque) #Valor del patrón en posición 1 (centro)
         print(MedicionBloque)
 
+        sleep(1)
         GPIO.output(pin_enableCalibrationMotor, motorEnabledState)       #habilita los motores
         steperMotor1.motor_go(True, "1/8", stepsP1_12, .005, False, 2) #Mov de 1 a 2
         GPIO.output(pin_enableCalibrationMotor, motorDisabledState)       #Modo seguro, motores inhabilitados
 
         ActivaPedal(servo_pin) #Baja palpador
-        sleep(int(tiempoestabilizacion)) #Tiempo de estabilización
-        ActivaPedal(servo_pin) #Sube palpador
-        MedicionBloque=DatosTESA() #Llama función TESA
+        MedicionBloque = tomar_medicion(tiempoestabilizacion) #Tomar medición
         listaMediciones.append(MedicionBloque)  #Valor del calibrando en posición 2 (esquina)
         print(MedicionBloque)
         
+        sleep(1)
         GPIO.output(pin_enableCalibrationMotor, motorEnabledState)       #habilita los motores
         steperMotor1.motor_go(False, "1/8", stepsP1_24v, .005, False, 2) #Mov1 de 2 a 3
         steperMotor2.motor_go(False, "Full", stepsP2_23h, .005, False, 1) #Mov2 de 2 a 3
@@ -524,45 +558,41 @@ def Completa2(tiempoinicial, tiempoestabilizacion, Repeticiones):
         GPIO.output(pin_enableCalibrationMotor, motorDisabledState)       #Modo seguro, motores inhabilitados
 
         ActivaPedal(servo_pin) #Baja palpador
-        sleep(int(tiempoestabilizacion)) #Tiempo de estabilización
-        ActivaPedal(servo_pin) #Sube palpador
-        MedicionBloque=DatosTESA() #Llama función TESA
+        MedicionBloque = tomar_medicion(tiempoestabilizacion) #Tomar medición
         listaMediciones.append(MedicionBloque) #Valor del calibrando en posición 3 (esquina)
         print(MedicionBloque)
         
+        sleep(1)
         GPIO.output(pin_enableCalibrationMotor, motorEnabledState)       #habilita los motores            
         steperMotor1.motor_go(False, "1/8", stepsP1_43v, .005, False, 2) #Mov de 3 a 4
         GPIO.output(pin_enableCalibrationMotor, motorDisabledState)       #Modo seguro, motores inhabilitados
 
         ActivaPedal(servo_pin) #Baja palpador
-        sleep(int(tiempoestabilizacion)) #Tiempo de estabilización
-        ActivaPedal(servo_pin) #Sube palpador
-        MedicionBloque=DatosTESA() #Llama función TESA
+        MedicionBloque = tomar_medicion(tiempoestabilizacion) #Tomar medición
         listaMediciones.append(MedicionBloque)  #Valor del calibrando en posición 4 (esquina)
         print(MedicionBloque)
         
+        sleep(1)
         GPIO.output(pin_enableCalibrationMotor, motorEnabledState)       #habilita los motores
         steperMotor2.motor_go(True, "Full", stepsP2_23h*2 , .005, False, 2) #Mov de 4 a 5
         GPIO.output(pin_enableCalibrationMotor, motorDisabledState)       #Modo seguro, motores inhabilitados
 
         ActivaPedal(servo_pin) #Baja palpador
-        sleep(int(tiempoestabilizacion)) #Tiempo de estabilización
-        ActivaPedal(servo_pin) #Sube palpador
-        MedicionBloque=DatosTESA() #Llama función TESA
+        MedicionBloque = tomar_medicion(tiempoestabilizacion) #Tomar medición
         listaMediciones.append(MedicionBloque)  #Valor del calibrando en posición 5 (esquina)
         print(MedicionBloque)
         
+        sleep(1)
         GPIO.output(pin_enableCalibrationMotor, motorEnabledState)       #habilita los motores
         steperMotor1.motor_go(True, "1/8", stepsP1_43v, .005, False, 2) #Mov de 5 a 6
         GPIO.output(pin_enableCalibrationMotor, motorDisabledState)       #Modo seguro, motores inhabilitados
 
         ActivaPedal(servo_pin) #Baja palpador
-        sleep(int(tiempoestabilizacion)) #Tiempo de estabilización
-        ActivaPedal(servo_pin) #Sube palpador
-        MedicionBloque=DatosTESA() #Llama función TESA
+        MedicionBloque = tomar_medicion(tiempoestabilizacion) #Tomar medición
         listaMediciones.append(MedicionBloque)  #Valor del calibrando en posición 6 (esquina)
         print(MedicionBloque)
         
+        sleep(1)
         GPIO.output(pin_enableCalibrationMotor, motorEnabledState)       #habilita los motores
         steperMotor1.motor_go(False, "1/8", stepsP1_43v, .005, False, 2) #Mov de 6 a 5
         steperMotor2.motor_go(False, "Full", stepsP2_23h, .005, False, 1) #Mov de 5 a Esp2
@@ -570,14 +600,16 @@ def Completa2(tiempoinicial, tiempoestabilizacion, Repeticiones):
         GPIO.output(pin_enableCalibrationMotor, motorDisabledState)       #Modo seguro, motores inhabilitados
 
         ActivaPedal(servo_pin) #Baja palpador
-        sleep(int(tiempoestabilizacion)) #Tiempo de estabilización
-        ActivaPedal(servo_pin) #Sube palpador
-        MedicionBloque=DatosTESA() #Llama función TESA
+        MedicionBloque = tomar_medicion(tiempoestabilizacion) #Tomar medición
         listaMediciones.append(MedicionBloque)  #Valor del patrón en posición 1 (centro)
         print(MedicionBloque)
         sleep(5)
+        ActivaPedal(servo_pin) #Baja palpador
+        
 
-    
+    sleep(5)
+    ActivaPedal(servo_pin) #Sube palpador
+    sleep(5)
     GPIO.output(pin_enableCalibrationMotor, motorEnabledState)       #habilita los motores
     steperMotor1.motor_go(True, "1/8", round(stepsP1_12/2), .005, False, 2) #Mov de 1 a HOME
     GPIO.output(pin_enableCalibrationMotor, motorDisabledState)       #Modo seguro, motores inhabilitados

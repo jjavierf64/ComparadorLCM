@@ -25,6 +25,12 @@ def moverDe0a1():
     # Retorna una respuesta
     return jsonify(success=True), 200
 
+@app.route('/activarPedalRemoto', methods=['POST'])
+def activarPedalRemoto():
+    ActivaPedal()
+    # Retorna una respuesta
+    return jsonify(success=True), 200
+
 @app.route('/moverPlato', methods=['POST'])
 def moverPlato():
     data = request.json

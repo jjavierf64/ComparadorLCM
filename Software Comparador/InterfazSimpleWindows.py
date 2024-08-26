@@ -8,8 +8,11 @@ from tkinter import ttk
 from ttkthemes import ThemedStyle
 from PIL import Image, ImageTk
 import os
+import subprocess
 import openpyxl
 import requests
+import xlwings as xw
+from datetime import datetime
 
 from FuncionesWindows import *
 
@@ -43,11 +46,30 @@ global RPi_url
 RPi_url = "http://192.168.196.100:5000/" # Zerotier
 
 
-
-
 ################## Definición de funciones de la interfaz ##################
 
 def nueva_calibracion():
+
+    def hallar_valores_serie(*args):
+        
+        idCalibrando_entry["values"] =[] #Limpiar Valores anteriores
+        
+        seleccion = cliente_combobox.get() # Obtener la selección del 
+
+        wb = openpyxl.load_workbook(f"Clientes/{seleccion}.xlsx")
+        
+        valoresIDcal = wb.sheetnames
+
+        wb.close()
+
+        idCalibrando_entry["values"] = valoresIDcal[1:]
+
+        idCalibrando_entry.current(0)
+
+        cliente_combobox["values"] = clientesRegistrados[1:]
+        return
+
+    
     # Ocultar la ventana del menú de opciones una vez que se selecciona una opción
     root.withdraw()
 
@@ -79,7 +101,7 @@ def nueva_calibracion():
     global revision_entry, patron_combobox, material_combobox, secuencia_combobox, tInicial_entry, tEstabilizacion_entry, numReps_entry
 
     # Crear una lista con los nombres de los clientes ya registrados
-    clientesRegistrados = []
+    clientesRegistrados = [""]
     archivoClientes = openpyxl.load_workbook("Clientes/Clientes.xlsx")
     hojaClientes = archivoClientes.active
 
@@ -93,10 +115,12 @@ def nueva_calibracion():
     archivoClientes.close()
 
     # Espacios para ingresar las variables requeridas para una nueva calibración
+    opcion_seleccionada = tk.StringVar()
+    opcion_seleccionada.trace('w', hallar_valores_serie)
     cliente_label = ttk.Label(ventana_nuevaCalibracion, text="Nombre del cliente:", anchor=tk.CENTER,
                               background="white")
     cliente_label.grid(row=2, column=0, pady=5, sticky=tk.EW)
-    cliente_combobox = ttk.Combobox(ventana_nuevaCalibracion, values=clientesRegistrados, width=40 ,state= "readonly")
+    cliente_combobox = ttk.Combobox(ventana_nuevaCalibracion, textvariable=opcion_seleccionada, values=clientesRegistrados, width=40 ,state= "readonly")
     cliente_combobox.grid(row=2, column=1, columnspan=2, pady=5, padx=(20, 5), sticky="ew")
 
     certificado_label = ttk.Label(ventana_nuevaCalibracion, text="Número de certificado:", background="white")
@@ -111,8 +135,11 @@ def nueva_calibracion():
 
     idCalibrando_label = ttk.Label(ventana_nuevaCalibracion, text="Identificación del calibrando (No. Serie):", background="white")
     idCalibrando_label.grid(row=5, column=0, pady=5)
-    idCalibrando_entry = ttk.Entry(ventana_nuevaCalibracion, width=42)
-    idCalibrando_entry.grid(row=5, column=1, columnspan=2, pady=5, padx=(20, 5))
+#    idCalibrando_entry = ttk.Entry(ventana_nuevaCalibracion, width=42)
+#    idCalibrando_entry.grid(row=5, column=1, columnspan=2, pady=5, padx=(20, 5))
+    idCalibrando_entry = ttk.Combobox(ventana_nuevaCalibracion, width=40 ,state= "readonly")
+    idCalibrando_entry.grid(row=5, column=1, columnspan=2, pady=5, padx=(20, 5), sticky="ew")
+    cliente_combobox.current(0)  
 
     responsable_label = ttk.Label(ventana_nuevaCalibracion, text="Responsable de la calibración:", background="white")
     responsable_label.grid(row=6, column=0, pady=5)
@@ -230,27 +257,56 @@ def reanudar_calibracion():
 
 
 def calibracion_abierta(ventanaPrevia, archivoCalibracion_datos, cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps, unidad):
-    
+
     # definir función para detección automática de plantilla
     def detect_plantilla(event):
-        bloqueID_oculto, valorNominal_oculto, unidad_oculto = event.widget.get().split()
+        bloqueID_oculto, valorNominal_oculto, unidad_oculto,_ = event.widget.get().split()
         seleccionarPlantilla_combobox.current(0)
 
         if unidad_oculto == "mm" and float(valorNominal_oculto) > 10:
             seleccionarPlantilla_combobox.current(1)
         elif unidad_oculto == "pulg" and float(valorNominal_oculto) > 0.15:
             seleccionarPlantilla_combobox.current(1)
+        
+
+            #Revisar Bloques del Calibrando
+        bloquesCalibrando = [] #Lista para el registro de IDs y tamaños
+        archivoCliente = BusquedaClientes(cliente)[2] #Busqueda del archivo del cliente
+        workbookCliente = load_workbook(filename=archivoCliente)  #Apertura del archivo de excel del cliente
+        hojaCalibrando = workbookCliente[idCalibrando]
+
+        for i,fila in enumerate(hojaCalibrando.iter_rows(min_row=14, max_row=500, min_col=3, max_col=3), start=14):
+            for celda in fila:
+                if celda.value != None: #Ve si existe algún dato y adjunta
+                    bloquesCalibrando.append([celda.value, hojaCalibrando["B"+str(i)].value, unidad])
+        workbookCliente.close()
+
+        #Revisar Bloques Ya Medidos
+        IDmedidos = []
+        workbookDatos = load_workbook(archivoCalibracion_datos) 
+        hojaDatos = workbookDatos.active
+        for fila in hojaDatos.iter_rows(min_row=2, max_row=500, min_col=2, max_col=2):
+            for celda in fila:
+                if celda.value != None: #Ve si existe algún dato y adjunta
+                    IDmedidos.append(celda.value)
+        workbookDatos.close()
+
+        for index,bloque in enumerate(bloquesCalibrando):
+            if bloque[0] in IDmedidos:
+                bloquesCalibrando[index].append("✅")
+            else:
+                bloquesCalibrando[index].append("☐")
 
         
             # Movimiento de disco de bloques
-        if unidad_oculto == "mm":
-            if float(valorNominal_oculto) > 10:
-                moverPlatoRemoto(RPi_url, 1)
-            elif float(valorNominal_oculto) < 10:
-                moverPlatoRemoto(RPi_url, 1)
-        elif unidad_oculto == "pulg": 
-            if float(valorNominal_oculto) > 0.15:
-                moverPlatoRemoto(RPi_url, 1)
+        # if unidad_oculto == "mm":
+        #     if float(valorNominal_oculto) > 10:
+        #         moverPlatoRemoto(RPi_url, 1) #falta asignar zonas
+        #     elif float(valorNominal_oculto) < 10:
+        #         moverPlatoRemoto(RPi_url, 1)
+        # elif unidad_oculto == "pulg": 
+        #     if float(valorNominal_oculto) > 0.15:
+        #         moverPlatoRemoto(RPi_url, 1)
                 
 
 
@@ -269,6 +325,9 @@ def calibracion_abierta(ventanaPrevia, archivoCalibracion_datos, cliente, certif
     ventana_CalibracionAbierta.protocol("WM_DELETE_WINDOW", lambda: regresarVentanaPrincipal(root, ventana_CalibracionAbierta)) #Cuando se cierre la ventana secundaria, vuelva al menú de opciones
     ventana_CalibracionAbierta.iconphoto(False, winIcono)
 
+    #guardado de parámetros
+    updateWindow = ventana_CalibracionAbierta, archivoCalibracion_datos, cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps, unidad
+
     # Crear un nuevo layout para la ventana de Nueva Calibración
     title_label = ttk.Label(ventana_CalibracionAbierta, text="Comparador de bloques TESA", font=("Helvetica", 16, "bold"),
                             background="white")
@@ -284,7 +343,7 @@ def calibracion_abierta(ventanaPrevia, archivoCalibracion_datos, cliente, certif
 
     image_label = ttk.Label(ventana_CalibracionAbierta, image=image, background="white")
     image_label.image = image
-    image_label.grid(row=0, column=10, rowspan=1, padx=10, pady=10)
+    image_label.grid(row=0, column=20, rowspan=1, padx=10, pady=10)
 
     info_label = ttk.Label(ventana_CalibracionAbierta, 
         text= f"Información de la Calibración Actual:\n  · Nombre del Cliente: {cliente}\n  · Número de Certificado: {certificado}\n  · Identificación del Calibrando: {idCalibrando}\n  · Secuencia de Calibración: {secuencia}\n  · Patrón: {patron}\n", background="white"
@@ -317,6 +376,7 @@ def calibracion_abierta(ventanaPrevia, archivoCalibracion_datos, cliente, certif
     seleccionarBloqueLabel = ttk.Label(ventana_CalibracionAbierta, text="Seleccione el bloque a calibrar (ID, Valor Nominal):", background="white")
     seleccionarBloqueLabel.grid(row=30, column=0, pady=10)
 
+    #Revisar Bloques del Calibrando
     bloquesCalibrando = [] #Lista para el registro de IDs y tamaños
     archivoCliente = BusquedaClientes(cliente)[2] #Busqueda del archivo del cliente
     workbookCliente = load_workbook(filename=archivoCliente)  #Apertura del archivo de excel del cliente
@@ -325,28 +385,53 @@ def calibracion_abierta(ventanaPrevia, archivoCalibracion_datos, cliente, certif
     for i,fila in enumerate(hojaCalibrando.iter_rows(min_row=14, max_row=500, min_col=3, max_col=3), start=14):
         for celda in fila:
             if celda.value != None: #Ve si existe algún dato y adjunta
-                bloquesCalibrando.append((celda.value, hojaCalibrando["B"+str(i)].value, unidad))
+                bloquesCalibrando.append([celda.value, hojaCalibrando["B"+str(i)].value, unidad])
     workbookCliente.close()
+
+    #Revisar Bloques Ya Medidos
+    IDmedidos = []
+    workbookDatos = load_workbook(archivoCalibracion_datos) 
+    hojaDatos = workbookDatos.active
+    for fila in hojaDatos.iter_rows(min_row=2, max_row=500, min_col=2, max_col=2):
+        for celda in fila:
+            if celda.value != None: #Ve si existe algún dato y adjunta
+                IDmedidos.append(celda.value)
+    workbookDatos.close()
+
+    for index,bloque in enumerate(bloquesCalibrando):
+        if bloque[0] in IDmedidos:
+            bloquesCalibrando[index].append("✅")
+        else:
+            bloquesCalibrando[index].append("☐")
+
+
 
     bloqueIdValor_combobox = ttk.Combobox(ventana_CalibracionAbierta, values=bloquesCalibrando, width=40,state= "readonly") # Se debe hacer split a la variable
     bloqueIdValor_combobox.grid(row=30, column=10, pady=10)
     bloqueIdValor_combobox.bind('<<ComboboxSelected>>', detect_plantilla)
-    
+     
 
     seleccionarPlantillaLabel =ttk.Label(ventana_CalibracionAbierta, text="Seleccione el tamaño de plantilla:", background="white")
     seleccionarPlantillaLabel.grid(row=35, column=0, pady=10, padx=10)
 
     seleccionarPlantilla_combobox = ttk.Combobox(ventana_CalibracionAbierta, values=["Pequeña", "Grande"], width=40 ,state= "readonly")
     seleccionarPlantilla_combobox.grid(row=35, column=10, pady=10, padx=10)
+    seleccionarPlantilla_combobox.configure(state='disabled')
+
     #--
 
     #Mover Plantilla
-    recordatorio_label = ttk.Label(ventana_CalibracionAbierta, text= "Recuerde colocar la Plantilla en Posición 1 ", background="white" )
+    recordatorio_label = ttk.Label(ventana_CalibracionAbierta, text= "Recuerde colocar la Plantilla en Posición 1 ", background="white",font='Helvetica 9 bold' )
     recordatorio_label.grid(row=40, column=0, pady=20, padx=10)
 
-    moverDe0a1_button = ttk.Button(ventana_CalibracionAbierta, text="Mover del Centro a Posición 1", 
+        #Mover Manualmente
+    moverManual_button = ttk.Button(ventana_CalibracionAbierta, text="Mover Plantilla Manualmente", 
+                                 command=lambda: subprocess.run([r"C:\Program Files (x86)\Mobatek\MobaXterm\MobaXterm.exe", r'-bookmark', r"User sessions\RPI (movimiento Motores)"]))
+    moverManual_button.grid(row=40, column=10, columnspan=1, pady=10, padx=10)
+        #Mover de pos 0 a 1
+    moverDe0a1_button = ttk.Button(ventana_CalibracionAbierta, text="Centro ⮕ Posición 1", 
                                  command=lambda: moverDe0a1(RPi_url))
-    moverDe0a1_button.grid(row=40, column=10, columnspan=1, pady=10, padx=10)
+    moverDe0a1_button.grid(row=40, column=20, columnspan=1, pady=10, padx=10)
 
     #Mover Plato
     moverPlato_label = ttk.Label(ventana_CalibracionAbierta, text= "Presione el botón para mover el plato giratorio ", background="white" )
@@ -356,16 +441,21 @@ def calibracion_abierta(ventanaPrevia, archivoCalibracion_datos, cliente, certif
                                  command=lambda: moverPlato())
     moverPlato_button.grid(row=50, column=10, columnspan=1, pady=10, padx=10)
     
+    # Activar Pedal
+    pedal_button = ttk.Button(ventana_CalibracionAbierta, text="Activar Pedal (SOLO EN CASO DE FALLO)",  command=lambda: activarPedalRemoto(RPi_url))
+    pedal_button.grid(row=80, column=0, columnspan=1, pady=10, padx=10)
+    
     # Continuar
-    continuar_button = ttk.Button(ventana_CalibracionAbierta, text="⮩ Realizar Calibración",  command=lambda: calibrarBloque(archivoCalibracion_datos, secuencia, bloqueIdValor_combobox,seleccionarPlantilla_combobox, tInicial_entry, tEstabilizacion_entry, numReps_entry))
-    continuar_button.grid(row=80, column=0, columnspan=1, pady=10, padx=10)
+    continuar_button = ttk.Button(ventana_CalibracionAbierta, text="⮩ Realizar Calibración",  command=lambda: calibrarBloque(archivoCalibracion_datos, secuencia, bloqueIdValor_combobox,seleccionarPlantilla_combobox, tInicial_entry, tEstabilizacion_entry, numReps_entry, updateWindow))
+    continuar_button.grid(row=80, column=10, columnspan=1, pady=10, padx=10)
 
     regresar_button = ttk.Button(ventana_CalibracionAbierta, text="⮪ Pausar Calibración y Regresar al Menú", 
                                  command=lambda: regresarVentanaPrincipal(root, ventana_CalibracionAbierta))
-    regresar_button.grid(row=100, column=0, columnspan=1, pady=10)
+    regresar_button.grid(row=100, column=10, columnspan=1, pady=(45,10), padx=10)
     
     finalizar_button = ttk.Button(ventana_CalibracionAbierta, text="🗸 Finalizar y Guardar Calibración",  command=lambda: finalizarCalibracion(root, ventana_CalibracionAbierta, archivoCalibracion_datos, cliente, certificado, secuencia, numReps) )
-    finalizar_button.grid(row=100, column=10, columnspan=1, pady=10)
+    finalizar_button.grid(row=100, column=20, columnspan=1, pady=(45,10), padx=10)
+        
     return
 
 
@@ -505,7 +595,7 @@ def ingresar_calibrando():
 
     materialCalibrando_label = ttk.Label(ventana_calibrando, text="Material:", anchor=tk.CENTER, background="white")
     materialCalibrando_label.grid(row=7, column=0, pady=5, sticky=tk.EW)
-    materialCalibrando_combobox = ttk.Combobox(ventana_calibrando, values=["Acero inoxidable", "Cerámica"], width=40 ,state= "readonly")
+    materialCalibrando_combobox = ttk.Combobox(ventana_calibrando, values=["acero", "cerámica", "carburo de tungsteno", "carburo de cromo"], width=40 ,state= "readonly")
     materialCalibrando_combobox.grid(row=7, column=1, columnspan=2, pady=5, padx=(20, 5), sticky="ew")
 
     modelo_label = ttk.Label(ventana_calibrando, text="Modelo:", anchor=tk.CENTER, background="white")
@@ -515,8 +605,10 @@ def ingresar_calibrando():
 
     grado_label = ttk.Label(ventana_calibrando, text="Grado declarado: ", anchor=tk.CENTER, background="white")
     grado_label.grid(row=9, column=0, pady=5, sticky=tk.EW)
-    grado_entry = ttk.Entry(ventana_calibrando, width=42)
+    grado_entry = ttk.Combobox(ventana_calibrando, values=["k","0","1","2"], width=40 ,state= "readonly")
     grado_entry.grid(row=9, column=1, columnspan=2, pady=5, padx=(20, 5), sticky="ew")
+    #grado_entry = ttk.Entry(ventana_calibrando, width=42)
+    #grado_entry.grid(row=9, column=1, columnspan=2, pady=5, padx=(20, 5), sticky="ew")
 
     identificacionInterna_label = ttk.Label(ventana_calibrando, text="Identificacion Interna: ", anchor=tk.CENTER, background="white")
     identificacionInterna_label.grid(row=10, column=0, pady=5, sticky=tk.EW)
@@ -690,8 +782,8 @@ def continuarNuevaCalibracion(ventana): # Función para continuar con el proceso
     else:
         archivoCalibracion_datos, archivoCalibracion_info = CrearArchivoCalibracion(certificado)
 
-        RellenarInfoCalibracion(archivoCalibracion_info, [cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps, unidad, direccionCliente])
-
+        RellenarInfoCalibracion(archivoCalibracion_info, [cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps, unidad, direccionCliente, datetime.now().strftime("%Y/%m/%d")])
+    
     calibracion_abierta(ventana, archivoCalibracion_datos, cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps, unidad)
 
     return 
@@ -706,9 +798,9 @@ def reanudarCalibracion(ventana):
     return
 
 
-def calibrarBloque(archivoCalibracion_datos, secuencia, bloqueIdValor_combobox, seleccionarPlantilla_combobox, tInicial_entry, tEstabilizacion_entry, numReps_entry ):
+def calibrarBloque(archivoCalibracion_datos, secuencia, bloqueIdValor_combobox, seleccionarPlantilla_combobox, tInicial_entry, tEstabilizacion_entry, numReps_entry, updateWindow):
     bloqueIdValor = bloqueIdValor_combobox.get()
-    bloqueID, valorNominal, unidad = bloqueIdValor.split()
+    bloqueID, valorNominal, unidad, _ = bloqueIdValor.split()
     plantilla = seleccionarPlantilla_combobox.get()
     tInicial = tInicial_entry.get()
     tEstabilizacion = tEstabilizacion_entry.get()
@@ -718,7 +810,9 @@ def calibrarBloque(archivoCalibracion_datos, secuencia, bloqueIdValor_combobox, 
     mensajeProceso.update()
     procesoCalibracion(RPi_url, archivoCalibracion_datos, secuencia, bloqueID, valorNominal, tInicial, tEstabilizacion, numReps, plantilla)
     mensajeProceso.destroy()
-    mostrarMensaje(f"Calibración del Bloque {bloqueID} Finalizada.")
+    
+    ventana, archivoCalibracion_datos, cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps, unidad = updateWindow
+    calibracion_abierta(ventana, archivoCalibracion_datos, cliente, certificado, solicitud, idCalibrando, responsable, revision, patron, material, secuencia, tInicial, tEstabilizacion, numReps, unidad)
     return
 
 def moverPlato():
@@ -792,21 +886,45 @@ def finalizarCalibracion(root, ventana_CalibracionAbierta, archivoCalibracion_da
     rutaMacro = f"./Calibraciones Finalizadas/{certificado}-{cliente}.xlsm"
     unificarArchivos(rutaDatos, rutaMacro)
 
+    """ NO FUNCIONA
+    # app = xw.App(add_book=False)
+    # app.display_alerts = False
+    # workbook = app.books.api.Open( os.path.abspath(rutaMacro), UpdateLinks=False)
+    # macro1 = workbook.macro("ImportarTodo.ImportarTodo")
+    # macro1()
+    # workbook.save()
+    # if len(workbook.app.books) == 1:
+    #     workbook.app.quit()
+    # else:
+    #     workbook.close()
+    
+    
+    
+    
+    
     # Create an instance of the Excel application
+    # os.path.abspath
     excel = win32com.client.Dispatch("Excel.Application")
+    #excel = win32com.client.gencache.EnsureDispatch('Excel.Application')
+
     excel.Visible = False
-    workbook = excel.Workbooks.Open(rutaMacro)
-    excel.Application.Run(f'{workbook.Name}!ImportarTodo.ImportarTodo')
+    excel.DisplayAlerts = False
+    #excel.ScreenUpdating = False
+    workbook = excel.Workbooks.Open(os.path.abspath(rutaMacro), CorruptLoad=1)
+    sleep(20)
+    excel.Application.Run('ImportarTodo.ImportarTodo')
     workbook.Save()
     workbook.Close(SaveChanges=False)
     excel.Application.Quit()
+    """ #NO FUNCIONA
 
 
     # Eliminar Archivos Restantes
     EliminarArchivo(archivoCalibracion_info)
     EliminarArchivo(rutaDatos)
 
-
+    mostrarMensaje("Calibración Finalizada con Éxito!")
+    abrir_explorador(r"C:\Users\Lrojas\Comparador\ComparadorLCM\Software Comparador\Calibraciones Finalizadas")
     regresarVentanaPrincipal(root, ventana_CalibracionAbierta)
     return
 
@@ -919,6 +1037,7 @@ image_label.grid(row=0, column=2, rowspan=1, padx=10, pady=10)
 options = [
     ("Nueva calibración", nueva_calibracion),
     ("Reanudar calibración", reanudar_calibracion),
+    ("Calibraciones Finalizadas", lambda:abrir_explorador(r"C:\Users\Lrojas\Comparador\ComparadorLCM\Software Comparador\Calibraciones Finalizadas")),
     ("Ingresar cliente", ingresar_cliente),
     ("Ingresar calibrando", ingresar_calibrando)
 ]
